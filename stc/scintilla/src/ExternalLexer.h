@@ -14,10 +14,12 @@
 #define EXT_LEXER_DECL
 #endif
 
+#include "Platform.h"
+
+#include "LexerModule.h"
 #ifdef SCI_NAMESPACE
 namespace Scintilla {
 #endif
-#include "LexerModule.h"
 
 typedef void*(EXT_LEXER_DECL *GetLexerFunction)(unsigned int Index);
 typedef int (EXT_LEXER_DECL *GetLexerCountFn)();

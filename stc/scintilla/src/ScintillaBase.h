@@ -79,7 +79,7 @@ protected:
 	void AutoCompleteMoveToCurrentWord();
 	static void AutoCompleteDoubleClick(void *p);
 
-	void CallTipClick();
+
 	void CallTipShow(Point pt, const char *defn);
 	virtual void CreateCallTipWindow(PRectangle rc) = 0;
 
@@ -95,6 +95,7 @@ protected:
 	void NotifyLexerChanged(Document *doc, void *userData);
 
 public:
+    void CallTipClick();
 	// Public so scintilla_send_message can use it
 	virtual sptr_t WndProc(unsigned int iMessage, uptr_t wParam, sptr_t lParam);
 };

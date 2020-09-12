@@ -8,6 +8,8 @@
 #ifndef LEXERMODULE_H
 #define LEXERMODULE_H
 
+#include "ILexer.h"
+
 #ifdef SCI_NAMESPACE
 namespace Scintilla {
 #endif

@@ -26,6 +26,8 @@
 #define PLAT_CURSES 0
 #define PLAT_TK 0
 
+#define SCI_NAMESPACE 1
+
 #if defined(FOX)
 #undef PLAT_FOX
 #define PLAT_FOX 1
@@ -67,12 +69,9 @@
 
 #else
 #undef PLAT_WIN
-
 #endif
 
-#ifdef SCI_NAMESPACE
 namespace Scintilla {
-#endif
 
 typedef float XYPOSITION;
 typedef double XYACCUMULATOR;
@@ -521,8 +520,6 @@ public:
 #endif
 #endif
 
-#ifdef SCI_NAMESPACE
 }
-#endif
 
 #endif

@@ -43,13 +43,11 @@
     #include "wx/afterstd.h"
 #endif
 
-#define PLAT_WIN 0
-
-#include "ScintillaWX.h"
 #include "ExternalLexer.h"
 #include "UniConversion.h"
 #include "stc.h"
 #include "private.h"
+#include "ScintillaWX.h"
 #include "PlatWX.h"
 
 #ifdef __WXMSW__
@@ -57,32 +55,27 @@
     #include "wx/msw/private.h"
 #endif
 
-#undef  __WXGTK20__
-#ifdef __WXGTK20__
-    #include <gdk/gdk.h>
-#endif
+namespace Scintilla {
 
 //----------------------------------------------------------------------
 // Helper classes
 
-class wxSTCTimer : public wxTimer {
-public:
-    wxSTCTimer(ScintillaWX* swx, ScintillaWX::TickReason reason) {
-        m_swx = swx;
-        m_reason = reason;
-    }
+    class wxSTCTimer : public wxTimer {
+    public:
+        wxSTCTimer(ScintillaWX *swx, TickReason reason) {
+            m_swx = swx;
+            m_reason = reason;
+        }
 
-    void Notify() wxOVERRIDE {
-        m_swx->TickFor(m_reason);
-    }
+        void Notify() wxOVERRIDE {
+            m_swx->TickFor(m_reason);
+        }
 
-private:
-    ScintillaWX* m_swx;
-    ScintillaWX::TickReason m_reason;
-};
-
-
-#if wxUSE_DRAG_AND_DROP
+    private:
+        ScintillaWX *m_swx;
+        TickReason m_reason;
+    };
+}
 bool wxSTCDropTarget::OnDropText(wxCoord x, wxCoord y, const wxString& data) {
     return m_swx->DoDropText(x, y, data);
 }
@@ -98,9 +91,8 @@ wxDragResult  wxSTCDropTarget::OnDragOver(wxCoord x, wxCoord y, wxDragResult def
 void  wxSTCDropTarget::OnLeave() {
     m_swx->DoDragLeave();
 }
-#endif // wxUSE_DRAG_AND_DROP
 
-
+namespace Scintilla {
 class wxSTCCallTip : public wxSTCPopupWindow {
 public:
     wxSTCCallTip(wxWindow* parent, CallTip* ct, ScintillaWX* swx) :
@@ -1540,5 +1532,5 @@ void ScintillaWX::ImeEndComposition() {
 
 //----------------------------------------------------------------------
 //----------------------------------------------------------------------
-
+}
 #endif // wxUSE_STC

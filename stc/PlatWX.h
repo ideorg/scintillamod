@@ -8,11 +8,10 @@
 #include "wx/imaglist.h"
 #include "Platform.h"
 
-class wxStyledTextCtrl;
-class wxSTCListBox;
-class wxSTCListBoxVisualData;
-
-
+namespace Scintilla {
+    class wxStyledTextCtrl;
+    class wxSTCListBox;
+    class wxSTCListBoxVisualData;
 
 wxRect wxRectFromPRectangle(PRectangle prc);
 PRectangle PRectangleFromwxRect(wxRect rc);
@@ -227,5 +226,6 @@ private:
 #endif // wxUSE_GRAPHICS_DIRECT2D
 
 #endif // wxUSE_STC
+
 
 #endif // _SRC_STC_PLATWX_H_

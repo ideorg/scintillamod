@@ -34,6 +34,7 @@ public:
 	Idler();
 };
 
+enum TickReason { tickCaret, tickScroll, tickWiden, tickDwell, tickPlatform };
 /**
  * When platform has a way to generate an event before painting,
  * accumulate needed styling range and other work items in
@@ -165,7 +166,7 @@ protected:	// ScintillaBase subclass needs access to much of Editor
 	 * When a style attribute is changed, this cache is flushed. */
 	bool stylesValid;
 	ViewStyle vs;
-	int technology;
+
 	Point sizeRGBAImage;
 	float scaleRGBAImage;
 
@@ -518,8 +519,7 @@ protected:	// ScintillaBase subclass needs access to much of Editor
 	void Tick();
 	bool Idle();
 	virtual void SetTicking(bool on);
-	enum TickReason { tickCaret, tickScroll, tickWiden, tickDwell, tickPlatform };
-	virtual void TickFor(TickReason reason);
+
 	virtual bool FineTickerAvailable();
 	virtual bool FineTickerRunning(TickReason reason);
 	virtual void FineTickerStart(TickReason reason, int millis, int tolerance);
@@ -593,6 +593,8 @@ public:
 	int ctrlID;
 	// Public so COM methods for drag and drop can set it.
 	int errorStatus;
+    int technology;
+    virtual void TickFor(TickReason reason);
 	friend class AutoSurface;
 	friend class SelectionLineIterator;
 };

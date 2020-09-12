@@ -2854,7 +2854,7 @@ class WXDLLIMPEXP_FWD_CORE wxScrollBar;
 
 //}}}
 //----------------------------------------------------------------------
-
+namespace Scintilla {
 class  ScintillaWX;                      // forward declare
 class  WordList;
 struct SCNotification;
@@ -5777,5 +5777,5 @@ typedef void (wxEvtHandler::*wxStyledTextEventFunction)(wxStyledTextEvent&);
 #endif
 
 #endif // wxUSE_STC
-
+}
 #endif // _WX_STC_STC_H_
