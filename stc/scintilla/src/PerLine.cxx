@@ -24,7 +24,7 @@
 #include "CellBuffer.h"
 #include "PerLine.h"
 
-using namespace Scintilla;
+using namespace ScintillaMod;
 
 MarkerHandleSet::MarkerHandleSet() {
 }

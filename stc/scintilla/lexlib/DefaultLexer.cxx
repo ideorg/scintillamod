@@ -20,7 +20,7 @@
 #include "LexerModule.h"
 #include "DefaultLexer.h"
 
-using namespace Scintilla;
+using namespace ScintillaMod;
 
 static const char styleSubable[] = { 0 };
 

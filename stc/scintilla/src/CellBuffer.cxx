@@ -27,7 +27,7 @@
 #include "CellBuffer.h"
 #include "UniConversion.h"
 
-namespace Scintilla {
+namespace ScintillaMod {
 
 struct CountWidths {
 	// Measures the number of characters in a string divided into those
@@ -82,7 +82,7 @@ public:
 
 }
 
-using namespace Scintilla;
+using namespace ScintillaMod;
 
 template <typename POS>
 class LineStartIndex {

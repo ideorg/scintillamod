@@ -23,7 +23,7 @@
 #include "CharacterSet.h"
 #include "LexerModule.h"
 
-using namespace Scintilla;
+using namespace ScintillaMod;
 
 static void ColouriseNullDoc(Sci_PositionU startPos, Sci_Position length, int, WordList *[],
                             Accessor &styler) {

@@ -27,7 +27,7 @@
 #include "CharacterSet.h"
 #include "LexerModule.h"
 
-using namespace Scintilla;
+using namespace ScintillaMod;
 
 static int is_radix(int radix, int ch) {
 	int digit;

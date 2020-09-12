@@ -72,7 +72,7 @@
 
 #else
 #undef PLAT_WIN
-#define PLAT_WIN 1
+#define PLAT_WIN 0
 
 #endif
 

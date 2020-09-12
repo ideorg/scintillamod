@@ -23,7 +23,7 @@
 #include "CharacterSet.h"
 #include "LexerModule.h"
 
-using namespace Scintilla;
+using namespace ScintillaMod;
 
 static const char * const yamlWordListDesc[] = {
 	"Keywords",

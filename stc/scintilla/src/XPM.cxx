@@ -19,7 +19,7 @@
 
 #include "XPM.h"
 
-using namespace Scintilla;
+using namespace ScintillaMod;
 
 namespace {
 

@@ -27,7 +27,7 @@
 #include "CharacterSet.h"
 #include "LexerModule.h"
 
-using namespace Scintilla;
+using namespace ScintillaMod;
 
 static bool IsSpaceEquiv(int state) {
 	return (state == SCE_COFFEESCRIPT_DEFAULT

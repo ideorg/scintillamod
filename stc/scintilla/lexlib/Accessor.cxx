@@ -17,7 +17,7 @@
 #include "LexAccessor.h"
 #include "Accessor.h"
 
-using namespace Scintilla;
+using namespace ScintillaMod;
 
 Accessor::Accessor(IDocument *pAccess_, PropSetSimple *pprops_) : LexAccessor(pAccess_), pprops(pprops_) {
 }

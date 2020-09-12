@@ -7,9 +7,9 @@
 
 #include "DBCS.h"
 
-using namespace Scintilla;
+using namespace ScintillaMod;
 
-namespace Scintilla {
+namespace ScintillaMod {
 
 bool DBCSIsLeadByte(int codePage, char ch) noexcept {
 	// Byte ranges found in Wikipedia articles with relevant search strings in each case

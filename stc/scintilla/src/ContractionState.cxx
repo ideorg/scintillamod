@@ -24,7 +24,7 @@
 #include "SparseVector.h"
 #include "ContractionState.h"
 
-using namespace Scintilla;
+using namespace ScintillaMod;
 
 namespace {
 
@@ -408,7 +408,7 @@ void ContractionState<LINE>::Check() const noexcept {
 
 }
 
-namespace Scintilla {
+namespace ScintillaMod {
 
 std::unique_ptr<IContractionState> ContractionStateCreate(bool largeDocument) {
 	if (largeDocument)

@@ -15,7 +15,7 @@
 
 #include "PropSetSimple.h"
 
-using namespace Scintilla;
+using namespace ScintillaMod;
 
 namespace {
 

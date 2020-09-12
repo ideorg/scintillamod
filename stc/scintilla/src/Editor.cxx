@@ -56,7 +56,7 @@
 #include "Editor.h"
 #include "ElapsedPeriod.h"
 
-using namespace Scintilla;
+using namespace ScintillaMod;
 
 namespace {
 

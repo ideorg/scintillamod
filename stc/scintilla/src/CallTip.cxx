@@ -26,7 +26,7 @@
 #include "IntegerRectangle.h"
 #include "CallTip.h"
 
-using namespace Scintilla;
+using namespace ScintillaMod;
 
 size_t Chunk::Length() const noexcept {
 	return end - start;
@@ -91,7 +91,7 @@ constexpr bool IsArrowCharacter(char ch) noexcept {
 	return (ch == 0) || (ch == '\001') || (ch == '\002');
 }
 
-void DrawArrow(Scintilla::Surface *surface, const PRectangle &rc, bool upArrow, ColourDesired colourBG, ColourDesired colourUnSel) {
+void DrawArrow(ScintillaMod::Surface *surface, const PRectangle &rc, bool upArrow, ColourDesired colourBG, ColourDesired colourUnSel) {
 	surface->FillRectangle(rc, colourBG);
 	const int width = static_cast<int>(rc.Width());
 	const int halfWidth = width / 2 - 3;

@@ -14,7 +14,7 @@
 #include "Scintilla.h"
 #include "Style.h"
 
-using namespace Scintilla;
+using namespace ScintillaMod;
 
 FontAlias::FontAlias() noexcept {
 }

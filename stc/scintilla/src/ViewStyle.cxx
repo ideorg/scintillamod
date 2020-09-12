@@ -26,7 +26,7 @@
 #include "Style.h"
 #include "ViewStyle.h"
 
-using namespace Scintilla;
+using namespace ScintillaMod;
 
 MarginStyle::MarginStyle(int style_, int width_, int mask_) noexcept :
 	style(style_), width(width_), mask(mask_), sensitive(false), cursor(SC_CURSORREVERSEARROW) {

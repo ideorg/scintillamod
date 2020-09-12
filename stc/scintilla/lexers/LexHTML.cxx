@@ -28,7 +28,7 @@
 #include "OptionSet.h"
 #include "DefaultLexer.h"
 
-using namespace Scintilla;
+using namespace ScintillaMod;
 
 namespace {
 

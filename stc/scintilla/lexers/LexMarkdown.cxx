@@ -51,7 +51,7 @@
 #include "CharacterSet.h"
 #include "LexerModule.h"
 
-using namespace Scintilla;
+using namespace ScintillaMod;
 
 static inline bool IsNewline(const int ch) {
     return (ch == '\n' || ch == '\r');

@@ -24,7 +24,7 @@
 #include "Position.h"
 #include "AutoComplete.h"
 
-using namespace Scintilla;
+using namespace ScintillaMod;
 
 AutoComplete::AutoComplete() :
 	active(false),

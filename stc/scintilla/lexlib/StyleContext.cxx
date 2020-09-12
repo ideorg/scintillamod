@@ -15,7 +15,7 @@
 #include "StyleContext.h"
 #include "CharacterSet.h"
 
-using namespace Scintilla;
+using namespace ScintillaMod;
 
 bool StyleContext::MatchIgnoreCase(const char *s) {
 	if (MakeLowerCase(ch) != static_cast<unsigned char>(*s))

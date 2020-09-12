@@ -30,7 +30,7 @@
 #include "SubStyles.h"
 #include "DefaultLexer.h"
 
-using namespace Scintilla;
+using namespace ScintillaMod;
 
 #define HERE_DELIM_MAX			256
 

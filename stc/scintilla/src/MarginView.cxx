@@ -50,9 +50,9 @@
 #include "MarginView.h"
 #include "EditView.h"
 
-using namespace Scintilla;
+using namespace ScintillaMod;
 
-namespace Scintilla {
+namespace ScintillaMod {
 
 void DrawWrapMarker(Surface *surface, PRectangle rcPlace,
 	bool isEndMarker, ColourDesired wrapColour) {

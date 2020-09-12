@@ -20,7 +20,7 @@
 #include "Indicator.h"
 #include "XPM.h"
 
-using namespace Scintilla;
+using namespace ScintillaMod;
 
 static PRectangle PixelGridAlign(const PRectangle &rc) noexcept {
 	// Move left and right side to nearest pixel to avoid blurry visuals

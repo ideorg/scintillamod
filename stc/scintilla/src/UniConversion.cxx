@@ -12,9 +12,9 @@
 
 #include "UniConversion.h"
 
-using namespace Scintilla;
+using namespace ScintillaMod;
 
-namespace Scintilla {
+namespace ScintillaMod {
 
 size_t UTF8Length(const wchar_t *uptr, size_t tlen) noexcept {
 	size_t len = 0;

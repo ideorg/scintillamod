@@ -30,7 +30,7 @@
 #include "CharacterSet.h"
 #include "LexerModule.h"
 
-using namespace Scintilla;
+using namespace ScintillaMod;
 
 namespace {
 	bool IsAlphabetic(unsigned int ch)

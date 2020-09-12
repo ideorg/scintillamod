@@ -22,7 +22,7 @@
 #include "LexerBase.h"
 #include "LexerSimple.h"
 
-using namespace Scintilla;
+using namespace ScintillaMod;
 
 LexerModule::LexerModule(int language_,
 	LexerFunction fnLexer_,

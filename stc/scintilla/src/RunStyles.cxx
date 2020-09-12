@@ -25,7 +25,7 @@
 #include "Partitioning.h"
 #include "RunStyles.h"
 
-using namespace Scintilla;
+using namespace ScintillaMod;
 
 // Find the first run at a position
 template <typename DISTANCE, typename STYLE>
@@ -306,9 +306,9 @@ void RunStyles<DISTANCE, STYLE>::Check() const {
 	}
 }
 
-template class Scintilla::RunStyles<int, int>;
-template class Scintilla::RunStyles<int, char>;
+template class ScintillaMod::RunStyles<int, int>;
+template class ScintillaMod::RunStyles<int, char>;
 #if (PTRDIFF_MAX != INT_MAX) || PLAT_HAIKU
-template class Scintilla::RunStyles<ptrdiff_t, int>;
-template class Scintilla::RunStyles<ptrdiff_t, char>;
+template class ScintillaMod::RunStyles<ptrdiff_t, int>;
+template class ScintillaMod::RunStyles<ptrdiff_t, char>;
 #endif

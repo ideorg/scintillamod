@@ -56,7 +56,7 @@
 #include "EditView.h"
 #include "ElapsedPeriod.h"
 
-using namespace Scintilla;
+using namespace ScintillaMod;
 
 PrintParameters::PrintParameters() noexcept {
 	magnification = 0;
@@ -64,7 +64,7 @@ PrintParameters::PrintParameters() noexcept {
 	wrapState = WrapMode::word;
 }
 
-namespace Scintilla {
+namespace ScintillaMod {
 
 bool ValidStyledText(const ViewStyle &vs, size_t styleOffset, const StyledText &st) noexcept {
 	if (st.multipleStyles) {

@@ -24,7 +24,7 @@
 #include "RunStyles.h"
 #include "Decoration.h"
 
-using namespace Scintilla;
+using namespace ScintillaMod;
 
 namespace {
 
@@ -296,7 +296,7 @@ Sci::Position DecorationList<POS>::End(int indicator, Sci::Position position) no
 
 }
 
-namespace Scintilla {
+namespace ScintillaMod {
 
 std::unique_ptr<IDecoration> DecorationCreate(bool largeDocument, int indicator) {
 	if (largeDocument)

@@ -47,7 +47,7 @@
 #include "PositionCache.h"
 #include "EditModel.h"
 
-using namespace Scintilla;
+using namespace ScintillaMod;
 
 Caret::Caret() noexcept :
 	active(false), on(false), period(500) {}

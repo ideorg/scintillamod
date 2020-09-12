@@ -45,7 +45,7 @@
 #include "Selection.h"
 #include "PositionCache.h"
 
-using namespace Scintilla;
+using namespace ScintillaMod;
 
 LineLayout::LineLayout(int maxLineLength_) :
 	lenLineStarts(0),

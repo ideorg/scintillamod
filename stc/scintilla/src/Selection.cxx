@@ -20,7 +20,7 @@
 #include "Position.h"
 #include "Selection.h"
 
-using namespace Scintilla;
+using namespace ScintillaMod;
 
 void SelectionPosition::MoveForInsertDelete(bool insertion, Sci::Position startChange, Sci::Position length, bool moveForEqual) noexcept {
 	if (insertion) {

@@ -22,7 +22,7 @@
 #include "LexerBase.h"
 #include "LexerSimple.h"
 
-using namespace Scintilla;
+using namespace ScintillaMod;
 
 LexerSimple::LexerSimple(const LexerModule *module_) :
 	LexerBase(module_->LexClasses(), module_->NamedStyles()),

@@ -24,7 +24,7 @@
 #include "CharacterSet.h"
 #include "LexerModule.h"
 
-using namespace Scintilla;
+using namespace ScintillaMod;
 
 static void ClassifySTTXTWord(WordList *keywordlists[], StyleContext &sc)
 {

@@ -22,7 +22,7 @@
 #include "XPM.h"
 #include "LineMarker.h"
 
-using namespace Scintilla;
+using namespace ScintillaMod;
 
 LineMarker::LineMarker(const LineMarker &other) {
 	// Defined to avoid pxpm and image being blindly copied, not as a complete copy constructor.

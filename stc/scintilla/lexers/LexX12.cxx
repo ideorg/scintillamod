@@ -22,7 +22,7 @@
 #include "LexerModule.h"
 #include "DefaultLexer.h"
 
-using namespace Scintilla;
+using namespace ScintillaMod;
 
 class LexerX12 : public DefaultLexer
 {

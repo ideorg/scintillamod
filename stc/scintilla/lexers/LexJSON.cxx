@@ -29,7 +29,7 @@
 #include "OptionSet.h"
 #include "DefaultLexer.h"
 
-using namespace Scintilla;
+using namespace ScintillaMod;
 
 static const char *const JSONWordListDesc[] = {
 	"JSON Keywords",

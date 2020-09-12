@@ -46,7 +46,7 @@
 #include "UniConversion.h"
 #include "ElapsedPeriod.h"
 
-using namespace Scintilla;
+using namespace ScintillaMod;
 
 void LexInterface::Colourise(Sci::Position start, Sci::Position end) {
 	if (pdoc && instance && !performingStyle) {
@@ -3301,7 +3301,7 @@ const char *BuiltinRegex::SubstituteByPosition(Document *doc, const char *text, 
 
 #ifndef SCI_OWNREGEX
 
-RegexSearchBase *Scintilla::CreateRegexSearch(CharClassify *charClassTable) {
+RegexSearchBase *ScintillaMod::CreateRegexSearch(CharClassify *charClassTable) {
 	return new BuiltinRegex(charClassTable);
 }
 

@@ -23,7 +23,7 @@
 #include "CharacterSet.h"
 #include "LexerModule.h"
 
-using namespace Scintilla;
+using namespace ScintillaMod;
 
 static inline bool IsAWordChar(const int ch) {
 	return (ch < 0x80) && (isalpha(ch) || ch == '@' || ch == '_');

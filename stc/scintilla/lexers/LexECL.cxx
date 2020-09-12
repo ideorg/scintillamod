@@ -42,7 +42,7 @@
 #define SET_UPPER "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 #define SET_DIGITS "0123456789"
 
-using namespace Scintilla;
+using namespace ScintillaMod;
 
 static bool IsSpaceEquiv(int state) {
 	switch (state) {

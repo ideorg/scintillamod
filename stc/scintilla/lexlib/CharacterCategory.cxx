@@ -15,7 +15,7 @@
 
 #include "Compat.h"
 
-namespace Scintilla {
+namespace ScintillaMod {
 
 namespace {
 	// Use an unnamed namespace to protect the declarations from name conflicts

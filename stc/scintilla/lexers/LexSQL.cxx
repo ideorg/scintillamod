@@ -33,7 +33,7 @@
 #include "SparseState.h"
 #include "DefaultLexer.h"
 
-using namespace Scintilla;
+using namespace ScintillaMod;
 
 static inline bool IsAWordChar(int ch, bool sqlAllowDottedWord) {
 	if (!sqlAllowDottedWord)

@@ -21,7 +21,7 @@
 
 #include "Compat.h"
 
-using namespace Scintilla;
+using namespace ScintillaMod;
 
 namespace {
 	// Use an unnamed namespace to protect the declarations from name conflicts
@@ -792,7 +792,7 @@ CaseConverter *ConverterForConversion(enum CaseConversion conversion) noexcept {
 
 }
 
-namespace Scintilla {
+namespace ScintillaMod {
 
 ICaseConverter *ConverterFor(enum CaseConversion conversion) {
 	CaseConverter *pCaseConv = ConverterForConversion(conversion);

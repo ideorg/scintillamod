@@ -18,7 +18,7 @@
 
 #include "KeyMap.h"
 
-using namespace Scintilla;
+using namespace ScintillaMod;
 
 KeyMap::KeyMap() {
 	for (int i = 0; MapDefault[i].key; i++) {

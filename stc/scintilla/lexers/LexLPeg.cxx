@@ -43,7 +43,7 @@ extern "C" {
 LUALIB_API int luaopen_lpeg(lua_State *L);
 }
 
-using namespace Scintilla;
+using namespace ScintillaMod;
 
 #ifndef NDEBUG
 #define RECORD_STACK_TOP(l) int orig_stack_top = lua_gettop(l)
@@ -970,7 +970,7 @@ LexerModule lmLPeg(SCLEX_LPEG, LexerLPeg::LexerFactoryLPeg, "lpeg");
 #include "Accessor.h"
 #include "LexerModule.h"
 
-using namespace Scintilla;
+using namespace ScintillaMod;
 
 static void LPegLex(Sci_PositionU, Sci_Position, int, WordList*[], Accessor&) {
   return;

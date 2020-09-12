@@ -22,7 +22,7 @@
 #include "CatalogueModules.h"
 #include "Catalogue.h"
 
-using namespace Scintilla;
+using namespace ScintillaMod;
 
 namespace {
 

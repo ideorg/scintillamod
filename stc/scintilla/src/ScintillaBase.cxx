@@ -65,7 +65,7 @@
 #include "ExternalLexer.h"
 #endif
 
-using namespace Scintilla;
+using namespace ScintillaMod;
 
 ScintillaBase::ScintillaBase() {
 	displayPopupMenu = SC_POPUP_ALL;
@@ -550,7 +550,7 @@ void ScintillaBase::RightButtonDownWithModifiers(Point pt, unsigned int curTime,
 
 #ifdef SCI_LEXER
 
-namespace Scintilla {
+namespace ScintillaMod {
 
 class LexState : public LexInterface {
 	const LexerModule *lexCurrent;

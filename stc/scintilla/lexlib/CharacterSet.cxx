@@ -11,9 +11,9 @@
 
 #include "CharacterSet.h"
 
-using namespace Scintilla;
+using namespace ScintillaMod;
 
-namespace Scintilla {
+namespace ScintillaMod {
 
 int CompareCaseInsensitive(const char *a, const char *b) noexcept {
 	while (*a && *b) {

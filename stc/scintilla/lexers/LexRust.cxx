@@ -31,7 +31,7 @@
 #include "OptionSet.h"
 #include "DefaultLexer.h"
 
-using namespace Scintilla;
+using namespace ScintillaMod;
 
 static const int NUM_RUST_KEYWORD_LISTS = 7;
 static const int MAX_RUST_IDENT_CHARS = 1023;

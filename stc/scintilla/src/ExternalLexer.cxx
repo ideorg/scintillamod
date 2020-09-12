@@ -24,7 +24,7 @@
 #include "Catalogue.h"
 #include "ExternalLexer.h"
 
-using namespace Scintilla;
+using namespace ScintillaMod;
 
 #if PLAT_WIN
 #define EXT_LEXER_DECL __stdcall
@@ -212,7 +212,7 @@ LMMinder minder;
 
 }
 
-namespace Scintilla {
+namespace ScintillaMod {
 
 void ExternalLexerLoad(const char *path) {
 	LexerManager::GetInstance()->Load(path);

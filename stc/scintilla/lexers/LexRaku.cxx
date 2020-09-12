@@ -59,7 +59,7 @@
 #include "OptionSet.h"
 #include "DefaultLexer.h"
 
-using namespace Scintilla;
+using namespace ScintillaMod;
 
 namespace { // anonymous namespace to isolate any name clashes
 /*----------------------------------------------------------------------------*

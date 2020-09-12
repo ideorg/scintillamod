@@ -24,7 +24,7 @@
 #include "CharacterSet.h"
 #include "LexerModule.h"
 
-using namespace Scintilla;
+using namespace ScintillaMod;
 
 // Extended to accept accented characters
 static inline bool IsAWordChar(int ch) {

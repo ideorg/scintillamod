@@ -29,7 +29,7 @@
 #include "OptionSet.h"
 #include "DefaultLexer.h"
 
-using namespace Scintilla;
+using namespace ScintillaMod;
 
 // Info for HERE document handling from perldata.pod (reformatted):
 // ----------------------------------------------------------------

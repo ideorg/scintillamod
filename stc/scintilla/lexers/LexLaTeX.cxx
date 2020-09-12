@@ -29,7 +29,7 @@
 #include "DefaultLexer.h"
 #include "LexerBase.h"
 
-using namespace Scintilla;
+using namespace ScintillaMod;
 
 using namespace std;
 

@@ -21,7 +21,7 @@
 #include "CharacterSet.h"
 #include "LexerModule.h"
 
-using namespace Scintilla;
+using namespace ScintillaMod;
 
 static void GetRange(Sci_PositionU start,
                      Sci_PositionU end,
