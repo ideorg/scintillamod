@@ -16,7 +16,7 @@ namespace ScintillaMod {
 // syntactically significant. UTF-8 avoids this as all trail bytes are >= 0x80
 class StyleContext {
 	LexAccessor &styler;
-	IDocumentWithLineEnd *multiByteAccess;
+	IDocument *multiByteAccess;
 	Sci_PositionU endPos;
 	Sci_PositionU lengthDocument;
 

@@ -233,11 +233,11 @@ public:
     virtual void Ellipse(PRectangle rc, ColourDesired fore, ColourDesired back) wxOVERRIDE;
     virtual void Copy(PRectangle rc, Point from, Surface &surfaceSource) wxOVERRIDE;
 
-    virtual void DrawTextNoClip(PRectangle rc, Font &font_, XYPOSITION ybase, const char *s, int len, ColourDesired fore, ColourDesired back) wxOVERRIDE;
-    virtual void DrawTextClipped(PRectangle rc, Font &font_, XYPOSITION ybase, const char *s, int len, ColourDesired fore, ColourDesired back) wxOVERRIDE;
-    virtual void DrawTextTransparent(PRectangle rc, Font &font_, XYPOSITION ybase, const char *s, int len, ColourDesired fore) wxOVERRIDE;
-    virtual void MeasureWidths(Font &font_, const char *s, int len, XYPOSITION *positions) wxOVERRIDE;
-    virtual XYPOSITION WidthText(Font &font_, const char *s, int len) wxOVERRIDE;
+    virtual void DrawTextNoClip(PRectangle rc, Font &font_, XYPOSITION ybase, std::string_view text,ColourDesired fore, ColourDesired back) wxOVERRIDE;
+    virtual void DrawTextClipped(PRectangle rc, Font &font_, XYPOSITION ybase, std::string_view text, ColourDesired fore, ColourDesired back) wxOVERRIDE;
+    virtual void DrawTextTransparent(PRectangle rc, Font &font_, XYPOSITION ybase, std::string_view text, ColourDesired fore) wxOVERRIDE;
+    virtual void MeasureWidths(Font &font_, std::string_view text, XYPOSITION *positions) wxOVERRIDE;
+    virtual XYPOSITION WidthText(Font &font, std::string_view text) wxOVERRIDE;
     virtual XYPOSITION Ascent(Font &font_) wxOVERRIDE;
     virtual XYPOSITION Descent(Font &font_) wxOVERRIDE;
     virtual XYPOSITION InternalLeading(Font &font_) wxOVERRIDE;
@@ -614,8 +614,7 @@ void SurfaceImpl::Copy(PRectangle rc, Point from, Surface &surfaceSource) {
 }
 
 void SurfaceImpl::DrawTextNoClip(PRectangle rc, Font &font, XYPOSITION ybase,
-                                 const char *s, int len,
-                                 ColourDesired fore, ColourDesired back) {
+                                 std::string_view text,ColourDesired fore, ColourDesired back) {
     SetFont(font);
     hdc->SetTextForeground(wxColourFromCD(fore));
     hdc->SetTextBackground(wxColourFromCD(back));
@@ -623,11 +622,10 @@ void SurfaceImpl::DrawTextNoClip(PRectangle rc, Font &font, XYPOSITION ybase,
 
     // ybase is where the baseline should be, but wxWin uses the upper left
     // corner, so I need to calculate the real position for the text...
-    hdc->DrawText(stc2wx(s, len), wxRound(rc.left), wxRound(ybase - GetAscent(font)));
+    hdc->DrawText(stc2wx(text.data(), text.size()), wxRound(rc.left), wxRound(ybase - GetAscent(font)));
 }
 
-void SurfaceImpl::DrawTextClipped(PRectangle rc, Font &font, XYPOSITION ybase,
-                                  const char *s, int len,
+void SurfaceImpl::DrawTextClipped(PRectangle rc, Font &font, XYPOSITION ybase, std::string_view text,
                                   ColourDesired fore, ColourDesired back) {
     SetFont(font);
     hdc->SetTextForeground(wxColourFromCD(fore));
@@ -636,14 +634,13 @@ void SurfaceImpl::DrawTextClipped(PRectangle rc, Font &font, XYPOSITION ybase,
     hdc->SetClippingRegion(wxRectFromPRectangle(rc));
 
     // see comments above
-    hdc->DrawText(stc2wx(s, len), wxRound(rc.left), wxRound(ybase - GetAscent(font)));
+    hdc->DrawText(stc2wx(text.data(), text.size()), wxRound(rc.left), wxRound(ybase - GetAscent(font)));
     hdc->DestroyClippingRegion();
 }
 
 
 void SurfaceImpl::DrawTextTransparent(PRectangle rc, Font &font, XYPOSITION ybase,
-                                      const char *s, int len,
-                                      ColourDesired fore) {
+                                      std::string_view text, ColourDesired fore) {
 
     SetFont(font);
     hdc->SetTextForeground(wxColourFromCD(fore));
@@ -651,15 +648,15 @@ void SurfaceImpl::DrawTextTransparent(PRectangle rc, Font &font, XYPOSITION ybas
 
     // ybase is where the baseline should be, but wxWin uses the upper left
     // corner, so I need to calculate the real position for the text...
-    hdc->DrawText(stc2wx(s, len), wxRound(rc.left), wxRound(ybase - GetAscent(font)));
+    hdc->DrawText(stc2wx(text.data(), text.size()), wxRound(rc.left), wxRound(ybase - GetAscent(font)));
 
     hdc->SetBackgroundMode(wxBRUSHSTYLE_SOLID);
 }
 
 
-void SurfaceImpl::MeasureWidths(Font &font, const char *s, int len, XYPOSITION *positions) {
+void SurfaceImpl::MeasureWidths(Font &font, std::string_view text, XYPOSITION *positions) {
 
-    wxString   str = stc2wx(s, len);
+    wxString   str = stc2wx(text.data(), text.size());
     wxArrayInt tpos;
 
     SetFont(font);
@@ -702,12 +699,12 @@ void SurfaceImpl::MeasureWidths(Font &font, const char *s, int len, XYPOSITION *
 }
 
 
-XYPOSITION SurfaceImpl::WidthText(Font &font, const char *s, int len) {
+XYPOSITION SurfaceImpl::WidthText(Font &font, std::string_view text) {
     SetFont(font);
     int w;
     int h;
 
-    hdc->GetTextExtent(stc2wx(s, len), &w, &h);
+    hdc->GetTextExtent(stc2wx(text.data(), text.size()), &w, &h);
     return w;
 }
 
@@ -1010,8 +1007,7 @@ public:
     virtual void DrawTextTransparent(PRectangle rc, Font &font_,
                                      XYPOSITION ybase, const char *s, int len,
                                      ColourDesired fore) wxOVERRIDE;
-    virtual void MeasureWidths(Font &font_, const char *s, int len,
-                               XYPOSITION *positions) wxOVERRIDE;
+    virtual void MeasureWidths(Font &font_, std::string_view text, XYPOSITION *positions) wxOVERRIDE;
     virtual XYPOSITION WidthText(Font &font_, const char *s, int len) wxOVERRIDE;
     virtual XYPOSITION Ascent(Font &font_) wxOVERRIDE;
     virtual XYPOSITION Descent(Font &font_) wxOVERRIDE;
@@ -1574,9 +1570,8 @@ void SurfaceD2D::DrawTextNoClip(PRectangle rc, Font &font_, XYPOSITION ybase,
     DrawTextCommon(rc, font_, ybase, s, len, ETO_OPAQUE);
 }
 
-void SurfaceD2D::DrawTextClipped(PRectangle rc, Font &font_, XYPOSITION ybase,
-                                 const char *s, int len, ColourDesired fore,
-                                 ColourDesired back)
+void SurfaceD2D::DrawTextClipped(PRectangle rc, Font &font_, XYPOSITION ybase, std::string_view text,
+				  ColourDesired fore, ColourDesired back)
 {
     wxCHECK( Initialised(), void() );
 
@@ -1630,8 +1625,7 @@ XYPOSITION SurfaceD2D::WidthText(Font &font_, const char *s, int len)
     return width;
 }
 
-void SurfaceD2D::MeasureWidths(Font &font_, const char *s, int len,
-                               XYPOSITION *positions)
+void SurfaceD2D::MeasureWidths(Font &font_, std::string_view text, XYPOSITION *positions)
 {
     int fit = 0;
     wxString tbuf = stc2wx(s,len);
@@ -1861,7 +1855,7 @@ void SurfaceD2D::DrawTextCommon(PRectangle rc, Font &font_, XYPOSITION ybase,
     {
         // Explicitly creating a text layout appears a little faster
         wxCOMPtr<IDWriteTextLayout> pTextLayout;
-        wxString tbuf = stc2wx(s, len);
+        wxString tbuf = stc2wx(text.data(), text.size());
         HRESULT hr;
 
         if ( fuOptions & ETO_CLIPPED )

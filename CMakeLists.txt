@@ -3,7 +3,7 @@ project(scintillamod)
 
 include_directories(stc/scintilla/include stc/scintilla/src stc/scintilla/lexlib)
 
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 17)
 
 set(wxWidgets_ROOT_DIR /usr/include/wx-3.0)
 set(wxWidgets_CONFIGURATION mswu)
