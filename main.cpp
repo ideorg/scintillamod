@@ -4,7 +4,7 @@
 #ifndef WX_PRECOMP
 #include <wx/wx.h>
 #endif
-#include <wx/stc/stc.h>
+#include "stc/stc.h"
 
 class MyApp : public wxApp
 {
@@ -28,7 +28,7 @@ wxIMPLEMENT_APP(MyApp);
 bool MyApp::OnInit()
 {
     MyFrame *frame = new MyFrame();
-    frame->Show(true);
+          frame->Show(true);
     return true;
 }
 MyFrame::MyFrame()
@@ -54,6 +54,7 @@ MyFrame::MyFrame()
     wxBoxSizer *mainSizer = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(mainSizer);
     mainSizer->Add(stc, 1, wxEXPAND | wxALL, 0);
+    stc->Paste();
 }
 void MyFrame::OnExit(wxCommandEvent& event)
 {

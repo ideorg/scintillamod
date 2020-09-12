@@ -1,3 +1,3 @@
 # scintillaex
-Modified scintilla / wxStyledTextCtrl<br>
+Modified scintilla / wxxStyledTextCtrl<br>
 MarkLine(int lineNumber)
