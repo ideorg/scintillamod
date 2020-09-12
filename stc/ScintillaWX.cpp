@@ -44,15 +44,12 @@
 #endif
 
 #include "ScintillaWX.h"
-#include "wx/stc/stc.h"
-#include "wx/stc/private.h"
+#include "stc.h"
+#include "private.h"
 #include "PlatWX.h"
 
 #ifdef __WXMSW__
     #include "wx/msw/private.h" // GetHwndOf()
-#endif
-#ifdef __WXGTK20__
-    #include <gdk/gdk.h>
 #endif
 
 //----------------------------------------------------------------------

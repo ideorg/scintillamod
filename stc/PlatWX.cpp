@@ -46,8 +46,8 @@
 #endif
 
 #include "PlatWX.h"
-#include "wx/stc/stc.h"
-#include "wx/stc/private.h"
+#include "stc.h"
+#include "private.h"
 
 #if defined(__WXMSW__) && wxUSE_GRAPHICS_DIRECT2D
 #define HAVE_DIRECTWRITE_TECHNOLOGY
