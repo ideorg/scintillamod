@@ -25,7 +25,7 @@ private:
 	Sci_Position startPos;
 	Sci_Position endPos;
 	int codePage;
-	EncodingType encodingType;
+	enum EncodingType encodingType;
 	Sci_Position lenDoc;
 	char styleBuf[bufferSize];
 	Sci_Position validLen;

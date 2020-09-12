@@ -319,7 +319,7 @@ public:
 	Font() noexcept;
 	// Deleted so Font objects can not be copied
 	Font(const Font &) = delete;
-	Font(Font &&) = default;
+	Font(Font &&) = delete;
 	Font &operator=(const Font &) = delete;
 	Font &operator=(Font &&) = delete;
 	virtual ~Font();
