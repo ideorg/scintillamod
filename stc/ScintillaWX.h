@@ -108,7 +108,7 @@ private:
 
 //----------------------------------------------------------------------
 
-class ScintillaWX : public Scintilla::ScintillaBase {
+class ScintillaWX : public ScintillaMod::ScintillaBase {
 public:
 
     ScintillaWX(wxStyledTextCtrl* win);
@@ -127,9 +127,9 @@ public:
     virtual bool ModifyScrollBars(Sci::Line nMax, Sci::Line nPage) wxOVERRIDE;
     virtual void Copy() wxOVERRIDE;
     virtual void Paste() wxOVERRIDE;
-    virtual void CopyToClipboard(const Scintilla::SelectionText &selectedText) wxOVERRIDE;
+    virtual void CopyToClipboard(const ScintillaMod::SelectionText &selectedText) wxOVERRIDE;
 
-    virtual void CreateCallTipWindow(Scintilla::PRectangle rc) wxOVERRIDE;
+    virtual void CreateCallTipWindow(ScintillaMod::PRectangle rc) wxOVERRIDE;
     virtual void AddToPopUp(const char *label, int cmd = 0, bool enabled = true) wxOVERRIDE;
     virtual void ClaimSelection() wxOVERRIDE;
 
@@ -158,11 +158,11 @@ public:
     void DoLoseFocus();
     void DoGainFocus();
     void DoInvalidateStyleData();
-    void DoLeftButtonDown(Scintilla::Point pt, unsigned int curTime, bool shift, bool ctrl, bool alt);
-    void DoRightButtonDown(Scintilla::Point pt, unsigned int curTime, bool shift, bool ctrl, bool alt);
-    void DoLeftButtonUp(Scintilla::Point pt, unsigned int curTime, bool shift, bool ctrl, bool alt);
-    void DoLeftButtonMove(Scintilla::Point pt, unsigned int curTime, bool shift, bool ctrl, bool alt);
-    void DoMiddleButtonUp(Scintilla::Point pt);
+    void DoLeftButtonDown(ScintillaMod::Point pt, unsigned int curTime, bool shift, bool ctrl, bool alt);
+    void DoRightButtonDown(ScintillaMod::Point pt, unsigned int curTime, bool shift, bool ctrl, bool alt);
+    void DoLeftButtonUp(ScintillaMod::Point pt, unsigned int curTime, bool shift, bool ctrl, bool alt);
+    void DoLeftButtonMove(ScintillaMod::Point pt, unsigned int curTime, bool shift, bool ctrl, bool alt);
+    void DoMiddleButtonUp(ScintillaMod::Point pt);
     void DoMouseWheel(wxMouseWheelAxis axis, int rotation, int delta,
                       int linesPerAction, int columnsPerAction,
                       bool ctrlDown, bool isPageScroll);
@@ -178,7 +178,7 @@ public:
 #endif
 
     void DoCommand(int ID);
-    bool DoContextMenu(Scintilla::Point pt);
+    bool DoContextMenu(ScintillaMod::Point pt);
     void DoOnListBox();
     void DoMouseCaptureLost();
 
@@ -190,7 +190,7 @@ public:
     bool GetHideSelection() { return view.hideSelection; }
     void DoScrollToLine(int line);
     void DoScrollToColumn(int column);
-    void ClipChildren(wxDC& dc, Scintilla::PRectangle rect);
+    void ClipChildren(wxDC& dc, ScintillaMod::PRectangle rect);
     void SetUseAntiAliasing(bool useAA);
     bool GetUseAntiAliasing();
     SurfaceData* GetSurfaceData() const {return m_surfaceData;}

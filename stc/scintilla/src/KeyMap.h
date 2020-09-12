@@ -8,7 +8,7 @@
 #ifndef KEYMAP_H
 #define KEYMAP_H
 
-namespace Scintilla {
+namespace ScintillaMod {
 
 #define SCI_NORM 0
 #define SCI_SHIFT SCMOD_SHIFT

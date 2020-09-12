@@ -8,7 +8,7 @@
 #ifndef EXTERNALLEXER_H
 #define EXTERNALLEXER_H
 
-namespace Scintilla {
+namespace ScintillaMod {
 
 void ExternalLexerLoad(const char *path);
 

@@ -8,7 +8,7 @@
 #ifndef PERLINE_H
 #define PERLINE_H
 
-namespace Scintilla {
+namespace ScintillaMod {
 
 /**
  * This holds the marker identifier and the marker type to display.

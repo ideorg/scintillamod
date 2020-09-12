@@ -8,7 +8,7 @@
 #ifndef SCINTILLABASE_H
 #define SCINTILLABASE_H
 
-namespace Scintilla {
+namespace ScintillaMod {
 
 #ifdef SCI_LEXER
 class LexState;

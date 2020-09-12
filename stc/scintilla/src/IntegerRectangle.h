@@ -8,7 +8,7 @@
 #ifndef INTEGERRECTANGLE_H
 #define INTEGERRECTANGLE_H
 
-namespace Scintilla {
+namespace ScintillaMod {
 
 struct IntegerRectangle {
 	int left;

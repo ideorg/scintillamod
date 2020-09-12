@@ -5497,14 +5497,14 @@ void wxStyledTextCtrl::OnSize(wxSizeEvent& WXUNUSED(evt)) {
 void wxStyledTextCtrl::OnMouseLeftDown(wxMouseEvent& evt) {
     SetFocus();
     wxPoint pt = evt.GetPosition();
-    m_swx->DoLeftButtonDown(Scintilla::Point(pt.x, pt.y), m_stopWatch.Time(),
+    m_swx->DoLeftButtonDown(ScintillaMod::Point(pt.x, pt.y), m_stopWatch.Time(),
                             evt.ShiftDown(), evt.ControlDown(), evt.AltDown());
 }
 
 void wxStyledTextCtrl::OnMouseRightDown(wxMouseEvent& evt) {
     SetFocus();
     wxPoint pt = evt.GetPosition();
-    m_swx->DoRightButtonDown(Scintilla::Point(pt.x, pt.y), m_stopWatch.Time(),
+    m_swx->DoRightButtonDown(ScintillaMod::Point(pt.x, pt.y), m_stopWatch.Time(),
                              evt.ShiftDown(), evt.ControlDown(), evt.AltDown());
     // We need to call evt.Skip() to allow generating EVT_CONTEXT_MENU
     evt.Skip();
@@ -5512,19 +5512,19 @@ void wxStyledTextCtrl::OnMouseRightDown(wxMouseEvent& evt) {
 
 void wxStyledTextCtrl::OnMouseMove(wxMouseEvent& evt) {
     wxPoint pt = evt.GetPosition();
-    m_swx->DoLeftButtonMove(Scintilla::Point(pt.x, pt.y), m_stopWatch.Time(),
+    m_swx->DoLeftButtonMove(ScintillaMod::Point(pt.x, pt.y), m_stopWatch.Time(),
                             evt.ShiftDown(), evt.ControlDown(), evt.AltDown());
 }
 
 void wxStyledTextCtrl::OnMouseLeftUp(wxMouseEvent& evt) {
     wxPoint pt = evt.GetPosition();
-    m_swx->DoLeftButtonUp(Scintilla::Point(pt.x, pt.y), m_stopWatch.Time(),
+    m_swx->DoLeftButtonUp(ScintillaMod::Point(pt.x, pt.y), m_stopWatch.Time(),
                           evt.ShiftDown(), evt.ControlDown(), evt.AltDown());
 }
 
 void wxStyledTextCtrl::OnMouseMiddleUp(wxMouseEvent& evt) {
     wxPoint pt = evt.GetPosition();
-    m_swx->DoMiddleButtonUp(Scintilla::Point(pt.x, pt.y));
+    m_swx->DoMiddleButtonUp(ScintillaMod::Point(pt.x, pt.y));
 }
 
 void wxStyledTextCtrl::OnContextMenu(wxContextMenuEvent& evt) {
@@ -5538,7 +5538,7 @@ void wxStyledTextCtrl::OnContextMenu(wxContextMenuEvent& evt) {
     if (ht != wxHT_WINDOW_INSIDE) {
         pt = this->PointFromPosition(this->GetCurrentPos());
     }
-    if ( !m_swx->DoContextMenu(Scintilla::Point(pt.x, pt.y)) )
+    if ( !m_swx->DoContextMenu(ScintillaMod::Point(pt.x, pt.y)) )
         evt.Skip();
 }
 

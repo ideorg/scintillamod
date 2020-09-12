@@ -8,7 +8,7 @@
 #ifndef CHARCLASSIFY_H
 #define CHARCLASSIFY_H
 
-namespace Scintilla {
+namespace ScintillaMod {
 
 class CharClassify {
 public:

@@ -7,7 +7,7 @@
 #ifndef DECORATION_H
 #define DECORATION_H
 
-namespace Scintilla {
+namespace ScintillaMod {
 
 class IDecoration {
 public:

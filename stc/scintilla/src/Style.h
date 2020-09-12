@@ -8,7 +8,7 @@
 #ifndef STYLE_H
 #define STYLE_H
 
-namespace Scintilla {
+namespace ScintillaMod {
 
 struct FontSpecification {
 	const char *fontName;

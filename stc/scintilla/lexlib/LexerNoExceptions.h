@@ -8,7 +8,7 @@
 #ifndef LEXERNOEXCEPTIONS_H
 #define LEXERNOEXCEPTIONS_H
 
-namespace Scintilla {
+namespace ScintillaMod {
 
 // A simple lexer with no state
 class LexerNoExceptions : public LexerBase {

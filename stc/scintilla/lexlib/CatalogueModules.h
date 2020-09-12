@@ -10,7 +10,7 @@
 #ifndef CATALOGUEMODULES_H
 #define CATALOGUEMODULES_H
 
-namespace Scintilla {
+namespace ScintillaMod {
 
 class CatalogueModules {
 	std::vector<LexerModule *> lexerCatalogue;

@@ -10,7 +10,7 @@
 #ifndef DEFAULTLEXER_H
 #define DEFAULTLEXER_H
 
-namespace Scintilla {
+namespace ScintillaMod {
 
 // A simple lexer with no state
 class DefaultLexer : public ILexerWithIdentity {

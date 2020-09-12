@@ -8,7 +8,7 @@
 #ifndef XPM_H
 #define XPM_H
 
-namespace Scintilla {
+namespace ScintillaMod {
 
 /**
  * Hold a pixmap in XPM format.

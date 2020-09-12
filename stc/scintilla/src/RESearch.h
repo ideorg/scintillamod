@@ -9,7 +9,7 @@
 #ifndef RESEARCH_H
 #define RESEARCH_H
 
-namespace Scintilla {
+namespace ScintillaMod {
 
 class CharacterIndexer {
 public:

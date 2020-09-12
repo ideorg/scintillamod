@@ -8,7 +8,7 @@
 #ifndef AUTOCOMPLETE_H
 #define AUTOCOMPLETE_H
 
-namespace Scintilla {
+namespace ScintillaMod {
 
 /**
  */

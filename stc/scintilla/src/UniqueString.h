@@ -13,7 +13,7 @@
 
 #include "Compat.h"
 
-namespace Scintilla {
+namespace ScintillaMod {
 
 constexpr bool IsNullOrEmpty(const char *text) noexcept {
 	return text == nullptr || *text == '\0';

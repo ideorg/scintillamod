@@ -8,7 +8,7 @@
 #ifndef CELLBUFFER_H
 #define CELLBUFFER_H
 
-namespace Scintilla {
+namespace ScintillaMod {
 
 // Interface to per-line data that wants to see each line insertion and deletion
 class PerLine {

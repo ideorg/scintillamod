@@ -10,7 +10,7 @@
 #ifndef OPTIONSET_H
 #define OPTIONSET_H
 
-namespace Scintilla {
+namespace ScintillaMod {
 
 template <typename T>
 class OptionSet {

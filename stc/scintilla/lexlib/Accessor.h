@@ -8,7 +8,7 @@
 #ifndef ACCESSOR_H
 #define ACCESSOR_H
 
-namespace Scintilla {
+namespace ScintillaMod {
 
 enum { wsSpace=1, wsTab=2, wsSpaceTab=4, wsInconsistent=8 };
 

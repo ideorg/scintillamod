@@ -8,7 +8,7 @@
 #ifndef DOCUMENT_H
 #define DOCUMENT_H
 
-namespace Scintilla {
+namespace ScintillaMod {
 
 class DocWatcher;
 class DocModification;

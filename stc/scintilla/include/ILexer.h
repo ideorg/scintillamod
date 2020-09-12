@@ -10,7 +10,7 @@
 
 #include "Sci_Position.h"
 
-namespace Scintilla {
+namespace ScintillaMod {
 
 enum { dvOriginal=0, dvLineEnd=1 };
 

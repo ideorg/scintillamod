@@ -8,7 +8,7 @@
 #ifndef LEXERSIMPLE_H
 #define LEXERSIMPLE_H
 
-namespace Scintilla {
+namespace ScintillaMod {
 
 // A simple lexer with no state
 class LexerSimple : public LexerBase {

@@ -8,7 +8,7 @@
 #ifndef EDITMODEL_H
 #define EDITMODEL_H
 
-namespace Scintilla {
+namespace ScintillaMod {
 
 /**
 */

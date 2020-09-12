@@ -10,7 +10,7 @@
 
 #include "Compat.h"
 
-namespace Scintilla {
+namespace ScintillaMod {
 
 /// A split vector of integers with a method for adding a value to all elements
 /// in a range.

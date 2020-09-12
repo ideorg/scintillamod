@@ -8,7 +8,7 @@
 #ifndef STYLECONTEXT_H
 #define STYLECONTEXT_H
 
-namespace Scintilla {
+namespace ScintillaMod {
 
 // All languages handled so far can treat all characters >= 0x80 as one class
 // which just continues the current token or starts an identifier if in default.

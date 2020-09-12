@@ -8,7 +8,7 @@
 #ifndef ELAPSEDPERIOD_H
 #define ELAPSEDPERIOD_H
 
-namespace Scintilla {
+namespace ScintillaMod {
 
 // Simplified access to high precision timing.
 class ElapsedPeriod {

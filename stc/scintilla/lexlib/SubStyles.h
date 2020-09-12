@@ -8,7 +8,7 @@
 #ifndef SUBSTYLES_H
 #define SUBSTYLES_H
 
-namespace Scintilla {
+namespace ScintillaMod {
 
 class WordClassifier {
 	int baseStyle;

@@ -8,7 +8,7 @@
 #ifndef PROPSETSIMPLE_H
 #define PROPSETSIMPLE_H
 
-namespace Scintilla {
+namespace ScintillaMod {
 
 class PropSetSimple {
 	void *impl;

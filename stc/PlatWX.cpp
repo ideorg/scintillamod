@@ -66,7 +66,7 @@
     #include "PlatWXcocoa.h"
 #endif
 
-using namespace Scintilla;
+using namespace ScintillaMod;
 
 wxRect wxRectFromPRectangle(PRectangle prc) {
     wxRect r(wxRound(prc.left), wxRound(prc.top),
@@ -93,7 +93,7 @@ wxColour wxColourFromCA(ColourAlpha const& cd) {
 
 //----------------------------------------------------------------------
 
-namespace Scintilla
+namespace ScintillaMod
 {
 
 inline wxWindow* GETWIN(WindowID id) { return (wxWindow*)id; }
@@ -758,7 +758,7 @@ void SurfaceImpl::SetDBCSMode(int WXUNUSED(codePage)) {
     // dbcsMode = codePage == SC_CP_DBCS;
 }
 
-} // namespace scintilla
+} // namespace ScintillaMod
 
 
 #ifdef HAVE_DIRECTWRITE_TECHNOLOGY
@@ -1558,7 +1558,7 @@ void SurfaceD2D::Copy(PRectangle rc, Point from, Surface& surfaceSource)
         hr = m_pRenderTarget->Flush();
         if ( FAILED(hr) )
         {
-            Scintilla::Platform::DebugPrintf("Failed Flush 0x%x\n", hr);
+            ScintillaMod::Platform::DebugPrintf("Failed Flush 0x%x\n", hr);
         }
     }
 }
@@ -1890,7 +1890,7 @@ void SurfaceD2D::DrawTextCommon(PRectangle rc, Font &font_, XYPOSITION ybase,
 
 #endif // HAVE_DIRECTWRITE_TECHNOLOGY
 
-namespace Scintilla {
+namespace ScintillaMod {
 
 Surface *Surface::Allocate(int technology) {
     wxUnusedVar(technology);
@@ -2033,7 +2033,7 @@ PRectangle Window::GetMonitorRect(Point pt) {
     return PRectangleFromwxRect(dpy.GetGeometry());
 }
 
-} // namespace Scintilla
+} // namespace ScintillaMod
 
 //----------------------------------------------------------------------
 // wxSTCPopupBase and wxSTCPopupWindow
@@ -3452,36 +3452,36 @@ DynamicLibrary *DynamicLibrary::Load(const char *modulePath) {
 
 //----------------------------------------------------------------------
 
-ColourDesired Scintilla::Platform::Chrome() {
+ColourDesired ScintillaMod::Platform::Chrome() {
     wxColour c;
     c = wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
     return ColourDesired(c.Red(), c.Green(), c.Blue());
 }
 
-ColourDesired Scintilla::Platform::ChromeHighlight() {
+ColourDesired ScintillaMod::Platform::ChromeHighlight() {
     wxColour c;
     c = wxSystemSettings::GetColour(wxSYS_COLOUR_3DHIGHLIGHT);
     return ColourDesired(c.Red(), c.Green(), c.Blue());
 }
 
-const char *Scintilla::Platform::DefaultFont() {
+const char *ScintillaMod::Platform::DefaultFont() {
     static char buf[128];
     wxStrlcpy(buf, wxNORMAL_FONT->GetFaceName().mbc_str(), WXSIZEOF(buf));
     return buf;
 }
 
-int Scintilla::Platform::DefaultFontSize() {
+int ScintillaMod::Platform::DefaultFontSize() {
     return wxNORMAL_FONT->GetPointSize();
 }
 
-unsigned int Scintilla::Platform::DoubleClickTime() {
+unsigned int ScintillaMod::Platform::DoubleClickTime() {
     return 500;   // **** ::GetDoubleClickTime();
 }
 
 
 //#define TRACE
 
-void Scintilla::Platform::DebugDisplay(const char *s) {
+void ScintillaMod::Platform::DebugDisplay(const char *s) {
 #ifdef TRACE
     wxLogDebug(stc2wx(s));
 #else
@@ -3489,7 +3489,7 @@ void Scintilla::Platform::DebugDisplay(const char *s) {
 #endif
 }
 
-void Scintilla::Platform::DebugPrintf(const char *format, ...) {
+void ScintillaMod::Platform::DebugPrintf(const char *format, ...) {
 #ifdef TRACE
     char buffer[2000];
     va_list pArguments;
@@ -3505,13 +3505,13 @@ void Scintilla::Platform::DebugPrintf(const char *format, ...) {
 
 static bool assertionPopUps = true;
 
-bool Scintilla::Platform::ShowAssertionPopUps(bool assertionPopUps_) {
+bool ScintillaMod::Platform::ShowAssertionPopUps(bool assertionPopUps_) {
     bool ret = assertionPopUps;
     assertionPopUps = assertionPopUps_;
     return ret;
 }
 
-void Scintilla::Platform::Assert(const char *c, const char *file, int line) {
+void ScintillaMod::Platform::Assert(const char *c, const char *file, int line) {
 #ifdef TRACE
     char buffer[2000];
     sprintf(buffer, "Assertion [%s] failed at %s %d", c, file, line);

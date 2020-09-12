@@ -8,7 +8,7 @@
 #ifndef LEXERMODULE_H
 #define LEXERMODULE_H
 
-namespace Scintilla {
+namespace ScintillaMod {
 
 class Accessor;
 class WordList;

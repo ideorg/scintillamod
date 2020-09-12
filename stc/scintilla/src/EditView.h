@@ -8,7 +8,7 @@
 #ifndef EDITVIEW_H
 #define EDITVIEW_H
 
-namespace Scintilla {
+namespace ScintillaMod {
 
 struct PrintParameters {
 	int magnification;

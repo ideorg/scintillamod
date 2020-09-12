@@ -10,7 +10,7 @@
 #ifndef SPARSESTATE_H
 #define SPARSESTATE_H
 
-namespace Scintilla {
+namespace ScintillaMod {
 
 template <typename T>
 class SparseState {

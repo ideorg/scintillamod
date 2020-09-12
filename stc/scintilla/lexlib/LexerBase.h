@@ -8,7 +8,7 @@
 #ifndef LEXERBASE_H
 #define LEXERBASE_H
 
-namespace Scintilla {
+namespace ScintillaMod {
 
 // A simple lexer with no state
 class LexerBase : public ILexerWithIdentity {

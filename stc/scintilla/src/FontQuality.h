@@ -9,7 +9,7 @@
 #ifndef FONTQUALITY_H
 #define FONTQUALITY_H
 
-namespace Scintilla {
+namespace ScintillaMod {
 
 // These definitions match Scintilla.h
 #define SC_EFF_QUALITY_MASK            0xF

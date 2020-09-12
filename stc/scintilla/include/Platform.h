@@ -76,7 +76,7 @@
 
 #endif
 
-namespace Scintilla {
+namespace ScintillaMod {
 
 typedef float XYPOSITION;
 typedef double XYACCUMULATOR;
@@ -541,7 +541,7 @@ public:
 #ifdef  NDEBUG
 #define PLATFORM_ASSERT(c) ((void)0)
 #else
-#define PLATFORM_ASSERT(c) ((c) ? (void)(0) : Scintilla::Platform::Assert(#c, __FILE__, __LINE__))
+#define PLATFORM_ASSERT(c) ((c) ? (void)(0) : ScintillaMod::Platform::Assert(#c, __FILE__, __LINE__))
 #endif
 
 }

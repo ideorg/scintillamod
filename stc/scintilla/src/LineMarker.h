@@ -8,7 +8,7 @@
 #ifndef LINEMARKER_H
 #define LINEMARKER_H
 
-namespace Scintilla {
+namespace ScintillaMod {
 
 class XPM;
 class RGBAImage;

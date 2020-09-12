@@ -8,7 +8,7 @@
 #ifndef CASEFOLDER_H
 #define CASEFOLDER_H
 
-namespace Scintilla {
+namespace ScintillaMod {
 
 class CaseFolder {
 public:

@@ -8,7 +8,7 @@
 #ifndef CHARACTERCATEGORY_H
 #define CHARACTERCATEGORY_H
 
-namespace Scintilla {
+namespace ScintillaMod {
 
 enum CharacterCategory {
 	ccLu, ccLl, ccLt, ccLm, ccLo,

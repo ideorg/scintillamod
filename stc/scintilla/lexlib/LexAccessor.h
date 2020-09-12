@@ -8,7 +8,7 @@
 #ifndef LEXACCESSOR_H
 #define LEXACCESSOR_H
 
-namespace Scintilla {
+namespace ScintillaMod {
 
 enum class EncodingType { eightBit, unicode, dbcs };
 

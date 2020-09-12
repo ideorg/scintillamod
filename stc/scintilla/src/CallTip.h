@@ -8,7 +8,7 @@
 #ifndef CALLTIP_H
 #define CALLTIP_H
 
-namespace Scintilla {
+namespace ScintillaMod {
 
 struct Chunk {
 	size_t start;

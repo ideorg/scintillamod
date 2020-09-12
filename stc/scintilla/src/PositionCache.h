@@ -8,7 +8,7 @@
 #ifndef POSITIONCACHE_H
 #define POSITIONCACHE_H
 
-namespace Scintilla {
+namespace ScintillaMod {
 
 inline constexpr bool IsEOLChar(int ch) noexcept {
 	return (ch == '\r') || (ch == '\n');

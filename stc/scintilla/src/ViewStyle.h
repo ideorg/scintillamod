@@ -8,7 +8,7 @@
 #ifndef VIEWSTYLE_H
 #define VIEWSTYLE_H
 
-namespace Scintilla {
+namespace ScintillaMod {
 
 /**
  */

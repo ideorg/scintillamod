@@ -8,7 +8,7 @@
 #ifndef INDICATOR_H
 #define INDICATOR_H
 
-namespace Scintilla {
+namespace ScintillaMod {
 
 struct StyleAndColour {
 	int style;

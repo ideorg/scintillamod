@@ -10,7 +10,7 @@
 #ifndef CATALOGUE_H
 #define CATALOGUE_H
 
-namespace Scintilla {
+namespace ScintillaMod {
 
 class Catalogue {
 public:
