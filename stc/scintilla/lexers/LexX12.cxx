@@ -30,13 +30,13 @@ public:
 	LexerX12();
 	virtual ~LexerX12() {} // virtual destructor, as we inherit from ILexer
 
-	static ILexer *Factory() {
+	static ILexer5 *Factory() {
 		return new LexerX12;
 	}
 
 	int SCI_METHOD Version() const override
 	{
-		return lvIdentity;
+		return lvRelease5;
 	}
 	void SCI_METHOD Release() override
 	{
@@ -88,10 +88,10 @@ public:
 protected:
 	struct Terminator
 	{
-		int Style;// = SCE_X12_BAD;
-		Sci_PositionU pos;// = 0;
-		Sci_PositionU length;// = 0;
-		int FoldChange;// = 0;
+		int Style = SCE_X12_BAD;
+		Sci_PositionU pos = 0;
+		Sci_PositionU length = 0;
+		int FoldChange = 0;
 	};
 	Terminator InitialiseFromISA(IDocument *pAccess);
 	Sci_PositionU FindPreviousSegmentStart(IDocument *pAccess, Sci_Position startPos) const;
@@ -128,7 +128,7 @@ void LexerX12::Lex(Sci_PositionU startPos, Sci_Position length, int, IDocument *
 	{
 		if (T.pos < startPos)
 			T.pos = startPos; // we may be colouring in batches.
-		pAccess->StartStyling(startPos, '\377');
+		pAccess->StartStyling(startPos);
 		pAccess->SetStyleFor(T.pos - startPos, SCE_X12_ENVELOPE);
 		pAccess->SetStyleFor(posFinish - T.pos, SCE_X12_BAD);
 		return;
@@ -138,7 +138,7 @@ void LexerX12::Lex(Sci_PositionU startPos, Sci_Position length, int, IDocument *
 	Sci_PositionU posCurrent = FindPreviousSegmentStart (pAccess, startPos);
 
 	// Style buffer, so we're not issuing loads of notifications
-	pAccess->StartStyling(posCurrent, '\377');
+	pAccess->StartStyling(posCurrent);
 
 	while (posCurrent < posFinish)
 	{

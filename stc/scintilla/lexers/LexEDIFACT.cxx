@@ -31,13 +31,13 @@ public:
 	LexerEDIFACT();
 	virtual ~LexerEDIFACT() {} // virtual destructor, as we inherit from ILexer
 
-	static ILexer *Factory() {
+	static ILexer5 *Factory() {
 		return new LexerEDIFACT;
 	}
 
 	int SCI_METHOD Version() const override
 	{
-		return lvIdentity;
+		return lvRelease5;
 	}
 	void SCI_METHOD Release() override
 	{
@@ -158,7 +158,7 @@ void LexerEDIFACT::Lex(Sci_PositionU startPos, Sci_Position length, int, IDocume
 
 	// Style buffer, so we're not issuing loads of notifications
 	LexAccessor styler (pAccess);
-	pAccess->StartStyling(posCurrent, '\377');
+	pAccess->StartStyling(posCurrent);
 	styler.StartSegment(posCurrent);
 	Sci_Position posSegmentStart = -1;
 
@@ -221,7 +221,7 @@ void LexerEDIFACT::Lex(Sci_PositionU startPos, Sci_Position length, int, IDocume
 	if (posSegmentStart == -1)
 		return;
 
-	pAccess->StartStyling(posSegmentStart, -1);
+	pAccess->StartStyling(posSegmentStart);
 	pAccess->SetStyleFor(posFinish - posSegmentStart, SCE_EDI_BADSEGMENT);
 }
 

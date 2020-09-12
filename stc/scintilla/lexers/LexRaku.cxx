@@ -646,7 +646,7 @@ public:
 		delete this;
 	}
 	int SCI_METHOD Version() const noexcept override {
-		return lvIdentity;
+		return lvRelease5;
 	}
 	const char *SCI_METHOD PropertyNames() override {
 		return osRaku.PropertyNames();
@@ -668,7 +668,7 @@ public:
 	void SCI_METHOD Lex(Sci_PositionU startPos, Sci_Position length, int initStyle, IDocument *pAccess) override;
 	void SCI_METHOD Fold(Sci_PositionU startPos, Sci_Position length, int initStyle, IDocument *pAccess) override;
 
-	static ILexer *LexerFactoryRaku() {
+	static ILexer5 *LexerFactoryRaku() {
 		return new LexerRaku();
 	}
 

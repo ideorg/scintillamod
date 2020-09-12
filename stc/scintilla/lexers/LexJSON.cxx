@@ -209,7 +209,7 @@ class LexerJSON : public DefaultLexer {
 	}
 	virtual ~LexerJSON() {}
 	int SCI_METHOD Version() const override {
-		return lvIdentity;
+		return lvRelease5;
 	}
 	void SCI_METHOD Release() override {
 		delete this;
@@ -256,7 +256,7 @@ class LexerJSON : public DefaultLexer {
 	void *SCI_METHOD PrivateCall(int, void *) override {
 		return 0;
 	}
-	static ILexer *LexerFactoryJSON() {
+	static ILexer5 *LexerFactoryJSON() {
 		return new LexerJSON;
 	}
 	const char *SCI_METHOD DescribeWordListSets() override {

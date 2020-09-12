@@ -123,7 +123,7 @@ public:
     }
 
     int SCI_METHOD Version() const override {
-        return lvIdentity;
+        return lvRelease5;
     }
 
     const char * SCI_METHOD PropertyNames() override {
@@ -165,7 +165,7 @@ public:
         return style;
     }
 
-    static ILexer *LexerFactoryCIL() {
+    static ILexer5 *LexerFactoryCIL() {
         return new LexerCIL();
     }
 };

@@ -10,7 +10,7 @@ set(wxWidgets_CONFIGURATION mswu)
 find_package(wxWidgets COMPONENTS core base REQUIRED)
 include(${wxWidgets_USE_FILE})
 
-set(SOURCE_FILES main.cpp stc/PlatWX.cpp stc/stc.cpp stc/ScintillaWX.cpp 
+set(SOURCE_FILES main.cpp stc/PlatWX.cpp stc/stc.cpp stc/ScintillaWX.cpp
         stc/scintilla/src/AutoComplete.cxx
         stc/scintilla/src/CallTip.cxx
         stc/scintilla/src/CaseConvert.cxx
@@ -52,6 +52,7 @@ set(SOURCE_FILES main.cpp stc/PlatWX.cpp stc/stc.cpp stc/ScintillaWX.cpp
       stc/scintilla/lexlib/PropSetSimple.cxx
       stc/scintilla/lexlib/StyleContext.cxx
       stc/scintilla/lexlib/WordList.cxx
+      stc/scintilla/lexers/LexCPP.cxx
         )
 add_executable(test ${SOURCE_FILES})
 

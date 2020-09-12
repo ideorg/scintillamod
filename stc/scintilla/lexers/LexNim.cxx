@@ -235,7 +235,7 @@ public:
     }
 
     int SCI_METHOD Version() const noexcept override {
-        return lvIdentity;
+        return lvRelease5;
     }
 
     const char * SCI_METHOD PropertyNames() override {
@@ -277,7 +277,7 @@ public:
         return style;
     }
 
-    static ILexer *LexerFactoryNim() {
+    static ILexer5 *LexerFactoryNim() {
         return new LexerNim();
     }
 };
@@ -631,7 +631,7 @@ void SCI_METHOD LexerNim::Lex(Sci_PositionU startPos, Sci_Position length,
                 }
 
                 const int rawStrStyle = options.highlightRawStrIdent ? IsLetter(sc.ch) :
-                                  (sc.ch == 'r' || sc.ch == 'R');
+                                        (sc.ch == 'r' || sc.ch == 'R');
 
                 if (rawStrStyle) {
                     sc.Forward();
