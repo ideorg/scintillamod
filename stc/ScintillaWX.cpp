@@ -51,6 +51,10 @@
 #ifdef __WXMSW__
     #include "wx/msw/private.h" // GetHwndOf()
 #endif
+#undef __WXGTK20__
+#ifdef __WXGTK20__
+    #include <gdk/gdk.h>
+#endif
 
 //----------------------------------------------------------------------
 // Helper classes
