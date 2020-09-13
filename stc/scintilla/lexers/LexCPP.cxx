@@ -461,7 +461,7 @@ struct OptionSetCPP : public OptionSet<OptionsCPP> {
 
 const char styleSubable[] = {SCE_C_IDENTIFIER, SCE_C_COMMENTDOCKEYWORD, 0};
 
-LexicalClass lexicalClasses[] = {
+static LexicalClass lexicalClasses[] = {
 	// Lexer Cpp SCLEX_CPP SCE_C_:
 	0, "SCE_C_DEFAULT", "default", "White space",
 	1, "SCE_C_COMMENT", "comment", "Comment: /* */.",

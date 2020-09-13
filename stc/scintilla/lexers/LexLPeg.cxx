@@ -957,12 +957,12 @@ LexerModule lmLPeg(SCLEX_LPEG, LexerLPeg::LexerFactoryLPeg, "lpeg");
 #include "Accessor.h"
 #include "LexerModule.h"
 
-using namespace ScintillaMod;
+namespace ScintillaMod {
 
-static void LPegLex(Sci_PositionU, Sci_Position, int, WordList*[], Accessor&) {
-  return;
+    static void LPegLex(Sci_PositionU, Sci_Position, int, WordList *[], Accessor &) {
+        return;
+    }
+
+    LexerModule lmLPeg(SCLEX_LPEG, LPegLex, "lpeg");
 }
-
-LexerModule lmLPeg(SCLEX_LPEG, LPegLex, "lpeg");
-
 #endif // LPEG_LEXER

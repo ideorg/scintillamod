@@ -25,27 +25,26 @@
 #include "CharacterSet.h"
 #include "LexerModule.h"
 
-using namespace ScintillaMod;
+namespace ScintillaMod {
 
 /*
  * Interface
  */
 
-static void ColouriseDocument(
-    Sci_PositionU startPos,
-    Sci_Position length,
-    int initStyle,
-    WordList *keywordlists[],
-    Accessor &styler);
+    static void ColouriseDocument(
+            Sci_PositionU startPos,
+            Sci_Position length,
+            int initStyle,
+            WordList *keywordlists[],
+            Accessor &styler);
 
-static const char * const adaWordListDesc[] = {
-	"Keywords",
-	0
-};
+    static const char *const adaWordListDesc[] = {
+            "Keywords",
+            0
+    };
 
-namespace ScintillaMod {
     LexerModule lmAda(SCLEX_ADA, ColouriseDocument, "ada", NULL, adaWordListDesc);
-}
+
 
 /*
  * Implementation
@@ -54,462 +53,476 @@ namespace ScintillaMod {
 // Functions that have apostropheStartsAttribute as a parameter set it according to whether
 // an apostrophe encountered after processing the current token will start an attribute or
 // a character literal.
-static void ColouriseCharacter(StyleContext& sc, bool& apostropheStartsAttribute);
-static void ColouriseComment(StyleContext& sc, bool& apostropheStartsAttribute);
-static void ColouriseContext(StyleContext& sc, char chEnd, int stateEOL);
-static void ColouriseDelimiter(StyleContext& sc, bool& apostropheStartsAttribute);
-static void ColouriseLabel(StyleContext& sc, WordList& keywords, bool& apostropheStartsAttribute);
-static void ColouriseNumber(StyleContext& sc, bool& apostropheStartsAttribute);
-static void ColouriseString(StyleContext& sc, bool& apostropheStartsAttribute);
-static void ColouriseWhiteSpace(StyleContext& sc, bool& apostropheStartsAttribute);
-static void ColouriseWord(StyleContext& sc, WordList& keywords, bool& apostropheStartsAttribute);
+    static void ColouriseCharacter(StyleContext &sc, bool &apostropheStartsAttribute);
 
-static inline bool IsDelimiterCharacter(int ch);
-static inline bool IsSeparatorOrDelimiterCharacter(int ch);
-static bool IsValidIdentifier(const std::string& identifier);
-static bool IsValidNumber(const std::string& number);
-static inline bool IsWordStartCharacter(int ch);
-static inline bool IsWordCharacter(int ch);
+    static void ColouriseComment(StyleContext &sc, bool &apostropheStartsAttribute);
 
-static void ColouriseCharacter(StyleContext& sc, bool& apostropheStartsAttribute) {
-	apostropheStartsAttribute = true;
+    static void ColouriseContext(StyleContext &sc, char chEnd, int stateEOL);
 
-	sc.SetState(SCE_ADA_CHARACTER);
+    static void ColouriseDelimiter(StyleContext &sc, bool &apostropheStartsAttribute);
 
-	// Skip the apostrophe and one more character (so that '' is shown as non-terminated and '''
-	// is handled correctly)
-	sc.Forward();
-	sc.Forward();
+    static void ColouriseLabel(StyleContext &sc, WordList &keywords, bool &apostropheStartsAttribute);
 
-	ColouriseContext(sc, '\'', SCE_ADA_CHARACTEREOL);
-}
+    static void ColouriseNumber(StyleContext &sc, bool &apostropheStartsAttribute);
 
-static void ColouriseContext(StyleContext& sc, char chEnd, int stateEOL) {
-	while (!sc.atLineEnd && !sc.Match(chEnd)) {
-		sc.Forward();
-	}
+    static void ColouriseString(StyleContext &sc, bool &apostropheStartsAttribute);
 
-	if (!sc.atLineEnd) {
-		sc.ForwardSetState(SCE_ADA_DEFAULT);
-	} else {
-		sc.ChangeState(stateEOL);
-	}
-}
+    static void ColouriseWhiteSpace(StyleContext &sc, bool &apostropheStartsAttribute);
 
-static void ColouriseComment(StyleContext& sc, bool& /*apostropheStartsAttribute*/) {
-	// Apostrophe meaning is not changed, but the parameter is present for uniformity
+    static void ColouriseWord(StyleContext &sc, WordList &keywords, bool &apostropheStartsAttribute);
 
-	sc.SetState(SCE_ADA_COMMENTLINE);
+    static inline bool IsDelimiterCharacter(int ch);
 
-	while (!sc.atLineEnd) {
-		sc.Forward();
-	}
-}
+    static inline bool IsSeparatorOrDelimiterCharacter(int ch);
 
-static void ColouriseDelimiter(StyleContext& sc, bool& apostropheStartsAttribute) {
-	apostropheStartsAttribute = sc.Match (')');
-	sc.SetState(SCE_ADA_DELIMITER);
-	sc.ForwardSetState(SCE_ADA_DEFAULT);
-}
+    static bool IsValidIdentifier(const std::string &identifier);
 
-static void ColouriseLabel(StyleContext& sc, WordList& keywords, bool& apostropheStartsAttribute) {
-	apostropheStartsAttribute = false;
+    static bool IsValidNumber(const std::string &number);
 
-	sc.SetState(SCE_ADA_LABEL);
+    static inline bool IsWordStartCharacter(int ch);
 
-	// Skip "<<"
-	sc.Forward();
-	sc.Forward();
+    static inline bool IsWordCharacter(int ch);
 
-	std::string identifier;
+    static void ColouriseCharacter(StyleContext &sc, bool &apostropheStartsAttribute) {
+        apostropheStartsAttribute = true;
 
-	while (!sc.atLineEnd && !IsSeparatorOrDelimiterCharacter(sc.ch)) {
-		identifier += static_cast<char>(tolower(sc.ch));
-		sc.Forward();
-	}
+        sc.SetState(SCE_ADA_CHARACTER);
 
-	// Skip ">>"
-	if (sc.Match('>', '>')) {
-		sc.Forward();
-		sc.Forward();
-	} else {
-		sc.ChangeState(SCE_ADA_ILLEGAL);
-	}
+        // Skip the apostrophe and one more character (so that '' is shown as non-terminated and '''
+        // is handled correctly)
+        sc.Forward();
+        sc.Forward();
 
-	// If the name is an invalid identifier or a keyword, then make it invalid label
-	if (!IsValidIdentifier(identifier) || keywords.InList(identifier.c_str())) {
-		sc.ChangeState(SCE_ADA_ILLEGAL);
-	}
+        ColouriseContext(sc, '\'', SCE_ADA_CHARACTEREOL);
+    }
 
-	sc.SetState(SCE_ADA_DEFAULT);
+    static void ColouriseContext(StyleContext &sc, char chEnd, int stateEOL) {
+        while (!sc.atLineEnd && !sc.Match(chEnd)) {
+            sc.Forward();
+        }
 
-}
+        if (!sc.atLineEnd) {
+            sc.ForwardSetState(SCE_ADA_DEFAULT);
+        } else {
+            sc.ChangeState(stateEOL);
+        }
+    }
 
-static void ColouriseNumber(StyleContext& sc, bool& apostropheStartsAttribute) {
-	apostropheStartsAttribute = true;
+    static void ColouriseComment(StyleContext &sc, bool & /*apostropheStartsAttribute*/) {
+        // Apostrophe meaning is not changed, but the parameter is present for uniformity
 
-	std::string number;
-	sc.SetState(SCE_ADA_NUMBER);
+        sc.SetState(SCE_ADA_COMMENTLINE);
 
-	// Get all characters up to a delimiter or a separator, including points, but excluding
-	// double points (ranges).
-	while (!IsSeparatorOrDelimiterCharacter(sc.ch) || (sc.ch == '.' && sc.chNext != '.')) {
-		number += static_cast<char>(sc.ch);
-		sc.Forward();
-	}
+        while (!sc.atLineEnd) {
+            sc.Forward();
+        }
+    }
 
-	// Special case: exponent with sign
-	if ((sc.chPrev == 'e' || sc.chPrev == 'E') &&
-	        (sc.ch == '+' || sc.ch == '-')) {
-		number += static_cast<char>(sc.ch);
-		sc.Forward ();
+    static void ColouriseDelimiter(StyleContext &sc, bool &apostropheStartsAttribute) {
+        apostropheStartsAttribute = sc.Match(')');
+        sc.SetState(SCE_ADA_DELIMITER);
+        sc.ForwardSetState(SCE_ADA_DEFAULT);
+    }
 
-		while (!IsSeparatorOrDelimiterCharacter(sc.ch)) {
-			number += static_cast<char>(sc.ch);
-			sc.Forward();
-		}
-	}
+    static void ColouriseLabel(StyleContext &sc, WordList &keywords, bool &apostropheStartsAttribute) {
+        apostropheStartsAttribute = false;
 
-	if (!IsValidNumber(number)) {
-		sc.ChangeState(SCE_ADA_ILLEGAL);
-	}
+        sc.SetState(SCE_ADA_LABEL);
 
-	sc.SetState(SCE_ADA_DEFAULT);
-}
+        // Skip "<<"
+        sc.Forward();
+        sc.Forward();
 
-static void ColouriseString(StyleContext& sc, bool& apostropheStartsAttribute) {
-	apostropheStartsAttribute = true;
+        std::string identifier;
 
-	sc.SetState(SCE_ADA_STRING);
-	sc.Forward();
+        while (!sc.atLineEnd && !IsSeparatorOrDelimiterCharacter(sc.ch)) {
+            identifier += static_cast<char>(tolower(sc.ch));
+            sc.Forward();
+        }
 
-	ColouriseContext(sc, '"', SCE_ADA_STRINGEOL);
-}
+        // Skip ">>"
+        if (sc.Match('>', '>')) {
+            sc.Forward();
+            sc.Forward();
+        } else {
+            sc.ChangeState(SCE_ADA_ILLEGAL);
+        }
 
-static void ColouriseWhiteSpace(StyleContext& sc, bool& /*apostropheStartsAttribute*/) {
-	// Apostrophe meaning is not changed, but the parameter is present for uniformity
-	sc.SetState(SCE_ADA_DEFAULT);
-	sc.ForwardSetState(SCE_ADA_DEFAULT);
-}
+        // If the name is an invalid identifier or a keyword, then make it invalid label
+        if (!IsValidIdentifier(identifier) || keywords.InList(identifier.c_str())) {
+            sc.ChangeState(SCE_ADA_ILLEGAL);
+        }
 
-static void ColouriseWord(StyleContext& sc, WordList& keywords, bool& apostropheStartsAttribute) {
-	apostropheStartsAttribute = true;
-	sc.SetState(SCE_ADA_IDENTIFIER);
+        sc.SetState(SCE_ADA_DEFAULT);
 
-	std::string word;
+    }
 
-	while (!sc.atLineEnd && !IsSeparatorOrDelimiterCharacter(sc.ch)) {
-		word += static_cast<char>(tolower(sc.ch));
-		sc.Forward();
-	}
+    static void ColouriseNumber(StyleContext &sc, bool &apostropheStartsAttribute) {
+        apostropheStartsAttribute = true;
 
-	if (!IsValidIdentifier(word)) {
-		sc.ChangeState(SCE_ADA_ILLEGAL);
+        std::string number;
+        sc.SetState(SCE_ADA_NUMBER);
 
-	} else if (keywords.InList(word.c_str())) {
-		sc.ChangeState(SCE_ADA_WORD);
+        // Get all characters up to a delimiter or a separator, including points, but excluding
+        // double points (ranges).
+        while (!IsSeparatorOrDelimiterCharacter(sc.ch) || (sc.ch == '.' && sc.chNext != '.')) {
+            number += static_cast<char>(sc.ch);
+            sc.Forward();
+        }
 
-		if (word != "all") {
-			apostropheStartsAttribute = false;
-		}
-	}
+        // Special case: exponent with sign
+        if ((sc.chPrev == 'e' || sc.chPrev == 'E') &&
+            (sc.ch == '+' || sc.ch == '-')) {
+            number += static_cast<char>(sc.ch);
+            sc.Forward();
 
-	sc.SetState(SCE_ADA_DEFAULT);
-}
+            while (!IsSeparatorOrDelimiterCharacter(sc.ch)) {
+                number += static_cast<char>(sc.ch);
+                sc.Forward();
+            }
+        }
+
+        if (!IsValidNumber(number)) {
+            sc.ChangeState(SCE_ADA_ILLEGAL);
+        }
+
+        sc.SetState(SCE_ADA_DEFAULT);
+    }
+
+    static void ColouriseString(StyleContext &sc, bool &apostropheStartsAttribute) {
+        apostropheStartsAttribute = true;
+
+        sc.SetState(SCE_ADA_STRING);
+        sc.Forward();
+
+        ColouriseContext(sc, '"', SCE_ADA_STRINGEOL);
+    }
+
+    static void ColouriseWhiteSpace(StyleContext &sc, bool & /*apostropheStartsAttribute*/) {
+        // Apostrophe meaning is not changed, but the parameter is present for uniformity
+        sc.SetState(SCE_ADA_DEFAULT);
+        sc.ForwardSetState(SCE_ADA_DEFAULT);
+    }
+
+    static void ColouriseWord(StyleContext &sc, WordList &keywords, bool &apostropheStartsAttribute) {
+        apostropheStartsAttribute = true;
+        sc.SetState(SCE_ADA_IDENTIFIER);
+
+        std::string word;
+
+        while (!sc.atLineEnd && !IsSeparatorOrDelimiterCharacter(sc.ch)) {
+            word += static_cast<char>(tolower(sc.ch));
+            sc.Forward();
+        }
+
+        if (!IsValidIdentifier(word)) {
+            sc.ChangeState(SCE_ADA_ILLEGAL);
+
+        } else if (keywords.InList(word.c_str())) {
+            sc.ChangeState(SCE_ADA_WORD);
+
+            if (word != "all") {
+                apostropheStartsAttribute = false;
+            }
+        }
+
+        sc.SetState(SCE_ADA_DEFAULT);
+    }
 
 //
 // ColouriseDocument
 //
 
-static void ColouriseDocument(
-    Sci_PositionU startPos,
-    Sci_Position length,
-    int initStyle,
-    WordList *keywordlists[],
-    Accessor &styler) {
-	WordList &keywords = *keywordlists[0];
+    static void ColouriseDocument(
+            Sci_PositionU startPos,
+            Sci_Position length,
+            int initStyle,
+            WordList *keywordlists[],
+            Accessor &styler) {
+        WordList &keywords = *keywordlists[0];
 
-	StyleContext sc(startPos, length, initStyle, styler);
+        StyleContext sc(startPos, length, initStyle, styler);
 
-	Sci_Position lineCurrent = styler.GetLine(startPos);
-	bool apostropheStartsAttribute = (styler.GetLineState(lineCurrent) & 1) != 0;
+        Sci_Position lineCurrent = styler.GetLine(startPos);
+        bool apostropheStartsAttribute = (styler.GetLineState(lineCurrent) & 1) != 0;
 
-	while (sc.More()) {
-		if (sc.atLineEnd) {
-			// Go to the next line
-			sc.Forward();
-			lineCurrent++;
+        while (sc.More()) {
+            if (sc.atLineEnd) {
+                // Go to the next line
+                sc.Forward();
+                lineCurrent++;
 
-			// Remember the line state for future incremental lexing
-			styler.SetLineState(lineCurrent, apostropheStartsAttribute);
+                // Remember the line state for future incremental lexing
+                styler.SetLineState(lineCurrent, apostropheStartsAttribute);
 
-			// Don't continue any styles on the next line
-			sc.SetState(SCE_ADA_DEFAULT);
-		}
+                // Don't continue any styles on the next line
+                sc.SetState(SCE_ADA_DEFAULT);
+            }
 
-		// Comments
-		if (sc.Match('-', '-')) {
-			ColouriseComment(sc, apostropheStartsAttribute);
+            // Comments
+            if (sc.Match('-', '-')) {
+                ColouriseComment(sc, apostropheStartsAttribute);
 
-		// Strings
-		} else if (sc.Match('"')) {
-			ColouriseString(sc, apostropheStartsAttribute);
+                // Strings
+            } else if (sc.Match('"')) {
+                ColouriseString(sc, apostropheStartsAttribute);
 
-		// Characters
-		} else if (sc.Match('\'') && !apostropheStartsAttribute) {
-			ColouriseCharacter(sc, apostropheStartsAttribute);
+                // Characters
+            } else if (sc.Match('\'') && !apostropheStartsAttribute) {
+                ColouriseCharacter(sc, apostropheStartsAttribute);
 
-		// Labels
-		} else if (sc.Match('<', '<')) {
-			ColouriseLabel(sc, keywords, apostropheStartsAttribute);
+                // Labels
+            } else if (sc.Match('<', '<')) {
+                ColouriseLabel(sc, keywords, apostropheStartsAttribute);
 
-		// Whitespace
-		} else if (IsASpace(sc.ch)) {
-			ColouriseWhiteSpace(sc, apostropheStartsAttribute);
+                // Whitespace
+            } else if (IsASpace(sc.ch)) {
+                ColouriseWhiteSpace(sc, apostropheStartsAttribute);
 
-		// Delimiters
-		} else if (IsDelimiterCharacter(sc.ch)) {
-			ColouriseDelimiter(sc, apostropheStartsAttribute);
+                // Delimiters
+            } else if (IsDelimiterCharacter(sc.ch)) {
+                ColouriseDelimiter(sc, apostropheStartsAttribute);
 
-		// Numbers
-		} else if (IsADigit(sc.ch) || sc.ch == '#') {
-			ColouriseNumber(sc, apostropheStartsAttribute);
+                // Numbers
+            } else if (IsADigit(sc.ch) || sc.ch == '#') {
+                ColouriseNumber(sc, apostropheStartsAttribute);
 
-		// Keywords or identifiers
-		} else {
-			ColouriseWord(sc, keywords, apostropheStartsAttribute);
-		}
-	}
+                // Keywords or identifiers
+            } else {
+                ColouriseWord(sc, keywords, apostropheStartsAttribute);
+            }
+        }
 
-	sc.Complete();
-}
+        sc.Complete();
+    }
 
-static inline bool IsDelimiterCharacter(int ch) {
-	switch (ch) {
-	case '&':
-	case '\'':
-	case '(':
-	case ')':
-	case '*':
-	case '+':
-	case ',':
-	case '-':
-	case '.':
-	case '/':
-	case ':':
-	case ';':
-	case '<':
-	case '=':
-	case '>':
-	case '|':
-		return true;
-	default:
-		return false;
-	}
-}
+    static inline bool IsDelimiterCharacter(int ch) {
+        switch (ch) {
+            case '&':
+            case '\'':
+            case '(':
+            case ')':
+            case '*':
+            case '+':
+            case ',':
+            case '-':
+            case '.':
+            case '/':
+            case ':':
+            case ';':
+            case '<':
+            case '=':
+            case '>':
+            case '|':
+                return true;
+            default:
+                return false;
+        }
+    }
 
-static inline bool IsSeparatorOrDelimiterCharacter(int ch) {
-	return IsASpace(ch) || IsDelimiterCharacter(ch);
-}
+    static inline bool IsSeparatorOrDelimiterCharacter(int ch) {
+        return IsASpace(ch) || IsDelimiterCharacter(ch);
+    }
 
-static bool IsValidIdentifier(const std::string& identifier) {
-	// First character can't be '_', so initialize the flag to true
-	bool lastWasUnderscore = true;
+    static bool IsValidIdentifier(const std::string &identifier) {
+        // First character can't be '_', so initialize the flag to true
+        bool lastWasUnderscore = true;
 
-	size_t length = identifier.length();
+        size_t length = identifier.length();
 
-	// Zero-length identifiers are not valid (these can occur inside labels)
-	if (length == 0) {
-		return false;
-	}
+        // Zero-length identifiers are not valid (these can occur inside labels)
+        if (length == 0) {
+            return false;
+        }
 
-	// Check for valid character at the start
-	if (!IsWordStartCharacter(identifier[0])) {
-		return false;
-	}
+        // Check for valid character at the start
+        if (!IsWordStartCharacter(identifier[0])) {
+            return false;
+        }
 
-	// Check for only valid characters and no double underscores
-	for (size_t i = 0; i < length; i++) {
-		if (!IsWordCharacter(identifier[i]) ||
-		        (identifier[i] == '_' && lastWasUnderscore)) {
-			return false;
-		}
-		lastWasUnderscore = identifier[i] == '_';
-	}
+        // Check for only valid characters and no double underscores
+        for (size_t i = 0; i < length; i++) {
+            if (!IsWordCharacter(identifier[i]) ||
+                (identifier[i] == '_' && lastWasUnderscore)) {
+                return false;
+            }
+            lastWasUnderscore = identifier[i] == '_';
+        }
 
-	// Check for underscore at the end
-	if (lastWasUnderscore == true) {
-		return false;
-	}
+        // Check for underscore at the end
+        if (lastWasUnderscore == true) {
+            return false;
+        }
 
-	// All checks passed
-	return true;
-}
+        // All checks passed
+        return true;
+    }
 
-static bool IsValidNumber(const std::string& number) {
-	size_t hashPos = number.find("#");
-	bool seenDot = false;
+    static bool IsValidNumber(const std::string &number) {
+        size_t hashPos = number.find("#");
+        bool seenDot = false;
 
-	size_t i = 0;
-	size_t length = number.length();
+        size_t i = 0;
+        size_t length = number.length();
 
-	if (length == 0)
-		return false; // Just in case
+        if (length == 0)
+            return false; // Just in case
 
-	// Decimal number
-	if (hashPos == std::string::npos) {
-		bool canBeSpecial = false;
+        // Decimal number
+        if (hashPos == std::string::npos) {
+            bool canBeSpecial = false;
 
-		for (; i < length; i++) {
-			if (number[i] == '_') {
-				if (!canBeSpecial) {
-					return false;
-				}
-				canBeSpecial = false;
-			} else if (number[i] == '.') {
-				if (!canBeSpecial || seenDot) {
-					return false;
-				}
-				canBeSpecial = false;
-				seenDot = true;
-			} else if (IsADigit(number[i])) {
-				canBeSpecial = true;
-			} else {
-				break;
-			}
-		}
+            for (; i < length; i++) {
+                if (number[i] == '_') {
+                    if (!canBeSpecial) {
+                        return false;
+                    }
+                    canBeSpecial = false;
+                } else if (number[i] == '.') {
+                    if (!canBeSpecial || seenDot) {
+                        return false;
+                    }
+                    canBeSpecial = false;
+                    seenDot = true;
+                } else if (IsADigit(number[i])) {
+                    canBeSpecial = true;
+                } else {
+                    break;
+                }
+            }
 
-		if (!canBeSpecial)
-			return false;
-	} else {
-		// Based number
-		bool canBeSpecial = false;
-		int base = 0;
+            if (!canBeSpecial)
+                return false;
+        } else {
+            // Based number
+            bool canBeSpecial = false;
+            int base = 0;
 
-		// Parse base
-		for (; i < length; i++) {
-			int ch = number[i];
-			if (ch == '_') {
-				if (!canBeSpecial)
-					return false;
-				canBeSpecial = false;
-			} else if (IsADigit(ch)) {
-				base = base * 10 + (ch - '0');
-				if (base > 16)
-					return false;
-				canBeSpecial = true;
-			} else if (ch == '#' && canBeSpecial) {
-				break;
-			} else {
-				return false;
-			}
-		}
+            // Parse base
+            for (; i < length; i++) {
+                int ch = number[i];
+                if (ch == '_') {
+                    if (!canBeSpecial)
+                        return false;
+                    canBeSpecial = false;
+                } else if (IsADigit(ch)) {
+                    base = base * 10 + (ch - '0');
+                    if (base > 16)
+                        return false;
+                    canBeSpecial = true;
+                } else if (ch == '#' && canBeSpecial) {
+                    break;
+                } else {
+                    return false;
+                }
+            }
 
-		if (base < 2)
-			return false;
-		if (i == length)
-			return false;
+            if (base < 2)
+                return false;
+            if (i == length)
+                return false;
 
-		i++; // Skip over '#'
+            i++; // Skip over '#'
 
-		// Parse number
-		canBeSpecial = false;
+            // Parse number
+            canBeSpecial = false;
 
-		for (; i < length; i++) {
-			int ch = tolower(number[i]);
+            for (; i < length; i++) {
+                int ch = tolower(number[i]);
 
-			if (ch == '_') {
-				if (!canBeSpecial) {
-					return false;
-				}
-				canBeSpecial = false;
+                if (ch == '_') {
+                    if (!canBeSpecial) {
+                        return false;
+                    }
+                    canBeSpecial = false;
 
-			} else if (ch == '.') {
-				if (!canBeSpecial || seenDot) {
-					return false;
-				}
-				canBeSpecial = false;
-				seenDot = true;
+                } else if (ch == '.') {
+                    if (!canBeSpecial || seenDot) {
+                        return false;
+                    }
+                    canBeSpecial = false;
+                    seenDot = true;
 
-			} else if (IsADigit(ch)) {
-				if (ch - '0' >= base) {
-					return false;
-				}
-				canBeSpecial = true;
+                } else if (IsADigit(ch)) {
+                    if (ch - '0' >= base) {
+                        return false;
+                    }
+                    canBeSpecial = true;
 
-			} else if (ch >= 'a' && ch <= 'f') {
-				if (ch - 'a' + 10 >= base) {
-					return false;
-				}
-				canBeSpecial = true;
+                } else if (ch >= 'a' && ch <= 'f') {
+                    if (ch - 'a' + 10 >= base) {
+                        return false;
+                    }
+                    canBeSpecial = true;
 
-			} else if (ch == '#' && canBeSpecial) {
-				break;
+                } else if (ch == '#' && canBeSpecial) {
+                    break;
 
-			} else {
-				return false;
-			}
-		}
+                } else {
+                    return false;
+                }
+            }
 
-		if (i == length) {
-			return false;
-		}
+            if (i == length) {
+                return false;
+            }
 
-		i++;
-	}
+            i++;
+        }
 
-	// Exponent (optional)
-	if (i < length) {
-		if (number[i] != 'e' && number[i] != 'E')
-			return false;
+        // Exponent (optional)
+        if (i < length) {
+            if (number[i] != 'e' && number[i] != 'E')
+                return false;
 
-		i++; // Move past 'E'
+            i++; // Move past 'E'
 
-		if (i == length) {
-			return false;
-		}
+            if (i == length) {
+                return false;
+            }
 
-		if (number[i] == '+')
-			i++;
-		else if (number[i] == '-') {
-			if (seenDot) {
-				i++;
-			} else {
-				return false; // Integer literals should not have negative exponents
-			}
-		}
+            if (number[i] == '+')
+                i++;
+            else if (number[i] == '-') {
+                if (seenDot) {
+                    i++;
+                } else {
+                    return false; // Integer literals should not have negative exponents
+                }
+            }
 
-		if (i == length) {
-			return false;
-		}
+            if (i == length) {
+                return false;
+            }
 
-		bool canBeSpecial = false;
+            bool canBeSpecial = false;
 
-		for (; i < length; i++) {
-			if (number[i] == '_') {
-				if (!canBeSpecial) {
-					return false;
-				}
-				canBeSpecial = false;
-			} else if (IsADigit(number[i])) {
-				canBeSpecial = true;
-			} else {
-				return false;
-			}
-		}
+            for (; i < length; i++) {
+                if (number[i] == '_') {
+                    if (!canBeSpecial) {
+                        return false;
+                    }
+                    canBeSpecial = false;
+                } else if (IsADigit(number[i])) {
+                    canBeSpecial = true;
+                } else {
+                    return false;
+                }
+            }
 
-		if (!canBeSpecial)
-			return false;
-	}
+            if (!canBeSpecial)
+                return false;
+        }
 
-	// if i == length, number was parsed successfully.
-	return i == length;
-}
+        // if i == length, number was parsed successfully.
+        return i == length;
+    }
 
-static inline bool IsWordCharacter(int ch) {
-	return IsWordStartCharacter(ch) || IsADigit(ch);
-}
+    static inline bool IsWordCharacter(int ch) {
+        return IsWordStartCharacter(ch) || IsADigit(ch);
+    }
 
-static inline bool IsWordStartCharacter(int ch) {
-	return (IsASCII(ch) && isalpha(ch)) || ch == '_';
+    static inline bool IsWordStartCharacter(int ch) {
+        return (IsASCII(ch) && isalpha(ch)) || ch == '_';
+    }
 }

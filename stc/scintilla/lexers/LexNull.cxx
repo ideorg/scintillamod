@@ -23,16 +23,17 @@
 #include "CharacterSet.h"
 #include "LexerModule.h"
 
-using namespace ScintillaMod;
+namespace ScintillaMod {
 
-static void ColouriseNullDoc(Sci_PositionU startPos, Sci_Position length, int, WordList *[],
-                            Accessor &styler) {
-	// Null language means all style bytes are 0 so just mark the end - no need to fill in.
-	if (length > 0) {
-		styler.StartAt(startPos + length - 1);
-		styler.StartSegment(startPos + length - 1);
-		styler.ColourTo(startPos + length - 1, 0);
-	}
+    static void ColouriseNullDoc(Sci_PositionU startPos, Sci_Position length, int, WordList *[],
+                                 Accessor &styler) {
+        // Null language means all style bytes are 0 so just mark the end - no need to fill in.
+        if (length > 0) {
+            styler.StartAt(startPos + length - 1);
+            styler.StartSegment(startPos + length - 1);
+            styler.ColourTo(startPos + length - 1, 0);
+        }
+    }
+
+    LexerModule lmNull(SCLEX_NULL, ColouriseNullDoc, "null");
 }
-
-LexerModule lmNull(SCLEX_NULL, ColouriseNullDoc, "null");

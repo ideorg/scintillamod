@@ -68,7 +68,7 @@
 #include "CharacterSet.h"
 #include "LexerModule.h"
 
-using namespace ScintillaMod;
+namespace ScintillaMod {
 
 static inline bool IsTypeCharacter(const int ch)
 {
@@ -906,6 +906,5 @@ static const char * const AU3WordLists[] = {
     0
 };
 
-namespace ScintillaMod {
     LexerModule lmAU3(SCLEX_AU3, ColouriseAU3Doc, "au3", FoldAU3Doc, AU3WordLists);
 }

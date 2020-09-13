@@ -24,7 +24,7 @@
 #include "CharacterSet.h"
 #include "LexerModule.h"
 
-using namespace ScintillaMod;
+namespace ScintillaMod {
 
 // Is an end of line character
 inline bool IsEOL(const int ch) {
@@ -673,7 +673,6 @@ static const char * const rgWordListDescriptions[] = {
 	0,
 };
 
-namespace ScintillaMod {
 // Case Sensitive Clarion Language Lexer
     LexerModule lmClw(SCLEX_CLW, ColouriseClarionDocSensitive, "clarion", FoldClarionDoc, rgWordListDescriptions);
 

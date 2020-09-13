@@ -53,7 +53,7 @@ set(SOURCE_FILES main.cpp stc/PlatWX.cpp stc/stc.cpp stc/ScintillaWX.cpp
       stc/scintilla/lexlib/StyleContext.cxx
       stc/scintilla/lexlib/WordList.cxx
 
-        #[[stc/scintilla/lexers/LexA68k.cxx
+        stc/scintilla/lexers/LexA68k.cxx
         stc/scintilla/lexers/LexAbaqus.cxx
         stc/scintilla/lexers/LexAda.cxx
         stc/scintilla/lexers/LexAPDL.cxx
@@ -75,12 +75,8 @@ set(SOURCE_FILES main.cpp stc/PlatWX.cpp stc/stc.cpp stc/ScintillaWX.cpp
         stc/scintilla/lexers/LexCmake.cxx
         stc/scintilla/lexers/LexCOBOL.cxx
         stc/scintilla/lexers/LexCoffeeScript.cxx
-        stc/scintilla/lexers/LexConf.cxx]]
+        stc/scintilla/lexers/LexConf.cxx
         stc/scintilla/lexers/LexCPP.cxx
-#[[
-
-
-
        stc/scintilla/lexers/LexCrontab.cxx
        stc/scintilla/lexers/LexCsound.cxx
        stc/scintilla/lexers/LexCSS.cxx
@@ -172,7 +168,6 @@ set(SOURCE_FILES main.cpp stc/PlatWX.cpp stc/stc.cpp stc/ScintillaWX.cpp
        stc/scintilla/lexers/LexVisualProlog.cxx
        stc/scintilla/lexers/LexX12.cxx
        stc/scintilla/lexers/LexYAML.cxx
-]]
         )
 add_executable(test ${SOURCE_FILES})
 

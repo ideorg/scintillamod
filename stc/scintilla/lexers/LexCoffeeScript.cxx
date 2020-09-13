@@ -27,7 +27,7 @@
 #include "CharacterSet.h"
 #include "LexerModule.h"
 
-using namespace ScintillaMod;
+namespace ScintillaMod {
 
 static bool IsSpaceEquiv(int state) {
 	return (state == SCE_COFFEESCRIPT_DEFAULT
@@ -480,7 +480,6 @@ static const char *const csWordLists[] = {
             0,
 };
 
-namespace ScintillaMod {
     LexerModule lmCoffeeScript(SCLEX_COFFEESCRIPT, ColouriseCoffeeScriptDoc, "coffeescript", FoldCoffeeScriptDoc,
                                csWordLists);
 }

@@ -23,7 +23,7 @@
 #include "CharacterSet.h"
 #include "LexerModule.h"
 
-using namespace ScintillaMod;
+namespace ScintillaMod {
 
 static bool Is0To9(char ch) {
 	return (ch >= '0') && (ch <= '9');
@@ -573,6 +573,5 @@ static const char *const batchWordListDesc[] = {
 	0
 };
 
-namespace ScintillaMod {
     LexerModule lmBatch(SCLEX_BATCH, ColouriseBatchDoc, "batch", 0, batchWordListDesc);
 }

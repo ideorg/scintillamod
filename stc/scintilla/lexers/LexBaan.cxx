@@ -36,9 +36,8 @@
 #include "OptionSet.h"
 #include "DefaultLexer.h"
 
-using namespace ScintillaMod;
+namespace ScintillaMod {
 
-namespace {
 // Use an unnamed namespace to protect the functions and classes from name conflicts
 
 // Options used for LexerBaan
@@ -378,7 +377,6 @@ public:
 	};
 };
 
-}
 
 class LexerBaan : public DefaultLexer {
 	WordListAbridged keywords;
@@ -989,6 +987,5 @@ void SCI_METHOD LexerBaan::Fold(Sci_PositionU startPos, Sci_Position length, int
 	styler.SetLevel(lineCurrent, levelPrev | flagsNext);
 }
 
-namespace ScintillaMod {
     LexerModule lmBaan(SCLEX_BAAN, LexerBaan::LexerFactoryBaan, "baan", baanWordLists);
 }

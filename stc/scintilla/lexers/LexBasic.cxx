@@ -39,7 +39,7 @@
 #include "OptionSet.h"
 #include "DefaultLexer.h"
 
-using namespace ScintillaMod;
+namespace ScintillaMod {
 
 /* Bits:
  * 1  - whitespace
@@ -562,7 +562,7 @@ void SCI_METHOD LexerBasic::Fold(Sci_PositionU startPos, Sci_Position length, in
 		}
 	}
 }
-namespace ScintillaMod {
+
     LexerModule lmBlitzBasic(SCLEX_BLITZBASIC, LexerBasic::LexerFactoryBlitzBasic, "blitzbasic",
                              blitzbasicWordListDesc);
 

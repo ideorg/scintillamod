@@ -25,8 +25,7 @@
 #include "CharacterSet.h"
 #include "LexerModule.h"
 
-using namespace ScintillaMod;
-
+namespace ScintillaMod {
 
 static inline bool IsAWordChar(const int ch) {
 	return (ch < 0x80) && (isalnum(ch) || ch == '.' || ch == '_');
@@ -225,7 +224,6 @@ static void FoldAveDoc(Sci_PositionU startPos, Sci_Position length, int /* initS
 	styler.SetLevel(lineCurrent, levelPrev | flagsNext);
 }
 
-namespace ScintillaMod {
     LexerModule lmAVE(SCLEX_AVE, ColouriseAveDoc, "ave", FoldAveDoc);
 }
 

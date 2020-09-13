@@ -24,7 +24,7 @@
 #include "CharacterSet.h"
 #include "LexerModule.h"
 
-using namespace ScintillaMod;
+namespace ScintillaMod {
 
 static inline bool IsAWordChar(const int ch) {
 	return (ch < 0x80 && (isalnum(ch) || ch == '_'));
@@ -254,6 +254,5 @@ static const char * const apdlWordListDesc[] = {
     0
 };
 
-namespace ScintillaMod {
     LexerModule lmAPDL(SCLEX_APDL, ColouriseAPDLDoc, "apdl", FoldAPDLDoc, apdlWordListDesc);
 }

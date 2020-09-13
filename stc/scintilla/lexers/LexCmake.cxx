@@ -24,7 +24,7 @@
 #include "CharacterSet.h"
 #include "LexerModule.h"
 
-using namespace ScintillaMod;
+namespace ScintillaMod {
 
 static bool isCmakeNumber(char ch)
 {
@@ -453,6 +453,5 @@ static const char * const cmakeWordLists[] = {
     0,
     0,};
 
-namespace ScintillaMod {
     LexerModule lmCmake(SCLEX_CMAKE, ColouriseCmakeDoc, "cmake", FoldCmakeDoc, cmakeWordLists);
 }

@@ -34,8 +34,6 @@
 
 using namespace ScintillaMod;
 
-namespace {
-    // Use an unnamed namespace to protect the functions and classes from name conflicts
 
 bool IsAWordChar(const int ch) {
     return (ch < 0x80) && (isalnum(ch) || ch == '_' || ch == '.');
@@ -91,7 +89,7 @@ struct OptionSetCIL : public OptionSet<OptionsCIL> {
     }
 };
 
-LexicalClass lexicalClasses[] = {
+static LexicalClass lexicalClasses[] = {
     // Lexer CIL SCLEX_CIL SCE_CIL_:
     0,  "SCE_CIL_DEFAULT",     "default",              "White space",
     1,  "SCE_CIL_COMMENT",     "comment",              "Multi-line comment",
@@ -106,7 +104,6 @@ LexicalClass lexicalClasses[] = {
     10, "SCE_CIL_IDENTIFIER",  "identifier",           "Identifiers",
 };
 
-}
 
 class LexerCIL : public DefaultLexer {
     WordList keywords, keywords2, keywords3;

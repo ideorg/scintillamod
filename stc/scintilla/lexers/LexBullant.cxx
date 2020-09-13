@@ -19,7 +19,7 @@
 #include "CharacterSet.h"
 #include "LexerModule.h"
 
-using namespace ScintillaMod;
+namespace ScintillaMod {
 
 static int classifyWordBullant(Sci_PositionU start, Sci_PositionU end, WordList &keywords, Accessor &styler) {
 	char s[100];
@@ -228,6 +228,5 @@ static const char * const bullantWordListDesc[] = {
 	0
 };
 
-namespace ScintillaMod {
     LexerModule lmBullant(SCLEX_BULLANT, ColouriseBullantDoc, "bullant", 0, bullantWordListDesc);
 }
