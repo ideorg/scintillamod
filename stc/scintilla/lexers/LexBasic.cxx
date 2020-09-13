@@ -562,9 +562,11 @@ void SCI_METHOD LexerBasic::Fold(Sci_PositionU startPos, Sci_Position length, in
 		}
 	}
 }
+namespace ScintillaMod {
+    LexerModule lmBlitzBasic(SCLEX_BLITZBASIC, LexerBasic::LexerFactoryBlitzBasic, "blitzbasic",
+                             blitzbasicWordListDesc);
 
-LexerModule lmBlitzBasic(SCLEX_BLITZBASIC, LexerBasic::LexerFactoryBlitzBasic, "blitzbasic", blitzbasicWordListDesc);
+    LexerModule lmPureBasic(SCLEX_PUREBASIC, LexerBasic::LexerFactoryPureBasic, "purebasic", purebasicWordListDesc);
 
-LexerModule lmPureBasic(SCLEX_PUREBASIC, LexerBasic::LexerFactoryPureBasic, "purebasic", purebasicWordListDesc);
-
-LexerModule lmFreeBasic(SCLEX_FREEBASIC, LexerBasic::LexerFactoryFreeBasic, "freebasic", freebasicWordListDesc);
+    LexerModule lmFreeBasic(SCLEX_FREEBASIC, LexerBasic::LexerFactoryFreeBasic, "freebasic", freebasicWordListDesc);
+}

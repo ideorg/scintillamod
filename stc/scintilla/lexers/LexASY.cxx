@@ -267,4 +267,6 @@ static const char * const asyWordLists[] = {
             0,
         };
 
-LexerModule lmASY(SCLEX_ASYMPTOTE, ColouriseAsyDoc, "asy", FoldAsyDoc, asyWordLists);
+namespace ScintillaMod {
+    LexerModule lmASY(SCLEX_ASYMPTOTE, ColouriseAsyDoc, "asy", FoldAsyDoc, asyWordLists);
+}

@@ -341,5 +341,6 @@ static const char * const a68kWordListDesc[] =
     "Doxygen keywords",
     0
 };
-
-LexerModule lmA68k(SCLEX_A68K, ColouriseA68kDoc, "a68k", 0, a68kWordListDesc);
+namespace ScintillaMod {
+    LexerModule lmA68k(SCLEX_A68K, ColouriseA68kDoc, "a68k", 0, a68kWordListDesc);
+}

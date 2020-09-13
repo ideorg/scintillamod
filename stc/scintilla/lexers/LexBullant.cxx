@@ -228,4 +228,6 @@ static const char * const bullantWordListDesc[] = {
 	0
 };
 
-LexerModule lmBullant(SCLEX_BULLANT, ColouriseBullantDoc, "bullant", 0, bullantWordListDesc);
+namespace ScintillaMod {
+    LexerModule lmBullant(SCLEX_BULLANT, ColouriseBullantDoc, "bullant", 0, bullantWordListDesc);
+}

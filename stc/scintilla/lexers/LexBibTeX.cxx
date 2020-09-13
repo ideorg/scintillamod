@@ -297,8 +297,9 @@ static const char * const BibTeXWordLists[] = {
             0,
 };
 
-
-LexerModule lmBibTeX(SCLEX_BIBTEX, ColorizeBibTeX, "bib", 0, BibTeXWordLists);
+namespace ScintillaMod {
+    LexerModule lmBibTeX(SCLEX_BIBTEX, ColorizeBibTeX, "bib", 0, BibTeXWordLists);
+}
 
 // Entry Names
 //    article, book, booklet, conference, inbook,

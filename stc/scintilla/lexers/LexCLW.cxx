@@ -673,8 +673,11 @@ static const char * const rgWordListDescriptions[] = {
 	0,
 };
 
+namespace ScintillaMod {
 // Case Sensitive Clarion Language Lexer
-LexerModule lmClw(SCLEX_CLW, ColouriseClarionDocSensitive, "clarion", FoldClarionDoc, rgWordListDescriptions);
+    LexerModule lmClw(SCLEX_CLW, ColouriseClarionDocSensitive, "clarion", FoldClarionDoc, rgWordListDescriptions);
 
 // Case Insensitive Clarion Language Lexer
-LexerModule lmClwNoCase(SCLEX_CLWNOCASE, ColouriseClarionDocInsensitive, "clarionnocase", FoldClarionDoc, rgWordListDescriptions);
+    LexerModule lmClwNoCase(SCLEX_CLWNOCASE, ColouriseClarionDocInsensitive, "clarionnocase", FoldClarionDoc,
+                            rgWordListDescriptions);
+}

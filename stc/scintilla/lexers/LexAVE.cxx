@@ -225,5 +225,7 @@ static void FoldAveDoc(Sci_PositionU startPos, Sci_Position length, int /* initS
 	styler.SetLevel(lineCurrent, levelPrev | flagsNext);
 }
 
-LexerModule lmAVE(SCLEX_AVE, ColouriseAveDoc, "ave", FoldAveDoc);
+namespace ScintillaMod {
+    LexerModule lmAVE(SCLEX_AVE, ColouriseAveDoc, "ave", FoldAveDoc);
+}
 

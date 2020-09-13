@@ -288,4 +288,6 @@ static const char * const avsWordLists[] = {
 	0,
 };
 
-LexerModule lmAVS(SCLEX_AVS, ColouriseAvsDoc, "avs", FoldAvsDoc, avsWordLists);
+namespace ScintillaMod {
+    LexerModule lmAVS(SCLEX_AVS, ColouriseAvsDoc, "avs", FoldAvsDoc, avsWordLists);
+}

@@ -187,4 +187,6 @@ static const char * const confWordListDesc[] = {
 	0
 };
 
-LexerModule lmConf(SCLEX_CONF, ColouriseConfDoc, "conf", 0, confWordListDesc);
+namespace ScintillaMod {
+    LexerModule lmConf(SCLEX_CONF, ColouriseConfDoc, "conf", 0, confWordListDesc);
+}

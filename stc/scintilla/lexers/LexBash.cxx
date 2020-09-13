@@ -1083,4 +1083,6 @@ void SCI_METHOD LexerBash::Fold(Sci_PositionU startPos, Sci_Position length, int
 	styler.SetLevel(lineCurrent, levelPrev | flagsNext);
 }
 
-LexerModule lmBash(SCLEX_BASH, LexerBash::LexerFactoryBash, "bash", bashWordListDesc);
+namespace ScintillaMod {
+    LexerModule lmBash(SCLEX_BASH, LexerBash::LexerFactoryBash, "bash", bashWordListDesc);
+}

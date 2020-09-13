@@ -254,4 +254,6 @@ static const char * const apdlWordListDesc[] = {
     0
 };
 
-LexerModule lmAPDL(SCLEX_APDL, ColouriseAPDLDoc, "apdl", FoldAPDLDoc, apdlWordListDesc);
+namespace ScintillaMod {
+    LexerModule lmAPDL(SCLEX_APDL, ColouriseAPDLDoc, "apdl", FoldAPDLDoc, apdlWordListDesc);
+}

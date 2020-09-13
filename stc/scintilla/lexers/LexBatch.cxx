@@ -573,4 +573,6 @@ static const char *const batchWordListDesc[] = {
 	0
 };
 
-LexerModule lmBatch(SCLEX_BATCH, ColouriseBatchDoc, "batch", 0, batchWordListDesc);
+namespace ScintillaMod {
+    LexerModule lmBatch(SCLEX_BATCH, ColouriseBatchDoc, "batch", 0, batchWordListDesc);
+}

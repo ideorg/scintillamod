@@ -52,6 +52,127 @@ set(SOURCE_FILES main.cpp stc/PlatWX.cpp stc/stc.cpp stc/ScintillaWX.cpp
       stc/scintilla/lexlib/PropSetSimple.cxx
       stc/scintilla/lexlib/StyleContext.cxx
       stc/scintilla/lexlib/WordList.cxx
+
+        #[[stc/scintilla/lexers/LexA68k.cxx
+        stc/scintilla/lexers/LexAbaqus.cxx
+        stc/scintilla/lexers/LexAda.cxx
+        stc/scintilla/lexers/LexAPDL.cxx
+        stc/scintilla/lexers/LexAsm.cxx
+        stc/scintilla/lexers/LexAsn1.cxx
+        stc/scintilla/lexers/LexASY.cxx
+        stc/scintilla/lexers/LexAU3.cxx
+        stc/scintilla/lexers/LexAVE.cxx
+        stc/scintilla/lexers/LexAVS.cxx
+        stc/scintilla/lexers/LexBaan.cxx
+        stc/scintilla/lexers/LexBash.cxx
+        stc/scintilla/lexers/LexBasic.cxx
+        stc/scintilla/lexers/LexBatch.cxx
+        stc/scintilla/lexers/LexBibTeX.cxx
+        stc/scintilla/lexers/LexBullant.cxx
+        stc/scintilla/lexers/LexCaml.cxx
+        stc/scintilla/lexers/LexCIL.cxx
+        stc/scintilla/lexers/LexCLW.cxx
+        stc/scintilla/lexers/LexCmake.cxx
+        stc/scintilla/lexers/LexCOBOL.cxx
+        stc/scintilla/lexers/LexCoffeeScript.cxx
+        stc/scintilla/lexers/LexConf.cxx]]
+        stc/scintilla/lexers/LexCPP.cxx
+#[[
+
+
+
+       stc/scintilla/lexers/LexCrontab.cxx
+       stc/scintilla/lexers/LexCsound.cxx
+       stc/scintilla/lexers/LexCSS.cxx
+       stc/scintilla/lexers/LexDataflex.cxx
+       stc/scintilla/lexers/LexD.cxx
+       stc/scintilla/lexers/LexDiff.cxx
+       stc/scintilla/lexers/LexDMAP.cxx
+       stc/scintilla/lexers/LexDMIS.cxx
+       stc/scintilla/lexers/LexECL.cxx
+       stc/scintilla/lexers/LexEDIFACT.cxx
+       stc/scintilla/lexers/LexEiffel.cxx
+       stc/scintilla/lexers/LexErlang.cxx
+       stc/scintilla/lexers/LexErrorList.cxx
+       stc/scintilla/lexers/LexEScript.cxx
+       stc/scintilla/lexers/LexFlagship.cxx
+       stc/scintilla/lexers/LexForth.cxx
+       stc/scintilla/lexers/LexFortran.cxx
+       stc/scintilla/lexers/LexGAP.cxx
+       stc/scintilla/lexers/LexGui4Cli.cxx
+       stc/scintilla/lexers/LexHaskell.cxx
+       stc/scintilla/lexers/LexHex.cxx
+       stc/scintilla/lexers/LexHollywood.cxx
+       stc/scintilla/lexers/LexHTML.cxx
+       stc/scintilla/lexers/LexIndent.cxx
+       stc/scintilla/lexers/LexInno.cxx
+       stc/scintilla/lexers/LexJSON.cxx
+       stc/scintilla/lexers/LexKix.cxx
+       stc/scintilla/lexers/LexKVIrc.cxx
+       stc/scintilla/lexers/LexLaTeX.cxx
+       stc/scintilla/lexers/LexLisp.cxx
+       stc/scintilla/lexers/LexLout.cxx
+       stc/scintilla/lexers/LexLPeg.cxx
+       stc/scintilla/lexers/LexLua.cxx
+       stc/scintilla/lexers/LexMagik.cxx
+       stc/scintilla/lexers/LexMake.cxx
+       stc/scintilla/lexers/LexMarkdown.cxx
+       stc/scintilla/lexers/LexMatlab.cxx
+       stc/scintilla/lexers/LexMaxima.cxx
+       stc/scintilla/lexers/LexMetapost.cxx
+       stc/scintilla/lexers/LexMMIXAL.cxx
+       stc/scintilla/lexers/LexModula.cxx
+       stc/scintilla/lexers/LexMPT.cxx
+       stc/scintilla/lexers/LexMSSQL.cxx
+       stc/scintilla/lexers/LexMySQL.cxx
+       stc/scintilla/lexers/LexNim.cxx
+       stc/scintilla/lexers/LexNimrod.cxx
+       stc/scintilla/lexers/LexNsis.cxx
+       stc/scintilla/lexers/LexNull.cxx
+       stc/scintilla/lexers/LexOpal.cxx
+       stc/scintilla/lexers/LexOScript.cxx
+       stc/scintilla/lexers/LexPascal.cxx
+       stc/scintilla/lexers/LexPB.cxx
+       stc/scintilla/lexers/LexPerl.cxx
+       stc/scintilla/lexers/LexPLM.cxx
+       stc/scintilla/lexers/LexPO.cxx
+       stc/scintilla/lexers/LexPOV.cxx
+       stc/scintilla/lexers/LexPowerPro.cxx
+       stc/scintilla/lexers/LexPowerShell.cxx
+       stc/scintilla/lexers/LexProgress.cxx
+       stc/scintilla/lexers/LexProps.cxx
+       stc/scintilla/lexers/LexPS.cxx
+       stc/scintilla/lexers/LexPython.cxx
+       stc/scintilla/lexers/LexRaku.cxx
+       stc/scintilla/lexers/LexR.cxx
+       stc/scintilla/lexers/LexRebol.cxx
+       stc/scintilla/lexers/LexRegistry.cxx
+       stc/scintilla/lexers/LexRuby.cxx
+       stc/scintilla/lexers/LexRust.cxx
+       stc/scintilla/lexers/LexSAS.cxx
+       stc/scintilla/lexers/LexScriptol.cxx
+       stc/scintilla/lexers/LexSmalltalk.cxx
+       stc/scintilla/lexers/LexSML.cxx
+       stc/scintilla/lexers/LexSorcus.cxx
+       stc/scintilla/lexers/LexSpecman.cxx
+       stc/scintilla/lexers/LexSpice.cxx
+       stc/scintilla/lexers/LexSQL.cxx
+       stc/scintilla/lexers/LexStata.cxx
+       stc/scintilla/lexers/LexSTTXT.cxx
+       stc/scintilla/lexers/LexTACL.cxx
+       stc/scintilla/lexers/LexTADS3.cxx
+       stc/scintilla/lexers/LexTAL.cxx
+       stc/scintilla/lexers/LexTCL.cxx
+       stc/scintilla/lexers/LexTCMD.cxx
+       stc/scintilla/lexers/LexTeX.cxx
+       stc/scintilla/lexers/LexTxt2tags.cxx
+       stc/scintilla/lexers/LexVB.cxx
+       stc/scintilla/lexers/LexVerilog.cxx
+       stc/scintilla/lexers/LexVHDL.cxx
+       stc/scintilla/lexers/LexVisualProlog.cxx
+       stc/scintilla/lexers/LexX12.cxx
+       stc/scintilla/lexers/LexYAML.cxx
+]]
         )
 add_executable(test ${SOURCE_FILES})
 

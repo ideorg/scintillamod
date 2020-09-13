@@ -480,4 +480,7 @@ static const char *const csWordLists[] = {
             0,
 };
 
-LexerModule lmCoffeeScript(SCLEX_COFFEESCRIPT, ColouriseCoffeeScriptDoc, "coffeescript", FoldCoffeeScriptDoc, csWordLists);
+namespace ScintillaMod {
+    LexerModule lmCoffeeScript(SCLEX_COFFEESCRIPT, ColouriseCoffeeScriptDoc, "coffeescript", FoldCoffeeScriptDoc,
+                               csWordLists);
+}

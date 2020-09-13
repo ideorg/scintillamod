@@ -600,4 +600,6 @@ static const char * const abaqusWordListDesc[] = {
     0
 };
 
-LexerModule lmAbaqus(SCLEX_ABAQUS, ColouriseABAQUSDoc, "abaqus", FoldABAQUSDoc, abaqusWordListDesc);
+namespace ScintillaMod {
+    LexerModule lmAbaqus(SCLEX_ABAQUS, ColouriseABAQUSDoc, "abaqus", FoldABAQUSDoc, abaqusWordListDesc);
+}

@@ -27,6 +27,8 @@
 #define PLAT_TK 0
 #define PLAT_HAIKU 0
 
+#define SCI_LEXER 1
+
 #if defined(FOX)
 #undef PLAT_FOX
 #define PLAT_FOX 1

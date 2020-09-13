@@ -455,6 +455,8 @@ static const char * const camlWordListDesc[] = {
 	0
 };
 
+namespace ScintillaMod {
 #ifndef BUILD_AS_EXTERNAL_LEXER
-LexerModule lmCaml(SCLEX_CAML, ColouriseCamlDoc, "caml", FoldCamlDoc, camlWordListDesc);
-#endif	/* BUILD_AS_EXTERNAL_LEXER */
+    LexerModule lmCaml(SCLEX_CAML, ColouriseCamlDoc, "caml", FoldCamlDoc, camlWordListDesc);
+#endif    /* BUILD_AS_EXTERNAL_LEXER */
+}
