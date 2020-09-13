@@ -29,13 +29,13 @@
 #include "OptionSet.h"
 #include "DefaultLexer.h"
 
-using namespace ScintillaMod;
+namespace ScintillaMod {
 
-static const char *const JSONWordListDesc[] = {
+    static const char *const JSONWordListDesc[] = {
 	"JSON Keywords",
 	"JSON-LD Keywords",
 	0
-};
+    };
 
 /**
  * Used to detect compact IRI/URLs in JSON-LD without first looking ahead for the
@@ -43,19 +43,22 @@ static const char *const JSONWordListDesc[] = {
  *
  * https://www.w3.org/TR/json-ld/#dfn-compact-iri
  */
-struct CompactIRI {
+    struct CompactIRI {
 	int colonCount;
 	bool foundInvalidChar;
 	CharacterSet setCompactIRI;
+
 	CompactIRI() {
 		colonCount = 0;
 		foundInvalidChar = false;
 		setCompactIRI = CharacterSet(CharacterSet::setAlpha, "$_-");
 	}
+
 	void resetState() {
 		colonCount = 0;
 		foundInvalidChar = false;
 	}
+
 	void checkChar(int ch) {
 		if (ch == ':') {
 			colonCount++;
@@ -63,25 +66,28 @@ struct CompactIRI {
 			foundInvalidChar |= !setCompactIRI.Contains(ch);
 		}
 	}
+
 	bool shouldHighlight() const {
 		return !foundInvalidChar && colonCount == 1;
 	}
-};
+    };
 
 /**
  * Keeps track of escaped characters in strings as per:
  *
  * https://tools.ietf.org/html/rfc7159#section-7
  */
-struct EscapeSequence {
+    struct EscapeSequence {
 	int digitsLeft;
 	CharacterSet setHexDigits;
 	CharacterSet setEscapeChars;
+
 	EscapeSequence() {
 		digitsLeft = 0;
 		setHexDigits = CharacterSet(CharacterSet::setDigits, "ABCDEFabcdef");
 		setEscapeChars = CharacterSet(CharacterSet::setNone, "\\\"tnbfru/");
 	}
+
 	// Returns true if the following character is a valid escaped character
 	bool newSequence(int nextChar) {
 		digitsLeft = 0;
@@ -92,28 +98,31 @@ struct EscapeSequence {
 		}
 		return true;
 	}
+
 	bool atEscapeEnd() const {
 		return digitsLeft <= 0;
 	}
+
 	bool isInvalidChar(int currChar) const {
 		return !setHexDigits.Contains(currChar);
 	}
-};
+    };
 
-struct OptionsJSON {
+    struct OptionsJSON {
 	bool foldCompact;
 	bool fold;
 	bool allowComments;
 	bool escapeSequence;
+
 	OptionsJSON() {
 		foldCompact = false;
 		fold = false;
 		allowComments = false;
 		escapeSequence = false;
 	}
-};
+    };
 
-struct OptionSetJSON : public OptionSet<OptionsJSON> {
+    struct OptionSetJSON : public OptionSet<OptionsJSON> {
 	OptionSetJSON() {
 		DefineProperty("lexer.json.escape.sequence", &OptionsJSON::escapeSequence,
 					   "Set to 1 to enable highlighting of escape sequences in strings");
@@ -125,9 +134,9 @@ struct OptionSetJSON : public OptionSet<OptionsJSON> {
 		DefineProperty("fold", &OptionsJSON::fold);
 		DefineWordListSets(JSONWordListDesc);
 	}
-};
+    };
 
-class LexerJSON : public DefaultLexer {
+    class LexerJSON : public DefaultLexer {
 	OptionsJSON options;
 	OptionSetJSON optSetJSON;
 	EscapeSequence escapeSeq;
@@ -143,8 +152,8 @@ class LexerJSON : public DefaultLexer {
 		Sci_Position i = 0;
 		while (i < 50) {
 			i++;
-			char curr = styler.SafeGetCharAt(start+i, '\0');
-			char next = styler.SafeGetCharAt(start+i+1, '\0');
+                char curr = styler.SafeGetCharAt(start + i, '\0');
+                char next = styler.SafeGetCharAt(start + i + 1, '\0');
 			bool atEOL = (curr == '\r' && next != '\n') || (curr == '\n');
 			if (curr == ch) {
 				return true;
@@ -167,14 +176,14 @@ class LexerJSON : public DefaultLexer {
 		bool escaped = false;
 		while (i < 100) {
 			i++;
-			char curr = styler.SafeGetCharAt(start+i, '\0');
+                char curr = styler.SafeGetCharAt(start + i, '\0');
 			if (escaped) {
 				escaped = false;
 				continue;
 			}
 			escaped = curr == '\\';
 			if (curr == '"') {
-				return IsNextNonWhitespace(styler, start+i, ':');
+                    return IsNextNonWhitespace(styler, start + i, ':');
 			} else if (!curr) {
 				return false;
 			}
@@ -207,31 +216,40 @@ class LexerJSON : public DefaultLexer {
 		setKeywordJSONLD(CharacterSet::setAlpha, ":@"),
 		setKeywordJSON(CharacterSet::setAlpha, "$_") {
 	}
+
 	virtual ~LexerJSON() {}
+
 	int SCI_METHOD Version() const override {
 		return lvRelease5;
 	}
+
 	void SCI_METHOD Release() override {
 		delete this;
 	}
+
 	const char *SCI_METHOD PropertyNames() override {
 		return optSetJSON.PropertyNames();
 	}
+
 	int SCI_METHOD PropertyType(const char *name) override {
 		return optSetJSON.PropertyType(name);
 	}
+
 	const char *SCI_METHOD DescribeProperty(const char *name) override {
 		return optSetJSON.DescribeProperty(name);
 	}
+
 	Sci_Position SCI_METHOD PropertySet(const char *key, const char *val) override {
 		if (optSetJSON.PropertySet(&options, key, val)) {
 			return 0;
 		}
 		return -1;
 	}
-	const char * SCI_METHOD PropertyGet(const char *key) override {
+
+        const char *SCI_METHOD PropertyGet(const char *key) override {
 		return optSetJSON.PropertyGet(key);
 	}
+
 	Sci_Position SCI_METHOD WordListSet(int n, const char *wl) override {
 		WordList *wordListN = 0;
 		switch (n) {
@@ -253,26 +271,31 @@ class LexerJSON : public DefaultLexer {
 		}
 		return firstModification;
 	}
+
 	void *SCI_METHOD PrivateCall(int, void *) override {
 		return 0;
 	}
+
 	static ILexer5 *LexerFactoryJSON() {
 		return new LexerJSON;
 	}
+
 	const char *SCI_METHOD DescribeWordListSets() override {
 		return optSetJSON.DescribeWordListSets();
 	}
+
 	void SCI_METHOD Lex(Sci_PositionU startPos,
 								Sci_Position length,
 								int initStyle,
 								IDocument *pAccess) override;
+
 	void SCI_METHOD Fold(Sci_PositionU startPos,
 								 Sci_Position length,
 								 int initStyle,
 								 IDocument *pAccess) override;
-};
+    };
 
-void SCI_METHOD LexerJSON::Lex(Sci_PositionU startPos,
+    void SCI_METHOD LexerJSON::Lex(Sci_PositionU startPos,
 							   Sci_Position length,
 							   int initStyle,
 							   IDocument *pAccess) {
@@ -410,7 +433,7 @@ void SCI_METHOD LexerJSON::Lex(Sci_PositionU startPos,
 				}
 			}
 			bool numberStart =
-				IsADigit(context.ch) && (context.chPrev == '+'||
+                        IsADigit(context.ch) && (context.chPrev == '+' ||
 										 context.chPrev == '-' ||
 										 context.atLineStart ||
 										 IsASpace(context.chPrev) ||
@@ -448,9 +471,9 @@ void SCI_METHOD LexerJSON::Lex(Sci_PositionU startPos,
 		context.Forward();
 	}
 	context.Complete();
-}
+    }
 
-void SCI_METHOD LexerJSON::Fold(Sci_PositionU startPos,
+    void SCI_METHOD LexerJSON::Fold(Sci_PositionU startPos,
 								Sci_Position length,
 								int,
 								IDocument *pAccess) {
@@ -467,7 +490,7 @@ void SCI_METHOD LexerJSON::Fold(Sci_PositionU startPos,
 	int visibleChars = 0;
 	for (Sci_PositionU i = startPos; i < endPos; i++) {
 		char curr = styler.SafeGetCharAt(i);
-		char next = styler.SafeGetCharAt(i+1);
+            char next = styler.SafeGetCharAt(i + 1);
 		bool atEOL = (curr == '\r' && next != '\n') || (curr == '\n');
 		if (styler.StyleAt(i) == SCE_JSON_OPERATOR) {
 			if (curr == '{' || curr == '[') {
@@ -476,7 +499,7 @@ void SCI_METHOD LexerJSON::Fold(Sci_PositionU startPos,
 				nextLevel--;
 			}
 		}
-		if (atEOL || i == (endPos-1)) {
+            if (atEOL || i == (endPos - 1)) {
 			int level = currLevel | nextLevel << 16;
 			if (!visibleChars && options.foldCompact) {
 				level |= SC_FOLDLEVELWHITEFLAG;
@@ -494,9 +517,10 @@ void SCI_METHOD LexerJSON::Fold(Sci_PositionU startPos,
 			visibleChars++;
 		}
 	}
-}
+    }
 
-LexerModule lmJSON(SCLEX_JSON,
+    LexerModule lmJSON(SCLEX_JSON,
 				   LexerJSON::LexerFactoryJSON,
 				   "json",
 				   JSONWordListDesc);
+}

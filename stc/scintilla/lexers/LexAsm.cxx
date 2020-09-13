@@ -32,7 +32,7 @@
 #include "OptionSet.h"
 #include "DefaultLexer.h"
 
-using namespace ScintillaMod;
+namespace ScintillaMod {
 
 static inline bool IsAWordChar(const int ch) {
 	return (ch < 0x80) && (isalnum(ch) || ch == '.' ||
@@ -472,6 +472,7 @@ void SCI_METHOD LexerAsm::Fold(Sci_PositionU startPos, Sci_Position length, int 
 	}
 }
 
-LexerModule lmAsm(SCLEX_ASM, LexerAsm::LexerFactoryAsm, "asm", asmWordListDesc);
-LexerModule lmAs(SCLEX_AS, LexerAsm::LexerFactoryAs, "as", asmWordListDesc);
+    LexerModule lmAsm(SCLEX_ASM, LexerAsm::LexerFactoryAsm, "asm", asmWordListDesc);
+    LexerModule lmAs(SCLEX_AS, LexerAsm::LexerFactoryAs, "as", asmWordListDesc);
+}
 

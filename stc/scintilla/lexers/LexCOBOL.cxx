@@ -26,7 +26,7 @@
 #include "CharacterSet.h"
 #include "LexerModule.h"
 
-using namespace ScintillaMod;
+namespace ScintillaMod {
 
 #define IN_DIVISION 0x01
 #define IN_DECLARATIVES 0x02
@@ -376,4 +376,5 @@ static const char * const COBOLWordListDesc[] = {
     0
 };
 
-LexerModule lmCOBOL(SCLEX_COBOL, ColouriseCOBOLDoc, "COBOL", FoldCOBOLDoc, COBOLWordListDesc);
+    LexerModule lmCOBOL(SCLEX_COBOL, ColouriseCOBOLDoc, "COBOL", FoldCOBOLDoc, COBOLWordListDesc);
+}

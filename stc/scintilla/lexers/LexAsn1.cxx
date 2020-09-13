@@ -23,7 +23,7 @@
 #include "CharacterSet.h"
 #include "LexerModule.h"
 
-using namespace ScintillaMod;
+namespace ScintillaMod {
 
 // Some char test functions
 static bool isAsn1Number(int ch)
@@ -183,4 +183,5 @@ static const char * const asn1WordLists[] = {
 	0, };
 
 
-LexerModule lmAsn1(SCLEX_ASN1, ColouriseAsn1Doc, "asn1", FoldAsn1Doc, asn1WordLists);
+    LexerModule lmAsn1(SCLEX_ASN1, ColouriseAsn1Doc, "asn1", FoldAsn1Doc, asn1WordLists);
+}

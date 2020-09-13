@@ -44,62 +44,62 @@
 #include "OptionSet.h"
 #include "DefaultLexer.h"
 
-using namespace ScintillaMod;
+namespace ScintillaMod {
 
 // See https://github.com/ghc/ghc/blob/master/compiler/parser/Lexer.x#L1682
 // Note, letter modifiers are prohibited.
 
-static int u_iswupper (int ch) {
+    static int u_iswupper(int ch) {
    CharacterCategory c = CategoriseCharacter(ch);
    return c == ccLu || c == ccLt;
-}
+    }
 
-static int u_iswalpha (int ch) {
+    static int u_iswalpha(int ch) {
    CharacterCategory c = CategoriseCharacter(ch);
    return c == ccLl || c == ccLu || c == ccLt || c == ccLo;
-}
+    }
 
-static int u_iswalnum (int ch) {
+    static int u_iswalnum(int ch) {
    CharacterCategory c = CategoriseCharacter(ch);
    return c == ccLl || c == ccLu || c == ccLt || c == ccLo
        || c == ccNd || c == ccNo;
-}
+    }
 
-static int u_IsHaskellSymbol(int ch) {
+    static int u_IsHaskellSymbol(int ch) {
    CharacterCategory c = CategoriseCharacter(ch);
    return c == ccPc || c == ccPd || c == ccPo
        || c == ccSm || c == ccSc || c == ccSk || c == ccSo;
-}
+    }
 
-static inline bool IsHaskellLetter(const int ch) {
+    static inline bool IsHaskellLetter(const int ch) {
    if (IsASCII(ch)) {
       return (ch >= 'a' && ch <= 'z')
           || (ch >= 'A' && ch <= 'Z');
    } else {
       return u_iswalpha(ch) != 0;
    }
-}
+    }
 
-static inline bool IsHaskellAlphaNumeric(const int ch) {
+    static inline bool IsHaskellAlphaNumeric(const int ch) {
    if (IsASCII(ch)) {
       return IsAlphaNumeric(ch);
    } else {
       return u_iswalnum(ch) != 0;
    }
-}
+    }
 
-static inline bool IsHaskellUpperCase(const int ch) {
+    static inline bool IsHaskellUpperCase(const int ch) {
    if (IsASCII(ch)) {
       return ch >= 'A' && ch <= 'Z';
    } else {
       return u_iswupper(ch) != 0;
    }
-}
+    }
 
-static inline bool IsAnHaskellOperatorChar(const int ch) {
+    static inline bool IsAnHaskellOperatorChar(const int ch) {
    if (IsASCII(ch)) {
       return
-         (  ch == '!' || ch == '#' || ch == '$' || ch == '%'
+                    (ch == '!' || ch == '#' || ch == '$' || ch == '%'
          || ch == '&' || ch == '*' || ch == '+' || ch == '-'
          || ch == '.' || ch == '/' || ch == ':' || ch == '<'
          || ch == '=' || ch == '>' || ch == '?' || ch == '@'
@@ -107,43 +107,43 @@ static inline bool IsAnHaskellOperatorChar(const int ch) {
    } else {
       return u_IsHaskellSymbol(ch) != 0;
    }
-}
+    }
 
-static inline bool IsAHaskellWordStart(const int ch) {
+    static inline bool IsAHaskellWordStart(const int ch) {
    return IsHaskellLetter(ch) || ch == '_';
-}
+    }
 
-static inline bool IsAHaskellWordChar(const int ch) {
-   return (  IsHaskellAlphaNumeric(ch)
+    static inline bool IsAHaskellWordChar(const int ch) {
+        return (IsHaskellAlphaNumeric(ch)
           || ch == '_'
           || ch == '\'');
-}
+    }
 
-static inline bool IsCommentBlockStyle(int style) {
+    static inline bool IsCommentBlockStyle(int style) {
    return (style >= SCE_HA_COMMENTBLOCK && style <= SCE_HA_COMMENTBLOCK3);
-}
+    }
 
-static inline bool IsCommentStyle(int style) {
+    static inline bool IsCommentStyle(int style) {
    return (style >= SCE_HA_COMMENTLINE && style <= SCE_HA_COMMENTBLOCK3)
-       || ( style == SCE_HA_LITERATE_COMMENT
+               || (style == SCE_HA_LITERATE_COMMENT
          || style == SCE_HA_LITERATE_CODEDELIM);
-}
+    }
 
 // styles which do not belong to Haskell, but to external tools
-static inline bool IsExternalStyle(int style) {
-   return ( style == SCE_HA_PREPROCESSOR
+    static inline bool IsExternalStyle(int style) {
+        return (style == SCE_HA_PREPROCESSOR
          || style == SCE_HA_LITERATE_COMMENT
          || style == SCE_HA_LITERATE_CODEDELIM);
-}
+    }
 
-static inline int CommentBlockStyleFromNestLevel(const unsigned int nestLevel) {
+    static inline int CommentBlockStyleFromNestLevel(const unsigned int nestLevel) {
    return SCE_HA_COMMENTBLOCK + (nestLevel % 3);
-}
+    }
 
 // Mangled version of lexlib/Accessor.cxx IndentAmount.
 // Modified to treat comment blocks as whitespace
 // plus special case for commentline/preprocessor.
-static int HaskellIndentAmount(Accessor &styler, const Sci_Position line) {
+    static int HaskellIndentAmount(Accessor &styler, const Sci_Position line) {
 
    // Determines the indentation level of the current line
    // Comment blocks are treated as whitespace
@@ -157,9 +157,9 @@ static int HaskellIndentAmount(Accessor &styler, const Sci_Position line) {
    int indent = 0;
    bool inPrevPrefix = line > 0;
 
-   Sci_Position posPrev = inPrevPrefix ? styler.LineStart(line-1) : 0;
+        Sci_Position posPrev = inPrevPrefix ? styler.LineStart(line - 1) : 0;
 
-   while ((  ch == ' ' || ch == '\t'
+        while ((ch == ' ' || ch == '\t'
           || IsCommentBlockStyle(style)
           || style == SCE_HA_LITERATE_CODEDELIM)
          && (pos < eol_pos)) {
@@ -181,7 +181,7 @@ static int HaskellIndentAmount(Accessor &styler, const Sci_Position line) {
 
    indent += SC_FOLDLEVELBASE;
    // if completely empty line or the start of a comment or preprocessor...
-   if (  styler.LineStart(line) == styler.Length()
+        if (styler.LineStart(line) == styler.Length()
       || ch == ' '
       || ch == '\t'
       || ch == '\n'
@@ -191,9 +191,9 @@ static int HaskellIndentAmount(Accessor &styler, const Sci_Position line) {
       return indent | SC_FOLDLEVELWHITEFLAG;
    else
       return indent;
-}
+    }
 
-struct OptionsHaskell {
+    struct OptionsHaskell {
    bool magicHash;
    bool allowQuotes;
    bool implicitParams;
@@ -204,6 +204,7 @@ struct OptionsHaskell {
    bool foldComment;
    bool foldCompact;
    bool foldImports;
+
    OptionsHaskell() {
       magicHash = true;       // Widespread use, enabled by default.
       allowQuotes = true;     // Widespread use, enabled by default.
@@ -216,16 +217,16 @@ struct OptionsHaskell {
       foldCompact = false;
       foldImports = false;
    }
-};
+    };
 
-static const char * const haskellWordListDesc[] = {
+    static const char *const haskellWordListDesc[] = {
    "Keywords",
    "FFI",
    "Reserved operators",
    0
-};
+    };
 
-struct OptionSetHaskell : public OptionSet<OptionsHaskell> {
+    struct OptionSetHaskell : public OptionSet<OptionsHaskell> {
    OptionSetHaskell() {
       DefineProperty("lexer.haskell.allow.hash", &OptionsHaskell::magicHash,
          "Set to 0 to disallow the '#' character at the end of identifiers and "
@@ -267,9 +268,9 @@ struct OptionSetHaskell : public OptionSet<OptionsHaskell> {
 
       DefineWordListSets(haskellWordListDesc);
    }
-};
+    };
 
-class LexerHaskell : public DefaultLexer {
+    class LexerHaskell : public DefaultLexer {
    bool literate;
    Sci_Position firstImportLine;
    int firstImportIndent;
@@ -280,19 +281,22 @@ class LexerHaskell : public DefaultLexer {
    OptionSetHaskell osHaskell;
 
    enum HashCount {
-       oneHash
-      ,twoHashes
-      ,unlimitedHashes
+            oneHash, twoHashes, unlimitedHashes
    };
 
    enum KeywordMode {
-       HA_MODE_DEFAULT = 0
-      ,HA_MODE_IMPORT1 = 1 // after "import", before "qualified" or "safe" or package name or module name.
-      ,HA_MODE_IMPORT2 = 2 // after module name, before "as" or "hiding".
-      ,HA_MODE_IMPORT3 = 3 // after "as", before "hiding"
-      ,HA_MODE_MODULE  = 4 // after "module", before module name.
-      ,HA_MODE_FFI     = 5 // after "foreign", before FFI keywords
-      ,HA_MODE_TYPE    = 6 // after "type" or "data", before "family"
+            HA_MODE_DEFAULT = 0,
+            HA_MODE_IMPORT1 = 1 // after "import", before "qualified" or "safe" or package name or module name.
+            ,
+            HA_MODE_IMPORT2 = 2 // after module name, before "as" or "hiding".
+            ,
+            HA_MODE_IMPORT3 = 3 // after "as", before "hiding"
+            ,
+            HA_MODE_MODULE = 4 // after "module", before module name.
+            ,
+            HA_MODE_FFI = 5 // after "foreign", before FFI keywords
+            ,
+            HA_MODE_TYPE = 6 // after "type" or "data", before "family"
    };
 
    enum LiterateMode {
@@ -302,7 +306,7 @@ class LexerHaskell : public DefaultLexer {
                           // else if "\begin{code}" is the only word on the
                           //    line except whitespace, switch to LITERATE_BLOCK
                           // otherwise color the line as a literate comment.
-      ,LITERATE_BLOCK = 1 // if the string "\end{code}" is encountered at column
+            , LITERATE_BLOCK = 1 // if the string "\end{code}" is encountered at column
                           //   0 ignoring all later characters, color the line
                           //   as a codedelim and switch to LITERATE_BIRD
                           // otherwise color the line as code.
@@ -317,12 +321,8 @@ class LexerHaskell : public DefaultLexer {
       KeywordMode mode;
 
       HaskellLineInfo(int state) :
-         nestLevel (state >> 10)
-       , nonexternalStyle ((state >> 5) & 0x1F)
-       , pragma ((state >> 4) & 0x1)
-       , lmode (static_cast<LiterateMode>((state >> 3) & 0x1))
-       , mode (static_cast<KeywordMode>(state & 0x7))
-         {}
+                    nestLevel(state >> 10), nonexternalStyle((state >> 5) & 0x1F), pragma((state >> 4) & 0x1),
+                    lmode(static_cast<LiterateMode>((state >> 3) & 0x1)), mode(static_cast<KeywordMode>(state & 0x7)) {}
 
       int ToLineState() {
          return
@@ -388,13 +388,12 @@ class LexerHaskell : public DefaultLexer {
             : indentLevel - firstImportIndent;
    }
 
-public:
+    public:
    LexerHaskell(bool literate_)
-      : DefaultLexer(literate_ ? "literatehaskell" : "haskell", literate_ ? SCLEX_LITERATEHASKELL : SCLEX_HASKELL)
-	  , literate(literate_)
-      , firstImportLine(-1)
-      , firstImportIndent(0)
-      {}
+                : DefaultLexer(literate_ ? "literatehaskell" : "haskell",
+                               literate_ ? SCLEX_LITERATEHASKELL : SCLEX_HASKELL), literate(literate_),
+                  firstImportLine(-1), firstImportIndent(0) {}
+
    virtual ~LexerHaskell() {}
 
    void SCI_METHOD Release() override {
@@ -405,7 +404,7 @@ public:
       return lvRelease5;
    }
 
-   const char * SCI_METHOD PropertyNames() override {
+        const char *SCI_METHOD PropertyNames() override {
       return osHaskell.PropertyNames();
    }
 
@@ -413,17 +412,17 @@ public:
       return osHaskell.PropertyType(name);
    }
 
-   const char * SCI_METHOD DescribeProperty(const char *name) override {
+        const char *SCI_METHOD DescribeProperty(const char *name) override {
       return osHaskell.DescribeProperty(name);
    }
 
    Sci_Position SCI_METHOD PropertySet(const char *key, const char *val) override;
 
-   const char * SCI_METHOD PropertyGet(const char *key) override {
+        const char *SCI_METHOD PropertyGet(const char *key) override {
 	   return osHaskell.PropertyGet(key);
    }
 
-   const char * SCI_METHOD DescribeWordListSets() override {
+        const char *SCI_METHOD DescribeWordListSets() override {
       return osHaskell.DescribeWordListSets();
    }
 
@@ -433,7 +432,7 @@ public:
 
    void SCI_METHOD Fold(Sci_PositionU startPos, Sci_Position length, int initStyle, IDocument *pAccess) override;
 
-   void * SCI_METHOD PrivateCall(int, void *) override {
+        void *SCI_METHOD PrivateCall(int, void *) override {
       return 0;
    }
 
@@ -444,16 +443,16 @@ public:
    static ILexer5 *LexerFactoryLiterateHaskell() {
       return new LexerHaskell(true);
    }
-};
+    };
 
-Sci_Position SCI_METHOD LexerHaskell::PropertySet(const char *key, const char *val) {
+    Sci_Position SCI_METHOD LexerHaskell::PropertySet(const char *key, const char *val) {
    if (osHaskell.PropertySet(&options, key, val)) {
       return 0;
    }
    return -1;
-}
+    }
 
-Sci_Position SCI_METHOD LexerHaskell::WordListSet(int n, const char *wl) {
+    Sci_Position SCI_METHOD LexerHaskell::WordListSet(int n, const char *wl) {
    WordList *wordListN = 0;
    switch (n) {
    case 0:
@@ -476,15 +475,14 @@ Sci_Position SCI_METHOD LexerHaskell::WordListSet(int n, const char *wl) {
       }
    }
    return firstModification;
-}
+    }
 
-void SCI_METHOD LexerHaskell::Lex(Sci_PositionU startPos, Sci_Position length, int initStyle
-                                 ,IDocument *pAccess) {
+    void SCI_METHOD LexerHaskell::Lex(Sci_PositionU startPos, Sci_Position length, int initStyle, IDocument *pAccess) {
    LexAccessor styler(pAccess);
 
    Sci_Position lineCurrent = styler.GetLine(startPos);
 
-   HaskellLineInfo hs = HaskellLineInfo(lineCurrent ? styler.GetLineState(lineCurrent-1) : 0);
+        HaskellLineInfo hs = HaskellLineInfo(lineCurrent ? styler.GetLineState(lineCurrent - 1) : 0);
 
    // Do not leak onto next line
    if (initStyle == SCE_HA_STRINGEOL)
@@ -523,7 +521,7 @@ void SCI_METHOD LexerHaskell::Lex(Sci_PositionU startPos, Sci_Position length, i
 
       // Handle line continuation generically.
       if (sc.ch == '\\' && (sc.chNext == '\n' || sc.chNext == '\r')
-         && (  sc.state == SCE_HA_STRING
+                && (sc.state == SCE_HA_STRING
             || sc.state == SCE_HA_PREPROCESSOR)) {
          // Remember the line state for future incremental lexing
          styler.SetLineState(lineCurrent, hs.ToLineState());
@@ -554,13 +552,12 @@ void SCI_METHOD LexerHaskell::Lex(Sci_PositionU startPos, Sci_Position length, i
 
       // External
          // Literate
-      if (  literate && hs.lmode == LITERATE_BIRD && sc.atLineStart
+            if (literate && hs.lmode == LITERATE_BIRD && sc.atLineStart
          && sc.ch == '>') {
             sc.SetState(SCE_HA_LITERATE_CODEDELIM);
             sc.ForwardSetState(hs.nonexternalStyle);
-      }
-      else if (literate && hs.lmode == LITERATE_BIRD && sc.atLineStart
-            && (  sc.ch == ' ' || sc.ch == '\t'
+            } else if (literate && hs.lmode == LITERATE_BIRD && sc.atLineStart
+                       && (sc.ch == ' ' || sc.ch == '\t'
                || sc.Match("\\begin{code}"))) {
          sc.SetState(sc.state);
 
@@ -584,8 +581,7 @@ void SCI_METHOD LexerHaskell::Lex(Sci_PositionU startPos, Sci_Position length, i
                hs.lmode = LITERATE_BLOCK;
             }
          }
-      }
-      else if (literate && hs.lmode == LITERATE_BLOCK && sc.atLineStart
+            } else if (literate && hs.lmode == LITERATE_BLOCK && sc.atLineStart
             && sc.Match("\\end{code}")) {
          sc.SetState(SCE_HA_LITERATE_CODEDELIM);
 
@@ -607,8 +603,7 @@ void SCI_METHOD LexerHaskell::Lex(Sci_PositionU startPos, Sci_Position length, i
             // Literate
       else if (sc.state == SCE_HA_LITERATE_COMMENT) {
          sc.Forward();
-      }
-      else if (sc.state == SCE_HA_LITERATE_CODEDELIM) {
+            } else if (sc.state == SCE_HA_LITERATE_CODEDELIM) {
          sc.ForwardSetState(hs.nonexternalStyle);
       }
             // Preprocessor
@@ -629,10 +624,10 @@ void SCI_METHOD LexerHaskell::Lex(Sci_PositionU startPos, Sci_Position length, i
       else if (sc.state == SCE_HA_OPERATOR) {
          int style = SCE_HA_OPERATOR;
 
-         if ( sc.ch == ':'
+                if (sc.ch == ':'
             && !alreadyInTheMiddleOfOperator
             // except "::"
-            && !( sc.chNext == ':'
+                    && !(sc.chNext == ':'
                && !IsAnHaskellOperatorChar(sc.GetRelative(2)))) {
             style = SCE_HA_CAPITAL;
          }
@@ -688,7 +683,7 @@ void SCI_METHOD LexerHaskell::Lex(Sci_PositionU startPos, Sci_Position length, i
             sc.Forward(); // prevent double counting a line
          } else if (IsADigit(sc.ch, base)) {
             sc.Forward();
-         } else if (sc.ch=='.' && dot && IsADigit(sc.chNext, base)) {
+                } else if (sc.ch == '.' && dot && IsADigit(sc.chNext, base)) {
             sc.Forward(2);
             dot = false;
          } else if ((base == 10) &&
@@ -751,23 +746,23 @@ void SCI_METHOD LexerHaskell::Lex(Sci_PositionU startPos, Sci_Position length, i
                style = SCE_HA_MODULE;
             }
          } else if (hs.mode == HA_MODE_IMPORT1 &&
-                    strcmp(s,"qualified") == 0) {
+                           strcmp(s, "qualified") == 0) {
              style    = SCE_HA_KEYWORD;
              new_mode = HA_MODE_IMPORT1;
          } else if (options.highlightSafe &&
                     hs.mode == HA_MODE_IMPORT1 &&
-                    strcmp(s,"safe") == 0) {
+                           strcmp(s, "safe") == 0) {
              style    = SCE_HA_KEYWORD;
              new_mode = HA_MODE_IMPORT1;
          } else if (hs.mode == HA_MODE_IMPORT2) {
-             if (strcmp(s,"as") == 0) {
+                    if (strcmp(s, "as") == 0) {
                 style    = SCE_HA_KEYWORD;
                 new_mode = HA_MODE_IMPORT3;
-            } else if (strcmp(s,"hiding") == 0) {
+                    } else if (strcmp(s, "hiding") == 0) {
                 style     = SCE_HA_KEYWORD;
             }
          } else if (hs.mode == HA_MODE_TYPE) {
-            if (strcmp(s,"family") == 0)
+                    if (strcmp(s, "family") == 0)
                style    = SCE_HA_KEYWORD;
          }
 
@@ -781,14 +776,14 @@ void SCI_METHOD LexerHaskell::Lex(Sci_PositionU startPos, Sci_Position length, i
          sc.ChangeState(style);
          sc.SetState(SCE_HA_DEFAULT);
 
-         if (strcmp(s,"import") == 0 && hs.mode != HA_MODE_FFI)
+                if (strcmp(s, "import") == 0 && hs.mode != HA_MODE_FFI)
             new_mode = HA_MODE_IMPORT1;
-         else if (strcmp(s,"module") == 0)
+                else if (strcmp(s, "module") == 0)
             new_mode = HA_MODE_MODULE;
-         else if (strcmp(s,"foreign") == 0)
+                else if (strcmp(s, "foreign") == 0)
             new_mode = HA_MODE_FFI;
-         else if (strcmp(s,"type") == 0
-               || strcmp(s,"data") == 0)
+                else if (strcmp(s, "type") == 0
+                         || strcmp(s, "data") == 0)
             new_mode = HA_MODE_TYPE;
 
          hs.mode = new_mode;
@@ -812,11 +807,11 @@ void SCI_METHOD LexerHaskell::Lex(Sci_PositionU startPos, Sci_Position length, i
       }
             // Nested
       else if (IsCommentBlockStyle(sc.state)) {
-         if (sc.Match('{','-')) {
+                if (sc.Match('{', '-')) {
             sc.SetState(CommentBlockStyleFromNestLevel(hs.nestLevel));
             sc.Forward(2);
             hs.nestLevel++;
-         } else if (sc.Match('-','}')) {
+                } else if (sc.Match('-', '}')) {
             sc.Forward(2);
             assert(hs.nestLevel > 0);
             if (hs.nestLevel > 0)
@@ -835,11 +830,11 @@ void SCI_METHOD LexerHaskell::Lex(Sci_PositionU startPos, Sci_Position length, i
             hs.pragma = false;
             sc.Forward(3);
             sc.SetState(SCE_HA_DEFAULT);
-         } else if (sc.Match('-','-')) {
+                } else if (sc.Match('-', '-')) {
             sc.SetState(SCE_HA_COMMENTLINE);
             sc.Forward(2);
             inDashes = false;
-         } else if (sc.Match('{','-')) {
+                } else if (sc.Match('{', '-')) {
             sc.SetState(CommentBlockStyleFromNestLevel(hs.nestLevel));
             sc.Forward(2);
             hs.nestLevel = 1;
@@ -877,13 +872,13 @@ void SCI_METHOD LexerHaskell::Lex(Sci_PositionU startPos, Sci_Position length, i
             sc.Forward(3);
          }
          // Comment line
-         else if (sc.Match('-','-')) {
+                else if (sc.Match('-', '-')) {
             sc.SetState(SCE_HA_COMMENTLINE);
             sc.Forward(2);
             inDashes = true;
          }
          // Comment block
-         else if (sc.Match('{','-')) {
+                else if (sc.Match('{', '-')) {
             sc.SetState(CommentBlockStyleFromNestLevel(hs.nestLevel));
             sc.Forward(2);
             hs.nestLevel = 1;
@@ -902,7 +897,7 @@ void SCI_METHOD LexerHaskell::Lex(Sci_PositionU startPos, Sci_Position length, i
 
             if (options.allowQuotes) {
                // Quoted type ''T
-               if (sc.ch=='\'' && IsAHaskellWordStart(sc.chNext)) {
+                        if (sc.ch == '\'' && IsAHaskellWordStart(sc.chNext)) {
                   sc.Forward();
                   sc.ChangeState(SCE_HA_IDENTIFIER);
                } else if (sc.chNext != '\'') {
@@ -914,7 +909,7 @@ void SCI_METHOD LexerHaskell::Lex(Sci_PositionU startPos, Sci_Position length, i
                      alreadyInTheMiddleOfOperator = false;
                      sc.ChangeState(SCE_HA_OPERATOR);
                   // Promoted list or tuple '[T]
-                  } else if (sc.ch == '[' || sc.ch== '(') {
+                            } else if (sc.ch == '[' || sc.ch == '(') {
                      sc.ChangeState(SCE_HA_OPERATOR);
                      sc.ForwardSetState(SCE_HA_DEFAULT);
                   }
@@ -928,7 +923,7 @@ void SCI_METHOD LexerHaskell::Lex(Sci_PositionU startPos, Sci_Position length, i
             alreadyInTheMiddleOfOperator = false;
             sc.SetState(SCE_HA_OPERATOR);
 
-            if (  options.implicitParams
+                    if (options.implicitParams
                && IsAHaskellWordStart(sc.chNext)
                && !IsHaskellUpperCase(sc.chNext)) {
                sc.Forward();
@@ -964,10 +959,10 @@ void SCI_METHOD LexerHaskell::Lex(Sci_PositionU startPos, Sci_Position length, i
       }
    }
    sc.Complete();
-}
+    }
 
-void SCI_METHOD LexerHaskell::Fold(Sci_PositionU startPos, Sci_Position length, int // initStyle
-                                  ,IDocument *pAccess) {
+    void SCI_METHOD
+    LexerHaskell::Fold(Sci_PositionU startPos, Sci_Position length, int initStyle, IDocument *pAccess) {
    if (!options.fold)
       return;
 
@@ -1061,7 +1056,7 @@ void SCI_METHOD LexerHaskell::Fold(Sci_PositionU startPos, Sci_Position length, 
 
       indentNext = indentNextLevel | (indentNext & ~SC_FOLDLEVELNUMBERMASK);
 
-      const int levelBeforeComments = Maximum(indentCurrentLevel,indentNextLevel);
+            const int levelBeforeComments = Maximum(indentCurrentLevel, indentNextLevel);
 
       // Now set all the indent levels on the lines we skipped
       // Do this from end to start.  Once we encounter one line
@@ -1083,7 +1078,7 @@ void SCI_METHOD LexerHaskell::Fold(Sci_PositionU startPos, Sci_Position length, 
 
             styler.SetLevel(skipLine, skipLevel | whiteFlag);
          } else {
-            if (  (skipLineIndent & SC_FOLDLEVELNUMBERMASK) > indentNextLevel
+                    if ((skipLineIndent & SC_FOLDLEVELNUMBERMASK) > indentNextLevel
                && !(skipLineIndent & SC_FOLDLEVELWHITEFLAG)) {
                skipLevel = levelBeforeComments;
             }
@@ -1110,7 +1105,9 @@ void SCI_METHOD LexerHaskell::Fold(Sci_PositionU startPos, Sci_Position length, 
    // NOTE: Cannot set level of last line here because indentCurrent doesn't have
    // header flag set; the loop above is crafted to take care of this case!
    //styler.SetLevel(lineCurrent, indentCurrent);
-}
+    }
 
-LexerModule lmHaskell(SCLEX_HASKELL, LexerHaskell::LexerFactoryHaskell, "haskell", haskellWordListDesc);
-LexerModule lmLiterateHaskell(SCLEX_LITERATEHASKELL, LexerHaskell::LexerFactoryLiterateHaskell, "literatehaskell", haskellWordListDesc);
+    LexerModule lmHaskell(SCLEX_HASKELL, LexerHaskell::LexerFactoryHaskell, "haskell", haskellWordListDesc);
+    LexerModule lmLiterateHaskell(SCLEX_LITERATEHASKELL, LexerHaskell::LexerFactoryLiterateHaskell, "literatehaskell",
+                                  haskellWordListDesc);
+}

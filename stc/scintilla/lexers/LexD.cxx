@@ -29,7 +29,7 @@
 #include "OptionSet.h"
 #include "DefaultLexer.h"
 
-using namespace ScintillaMod;
+namespace ScintillaMod {
 
 /* Nested comments require keeping the value of the nesting level for every
    position in the document.  But since scintilla always styles line by line,
@@ -39,15 +39,15 @@ using namespace ScintillaMod;
 
 // Underscore, letter, digit and universal alphas from C99 Appendix D.
 
-static bool IsWordStart(int ch) {
+    static bool IsWordStart(int ch) {
 	return (IsASCII(ch) && (isalpha(ch) || ch == '_')) || !IsASCII(ch);
-}
+    }
 
-static bool IsWord(int ch) {
+    static bool IsWord(int ch) {
 	return (IsASCII(ch) && (isalnum(ch) || ch == '_')) || !IsASCII(ch);
-}
+    }
 
-static bool IsDoxygen(int ch) {
+    static bool IsDoxygen(int ch) {
 	if (IsASCII(ch) && islower(ch))
 		return true;
 	if (ch == '$' || ch == '@' || ch == '\\' ||
@@ -55,23 +55,23 @@ static bool IsDoxygen(int ch) {
 		ch == '{' || ch == '}' || ch == '[' || ch == ']')
 		return true;
 	return false;
-}
+    }
 
-static bool IsStringSuffix(int ch) {
+    static bool IsStringSuffix(int ch) {
 	return ch == 'c' || ch == 'w' || ch == 'd';
-}
+    }
 
-static bool IsStreamCommentStyle(int style) {
+    static bool IsStreamCommentStyle(int style) {
 	return style == SCE_D_COMMENT ||
 		style == SCE_D_COMMENTDOC ||
 		style == SCE_D_COMMENTDOCKEYWORD ||
 		style == SCE_D_COMMENTDOCKEYWORDERROR;
-}
+    }
 
 // An individual named option for use in an OptionSet
 
 // Options used for LexerD
-struct OptionsD {
+    struct OptionsD {
 	bool fold;
 	bool foldSyntaxBased;
 	bool foldComment;
@@ -83,6 +83,7 @@ struct OptionsD {
 	bool foldCompact;
 	int  foldAtElseInt;
 	bool foldAtElse;
+
 	OptionsD() {
 		fold = false;
 		foldSyntaxBased = true;
@@ -96,9 +97,9 @@ struct OptionsD {
 		foldAtElseInt = -1;
 		foldAtElse = false;
 	}
-};
+    };
 
-static const char * const dWordLists[] = {
+    static const char *const dWordLists[] = {
 			"Primary keywords and identifiers",
 			"Secondary keywords and identifiers",
 			"Documentation comment keywords",
@@ -109,7 +110,7 @@ static const char * const dWordLists[] = {
 			0,
 		};
 
-struct OptionSetD : public OptionSet<OptionsD> {
+    struct OptionSetD : public OptionSet<OptionsD> {
 	OptionSetD() {
 		DefineProperty("fold", &OptionsD::fold);
 
@@ -142,9 +143,9 @@ struct OptionSetD : public OptionSet<OptionsD> {
 
 		DefineWordListSets(dWordLists);
 	}
-};
+    };
 
-class LexerD : public DefaultLexer {
+    class LexerD : public DefaultLexer {
 	bool caseSensitive;
 	WordList keywords;
 	WordList keywords2;
@@ -155,40 +156,52 @@ class LexerD : public DefaultLexer {
 	WordList keywords7;
 	OptionsD options;
 	OptionSetD osD;
-public:
+    public:
 	LexerD(bool caseSensitive_) :
 		DefaultLexer("D", SCLEX_D),
 		caseSensitive(caseSensitive_) {
 	}
+
 	virtual ~LexerD() {
 	}
+
 	void SCI_METHOD Release() override {
 		delete this;
 	}
+
 	int SCI_METHOD Version() const override {
 		return lvRelease5;
 	}
-	const char * SCI_METHOD PropertyNames() override {
+
+        const char *SCI_METHOD PropertyNames() override {
 		return osD.PropertyNames();
 	}
+
 	int SCI_METHOD PropertyType(const char *name) override {
 		return osD.PropertyType(name);
 	}
-	const char * SCI_METHOD DescribeProperty(const char *name) override {
+
+        const char *SCI_METHOD DescribeProperty(const char *name) override {
 		return osD.DescribeProperty(name);
 	}
+
 	Sci_Position SCI_METHOD PropertySet(const char *key, const char *val) override;
-	const char * SCI_METHOD PropertyGet(const char *key) override {
+
+        const char *SCI_METHOD PropertyGet(const char *key) override {
 		return osD.PropertyGet(key);
 	}
-	const char * SCI_METHOD DescribeWordListSets() override {
+
+        const char *SCI_METHOD DescribeWordListSets() override {
 		return osD.DescribeWordListSets();
 	}
+
 	Sci_Position SCI_METHOD WordListSet(int n, const char *wl) override;
+
 	void SCI_METHOD Lex(Sci_PositionU startPos, Sci_Position length, int initStyle, IDocument *pAccess) override;
+
 	void SCI_METHOD Fold(Sci_PositionU startPos, Sci_Position length, int initStyle, IDocument *pAccess) override;
 
-	void * SCI_METHOD PrivateCall(int, void *) override {
+        void *SCI_METHOD PrivateCall(int, void *) override {
 		return 0;
 	}
 
@@ -198,16 +211,16 @@ public:
 	static ILexer5 *LexerFactoryDInsensitive() {
 		return new LexerD(false);
 	}
-};
+    };
 
-Sci_Position SCI_METHOD LexerD::PropertySet(const char *key, const char *val) {
+    Sci_Position SCI_METHOD LexerD::PropertySet(const char *key, const char *val) {
 	if (osD.PropertySet(&options, key, val)) {
 		return 0;
 	}
 	return -1;
-}
+    }
 
-Sci_Position SCI_METHOD LexerD::WordListSet(int n, const char *wl) {
+    Sci_Position SCI_METHOD LexerD::WordListSet(int n, const char *wl) {
 	WordList *wordListN = 0;
 	switch (n) {
 	case 0:
@@ -242,9 +255,9 @@ Sci_Position SCI_METHOD LexerD::WordListSet(int n, const char *wl) {
 		}
 	}
 	return firstModification;
-}
+    }
 
-void SCI_METHOD LexerD::Lex(Sci_PositionU startPos, Sci_Position length, int initStyle, IDocument *pAccess) {
+    void SCI_METHOD LexerD::Lex(Sci_PositionU startPos, Sci_Position length, int initStyle, IDocument *pAccess) {
 	LexAccessor styler(pAccess);
 
 	int styleBeforeDCKeyword = SCE_D_DEFAULT;
@@ -252,7 +265,7 @@ void SCI_METHOD LexerD::Lex(Sci_PositionU startPos, Sci_Position length, int ini
 	StyleContext sc(startPos, length, initStyle, styler);
 
 	Sci_Position curLine = styler.GetLine(startPos);
-	int curNcLevel = curLine > 0? styler.GetLineState(curLine-1): 0;
+        int curNcLevel = curLine > 0 ? styler.GetLineState(curLine - 1) : 0;
 	bool numFloat = false; // Float literals have '+' and '-' signs
 	bool numHex = false;
 
@@ -274,11 +287,11 @@ void SCI_METHOD LexerD::Lex(Sci_PositionU startPos, Sci_Position length, int ini
 					continue;
 				} else if (sc.ch == '.' && sc.chNext != '.' && !numFloat) {
 					// Don't parse 0..2 as number.
-					numFloat=true;
+                        numFloat = true;
 					continue;
-				} else if ( ( sc.ch == '-' || sc.ch == '+' ) && (		/*sign and*/
-					( !numHex && ( sc.chPrev == 'e' || sc.chPrev == 'E' ) ) || /*decimal or*/
-					( sc.chPrev == 'p' || sc.chPrev == 'P' ) ) ) {		/*hex*/
+                    } else if ((sc.ch == '-' || sc.ch == '+') && (        /*sign and*/
+                            (!numHex && (sc.chPrev == 'e' || sc.chPrev == 'E')) || /*decimal or*/
+                            (sc.chPrev == 'p' || sc.chPrev == 'P'))) {        /*hex*/
 					// Parse exponent sign in float literals: 2e+10 0x2e+10
 					continue;
 				} else {
@@ -371,7 +384,7 @@ void SCI_METHOD LexerD::Lex(Sci_PositionU startPos, Sci_Position length, int ini
 					if (curNcLevel == 0) {
 						sc.ForwardSetState(SCE_D_DEFAULT);
 					}
-				} else if (sc.Match('/','+')) {
+                    } else if (sc.Match('/', '+')) {
 					curNcLevel += 1;
 					curLine = styler.GetLine(sc.currentPos);
 					styler.SetLineState(curLine, curNcLevel);
@@ -384,7 +397,7 @@ void SCI_METHOD LexerD::Lex(Sci_PositionU startPos, Sci_Position length, int ini
 						sc.Forward();
 					}
 				} else if (sc.ch == '"') {
-					if(IsStringSuffix(sc.chNext))
+                        if (IsStringSuffix(sc.chNext))
 						sc.Forward();
 					sc.ForwardSetState(SCE_D_DEFAULT);
 				}
@@ -408,14 +421,14 @@ void SCI_METHOD LexerD::Lex(Sci_PositionU startPos, Sci_Position length, int ini
 				break;
 			case SCE_D_STRINGB:
 				if (sc.ch == '`') {
-					if(IsStringSuffix(sc.chNext))
+                        if (IsStringSuffix(sc.chNext))
 						sc.Forward();
 					sc.ForwardSetState(SCE_D_DEFAULT);
 				}
 				break;
 			case SCE_D_STRINGR:
 				if (sc.ch == '"') {
-					if(IsStringSuffix(sc.chNext))
+                        if (IsStringSuffix(sc.chNext))
 						sc.Forward();
 					sc.ForwardSetState(SCE_D_DEFAULT);
 				}
@@ -428,15 +441,15 @@ void SCI_METHOD LexerD::Lex(Sci_PositionU startPos, Sci_Position length, int ini
 				sc.SetState(SCE_D_NUMBER);
 				numFloat = sc.ch == '.';
 				// Remember hex literal
-				numHex = sc.ch == '0' && ( sc.chNext == 'x' || sc.chNext == 'X' );
-			} else if ( (sc.ch == 'r' || sc.ch == 'x' || sc.ch == 'q')
-				&& sc.chNext == '"' ) {
+                    numHex = sc.ch == '0' && (sc.chNext == 'x' || sc.chNext == 'X');
+                } else if ((sc.ch == 'r' || sc.ch == 'x' || sc.ch == 'q')
+                           && sc.chNext == '"') {
 				// Limited support for hex and delimited strings: parse as r""
 				sc.SetState(SCE_D_STRINGR);
 				sc.Forward();
 			} else if (IsWordStart(sc.ch) || sc.ch == '$') {
 				sc.SetState(SCE_D_IDENTIFIER);
-			} else if (sc.Match('/','+')) {
+                } else if (sc.Match('/', '+')) {
 				curNcLevel += 1;
 				curLine = styler.GetLine(sc.currentPos);
 				styler.SetLineState(curLine, curNcLevel);
@@ -468,13 +481,13 @@ void SCI_METHOD LexerD::Lex(Sci_PositionU startPos, Sci_Position length, int ini
 		}
 	}
 	sc.Complete();
-}
+    }
 
 // Store both the current line's fold level and the next lines in the
 // level store to make it easy to pick up with each increment
 // and to make it possible to fiddle the current level for "} else {".
 
-void SCI_METHOD LexerD::Fold(Sci_PositionU startPos, Sci_Position length, int initStyle, IDocument *pAccess) {
+    void SCI_METHOD LexerD::Fold(Sci_PositionU startPos, Sci_Position length, int initStyle, IDocument *pAccess) {
 
 	if (!options.fold)
 		return;
@@ -486,7 +499,7 @@ void SCI_METHOD LexerD::Fold(Sci_PositionU startPos, Sci_Position length, int in
 	Sci_Position lineCurrent = styler.GetLine(startPos);
 	int levelCurrent = SC_FOLDLEVELBASE;
 	if (lineCurrent > 0)
-		levelCurrent = styler.LevelAt(lineCurrent-1) >> 16;
+            levelCurrent = styler.LevelAt(lineCurrent - 1) >> 16;
 	int levelMinCurrent = levelCurrent;
 	int levelNext = levelCurrent;
 	char chNext = styler[startPos];
@@ -509,7 +522,8 @@ void SCI_METHOD LexerD::Fold(Sci_PositionU startPos, Sci_Position length, int in
 				levelNext--;
 			}
 		}
-		if (options.foldComment && options.foldCommentExplicit && ((style == SCE_D_COMMENTLINE) || options.foldExplicitAnywhere)) {
+            if (options.foldComment && options.foldCommentExplicit &&
+                ((style == SCE_D_COMMENTLINE) || options.foldExplicitAnywhere)) {
 			if (userDefinedFoldMarkers) {
 				if (styler.Match(i, options.foldExplicitStart.c_str())) {
  					levelNext++;
@@ -539,11 +553,11 @@ void SCI_METHOD LexerD::Fold(Sci_PositionU startPos, Sci_Position length, int in
 				levelNext--;
 			}
 		}
-		if (atEOL || (i == endPos-1)) {
+            if (atEOL || (i == endPos - 1)) {
 			if (options.foldComment && options.foldCommentMultiline) {  // Handle nested comments
 				int nc;
 				nc =  styler.GetLineState(lineCurrent);
-				nc -= lineCurrent>0? styler.GetLineState(lineCurrent-1): 0;
+                    nc -= lineCurrent > 0 ? styler.GetLineState(lineCurrent - 1) : 0;
 				levelNext += nc;
 			}
 			int levelUse = levelCurrent;
@@ -566,6 +580,7 @@ void SCI_METHOD LexerD::Fold(Sci_PositionU startPos, Sci_Position length, int in
 		if (!IsASpace(ch))
 			visibleChars++;
 	}
-}
+    }
 
-LexerModule lmD(SCLEX_D, LexerD::LexerFactoryD, "d", dWordLists);
+    LexerModule lmD(SCLEX_D, LexerD::LexerFactoryD, "d", dWordLists);
+}

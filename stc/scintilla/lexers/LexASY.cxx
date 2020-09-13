@@ -20,7 +20,7 @@
 #include "CharacterSet.h"
 #include "LexerModule.h"
 
-using namespace ScintillaMod;
+namespace ScintillaMod {
 
 static void ColouriseAsyDoc(Sci_PositionU startPos, Sci_Position length, int initStyle,
 		WordList *keywordlists[], Accessor &styler) {
@@ -267,4 +267,5 @@ static const char * const asyWordLists[] = {
             0,
         };
 
-LexerModule lmASY(SCLEX_ASYMPTOTE, ColouriseAsyDoc, "asy", FoldAsyDoc, asyWordLists);
+    LexerModule lmASY(SCLEX_ASYMPTOTE, ColouriseAsyDoc, "asy", FoldAsyDoc, asyWordLists);
+}

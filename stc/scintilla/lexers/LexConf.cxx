@@ -27,7 +27,7 @@
 #include "CharacterSet.h"
 #include "LexerModule.h"
 
-using namespace ScintillaMod;
+namespace ScintillaMod {
 
 static void ColouriseConfDoc(Sci_PositionU startPos, Sci_Position length, int, WordList *keywordLists[], Accessor &styler)
 {
@@ -187,4 +187,5 @@ static const char * const confWordListDesc[] = {
 	0
 };
 
-LexerModule lmConf(SCLEX_CONF, ColouriseConfDoc, "conf", 0, confWordListDesc);
+    LexerModule lmConf(SCLEX_CONF, ColouriseConfDoc, "conf", 0, confWordListDesc);
+}

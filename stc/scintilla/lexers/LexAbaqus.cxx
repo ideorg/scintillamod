@@ -26,7 +26,7 @@
 #include "CharacterSet.h"
 #include "LexerModule.h"
 
-using namespace ScintillaMod;
+namespace ScintillaMod {
 
 static inline bool IsAKeywordChar(const int ch) {
 	return (ch < 0x80 && (isalnum(ch) || (ch == '_') || (ch == ' ')));
@@ -600,4 +600,5 @@ static const char * const abaqusWordListDesc[] = {
     0
 };
 
-LexerModule lmAbaqus(SCLEX_ABAQUS, ColouriseABAQUSDoc, "abaqus", FoldABAQUSDoc, abaqusWordListDesc);
+    LexerModule lmAbaqus(SCLEX_ABAQUS, ColouriseABAQUSDoc, "abaqus", FoldABAQUSDoc, abaqusWordListDesc);
+}

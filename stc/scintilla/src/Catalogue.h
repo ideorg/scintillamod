@@ -11,7 +11,7 @@
 #define CATALOGUE_H
 
 namespace ScintillaMod {
-
+    int Scintilla_LinkLexers();
 class Catalogue {
 public:
 	static const LexerModule *Find(int language);

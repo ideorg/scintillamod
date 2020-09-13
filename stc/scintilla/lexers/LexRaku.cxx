@@ -59,9 +59,8 @@
 #include "OptionSet.h"
 #include "DefaultLexer.h"
 
-using namespace ScintillaMod;
+namespace ScintillaMod {
 
-namespace { // anonymous namespace to isolate any name clashes
 /*----------------------------------------------------------------------------*
  * --- DEFINITIONS: OPTIONS / CONSTANTS ---
  *----------------------------------------------------------------------------*/
@@ -100,7 +99,7 @@ namespace { // anonymous namespace to isolate any name clashes
 #define RAKUDELIM_QUOTE			1	// quote: normal string
 
 // rakuWordLists: keywords as defined in config
-const char *const rakuWordLists[] = {
+    const char *const rakuWordLists[] = {
 	"Keywords and identifiers",
 	"Functions",
 	"Types basic",
@@ -109,15 +108,16 @@ const char *const rakuWordLists[] = {
 	"Types exception",
 	"Adverbs",
 	nullptr,
-};
+    };
 
 // Options and defaults
-struct OptionsRaku {
+    struct OptionsRaku {
 	bool fold;
 	bool foldCompact;
 	bool foldComment;
 	bool foldCommentMultiline;
 	bool foldCommentPOD;
+
 	OptionsRaku() {
 		fold					= true;
 		foldCompact				= false;
@@ -125,10 +125,10 @@ struct OptionsRaku {
 		foldCommentMultiline	= true;
 		foldCommentPOD			= true;
 	}
-};
+    };
 
 // init options and words
-struct OptionSetRaku : public OptionSet<OptionsRaku> {
+    struct OptionSetRaku : public OptionSet<OptionsRaku> {
 	OptionSetRaku() {
 		DefineProperty("fold",			&OptionsRaku::fold);
 		DefineProperty("fold.comment",	&OptionsRaku::foldComment);
@@ -142,10 +142,10 @@ struct OptionSetRaku : public OptionSet<OptionsRaku> {
 		// init word lists
 		DefineWordListSets(rakuWordLists);
 	}
-};
+    };
 
 // Delimiter pair
-struct DelimPair {
+    struct DelimPair {
 	int opener;		// opener char
 	int closer[2];	// closer chars
 	bool interpol;	// can variables be interpolated?
@@ -157,10 +157,11 @@ struct DelimPair {
 		interpol = false;
 		count = 0;
 	}
+
 	bool isCloser(int ch) const {
 		return ch == closer[0] || ch == closer[1];
 	}
-};
+    };
 
 /*----------------------------------------------------------------------------*
  * --- FUNCTIONS ---
@@ -170,25 +171,25 @@ struct DelimPair {
  * IsANewLine
  * - returns true if this is a new line char
  */
-constexpr bool IsANewLine(int ch) noexcept {
+    constexpr bool IsANewLine(int ch) noexcept {
 	return ch == '\r' || ch == '\n';
-}
+    }
 
 /*
  * IsAWhitespace
  * - returns true if this is a whitespace (or newline) char
  */
-bool IsAWhitespace(int ch) noexcept {
+    bool IsAWhitespace(int ch) noexcept {
 	return IsASpaceOrTab(ch) || IsANewLine(ch);
-}
+    }
 
 /*
  * IsAlphabet
  * - returns true if this is an alphabetical char
  */
-constexpr bool IsAlphabet(int ch) noexcept {
+    constexpr bool IsAlphabet(int ch) noexcept {
 	return (ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z');
-}
+    }
 
 /*
  * IsCommentLine
@@ -196,7 +197,7 @@ constexpr bool IsAlphabet(int ch) noexcept {
  *   - tests: SCE_RAKU_COMMENTLINE or SCE_RAKU_COMMENTEMBED
  * modified from: LexPerl.cxx
  */
-bool IsCommentLine(Sci_Position line, LexAccessor &styler, int type = SCE_RAKU_COMMENTLINE) {
+    bool IsCommentLine(Sci_Position line, LexAccessor &styler, int type = SCE_RAKU_COMMENTLINE) {
 	Sci_Position pos = styler.LineStart(line);
 	Sci_Position eol_pos = styler.LineStart(line + 1) - 1;
 	for (Sci_Position i = pos; i < eol_pos; i++) {
@@ -206,14 +207,14 @@ bool IsCommentLine(Sci_Position line, LexAccessor &styler, int type = SCE_RAKU_C
 			if (i == (eol_pos - 1) && style == type)
 				return true;
 		} else { // make sure the line is NOT a SCE_RAKU_COMMENTEMBED
-			if (ch == '#' && style == type && styler[i+1] != '`' )
+                if (ch == '#' && style == type && styler[i + 1] != '`')
 				return true;
 			else if (!IsASpaceOrTab(ch))
 				return false;
 		}
 	}
 	return false;
-}
+    }
 
 /*
  * GetBracketCloseChar
@@ -222,77 +223,109 @@ bool IsCommentLine(Sci_Position line, LexAccessor &styler, int type = SCE_RAKU_C
  * - Categories are general matches for valid BiDi types
  * - Most closer chars are opener + 1
  */
-int GetBracketCloseChar(const int ch) noexcept {
+    int GetBracketCloseChar(const int ch) noexcept {
 	const CharacterCategory cc = CategoriseCharacter(ch);
 	switch (cc) {
 		case ccSm:
 			switch (ch) {
-				case 0x3C: return 0x3E; // LESS-THAN SIGN
-				case 0x2208: return 0x220B; // ELEMENT OF
-				case 0x2209: return 0x220C; // NOT AN ELEMENT OF
-				case 0x220A: return 0x220D; // SMALL ELEMENT OF
-				case 0x2215: return 0x29F5; // DIVISION SLASH
-				case 0x2243: return 0x22CD; // ASYMPTOTICALLY EQUAL TO
-				case 0x2298: return 0x29B8; // CIRCLED DIVISION SLASH
-				case 0x22A6: return 0x2ADE; // ASSERTION
-				case 0x22A8: return 0x2AE4; // TRUE
-				case 0x22A9: return 0x2AE3; // FORCES
-				case 0x22AB: return 0x2AE5; // DOUBLE VERTICAL BAR DOUBLE RIGHT TURNSTILE
-				case 0x22F2: return 0x22FA; // ELEMENT OF WITH LONG HORIZONTAL STROKE
-				case 0x22F3: return 0x22FB; // ELEMENT OF WITH VERTICAL BAR AT END OF HORIZONTAL STROKE
-				case 0x22F4: return 0x22FC; // SMALL ELEMENT OF WITH VERTICAL BAR AT END OF HORIZONTAL STROKE
-				case 0x22F6: return 0x22FD; // ELEMENT OF WITH OVERBAR
-				case 0x22F7: return 0x22FE; // SMALL ELEMENT OF WITH OVERBAR
-				case 0xFF1C: return 0xFF1E; // FULLWIDTH LESS-THAN SIGN
+                    case 0x3C:
+                        return 0x3E; // LESS-THAN SIGN
+                    case 0x2208:
+                        return 0x220B; // ELEMENT OF
+                    case 0x2209:
+                        return 0x220C; // NOT AN ELEMENT OF
+                    case 0x220A:
+                        return 0x220D; // SMALL ELEMENT OF
+                    case 0x2215:
+                        return 0x29F5; // DIVISION SLASH
+                    case 0x2243:
+                        return 0x22CD; // ASYMPTOTICALLY EQUAL TO
+                    case 0x2298:
+                        return 0x29B8; // CIRCLED DIVISION SLASH
+                    case 0x22A6:
+                        return 0x2ADE; // ASSERTION
+                    case 0x22A8:
+                        return 0x2AE4; // TRUE
+                    case 0x22A9:
+                        return 0x2AE3; // FORCES
+                    case 0x22AB:
+                        return 0x2AE5; // DOUBLE VERTICAL BAR DOUBLE RIGHT TURNSTILE
+                    case 0x22F2:
+                        return 0x22FA; // ELEMENT OF WITH LONG HORIZONTAL STROKE
+                    case 0x22F3:
+                        return 0x22FB; // ELEMENT OF WITH VERTICAL BAR AT END OF HORIZONTAL STROKE
+                    case 0x22F4:
+                        return 0x22FC; // SMALL ELEMENT OF WITH VERTICAL BAR AT END OF HORIZONTAL STROKE
+                    case 0x22F6:
+                        return 0x22FD; // ELEMENT OF WITH OVERBAR
+                    case 0x22F7:
+                        return 0x22FE; // SMALL ELEMENT OF WITH OVERBAR
+                    case 0xFF1C:
+                        return 0xFF1E; // FULLWIDTH LESS-THAN SIGN
 			}
 			break;
 		case ccPs:
 			switch (ch) {
-				case 0x5B: return 0x5D; // LEFT SQUARE BRACKET
-				case 0x7B: return 0x7D; // LEFT CURLY BRACKET
-				case 0x298D: return 0x2990; // LEFT SQUARE BRACKET WITH TICK IN TOP CORNER
-				case 0x298F: return 0x298E; // LEFT SQUARE BRACKET WITH TICK IN BOTTOM CORNER
-				case 0xFF3B: return 0xFF3D; // FULLWIDTH LEFT SQUARE BRACKET
-				case 0xFF5B: return 0xFF5D; // FULLWIDTH LEFT CURLY BRACKET
+                    case 0x5B:
+                        return 0x5D; // LEFT SQUARE BRACKET
+                    case 0x7B:
+                        return 0x7D; // LEFT CURLY BRACKET
+                    case 0x298D:
+                        return 0x2990; // LEFT SQUARE BRACKET WITH TICK IN TOP CORNER
+                    case 0x298F:
+                        return 0x298E; // LEFT SQUARE BRACKET WITH TICK IN BOTTOM CORNER
+                    case 0xFF3B:
+                        return 0xFF3D; // FULLWIDTH LEFT SQUARE BRACKET
+                    case 0xFF5B:
+                        return 0xFF5D; // FULLWIDTH LEFT CURLY BRACKET
 			}
 			break;
 		case ccPi:
 			break;
-		default: return 0;
+            default:
+                return 0;
 	}
 	return ch + 1;
-}
+    }
 
 /*
  * IsValidQuoteOpener
  * -
  */
-bool IsValidQuoteOpener(const int ch, DelimPair &dp, int type = RAKUDELIM_BRACKET) noexcept {
+    bool IsValidQuoteOpener(const int ch, DelimPair &dp, int type = RAKUDELIM_BRACKET) noexcept {
 	dp.closer[0] = 0;
 	dp.closer[1] = 0;
 	dp.interpol = true;
 	if (type == RAKUDELIM_QUOTE) {
 		switch (ch) {
 			//   Opener		Closer					Description
-			case '\'':		dp.closer[0] = '\'';	// APOSTROPHE
+                case '\'':
+                    dp.closer[0] = '\'';    // APOSTROPHE
 				dp.interpol = false;
 				break;
-			case '"':		dp.closer[0] = '"';		// QUOTATION MARK
+                case '"':
+                    dp.closer[0] = '"';        // QUOTATION MARK
 				break;
-			case 0x2018:	dp.closer[0] = 0x2019;	// LEFT SINGLE QUOTATION MARK
+                case 0x2018:
+                    dp.closer[0] = 0x2019;    // LEFT SINGLE QUOTATION MARK
 				dp.interpol = false;
 				break;
-			case 0x201C:	dp.closer[0] = 0x201D;	// LEFT DOUBLE QUOTATION MARK
+                case 0x201C:
+                    dp.closer[0] = 0x201D;    // LEFT DOUBLE QUOTATION MARK
 				break;
-			case 0x201D:	dp.closer[0] = 0x201C;	// RIGHT DOUBLE QUOTATION MARK
+                case 0x201D:
+                    dp.closer[0] = 0x201C;    // RIGHT DOUBLE QUOTATION MARK
 				break;
-			case 0x201E:	dp.closer[0] = 0x201C;	// DOUBLE LOW-9 QUOTATION MARK
+                case 0x201E:
+                    dp.closer[0] = 0x201C;    // DOUBLE LOW-9 QUOTATION MARK
 							dp.closer[1] = 0x201D;
 				break;
-			case 0xFF62:	dp.closer[0] = 0xFF63;	// HALFWIDTH LEFT CORNER BRACKET
+                case 0xFF62:
+                    dp.closer[0] = 0xFF63;    // HALFWIDTH LEFT CORNER BRACKET
 				dp.interpol = false;
 				break;
-			default:		return false;
+                default:
+                    return false;
 		}
 	} else if (type == RAKUDELIM_BRACKET) {
 		dp.closer[0] = GetBracketCloseChar(ch);
@@ -300,40 +333,40 @@ bool IsValidQuoteOpener(const int ch, DelimPair &dp, int type = RAKUDELIM_BRACKE
 	dp.opener = ch;
 	dp.count = 1;
 	return dp.closer[0] > 0;
-}
+    }
 
 /*
  * IsBracketOpenChar
  * - true if this is a valid start bracket character
  */
-bool IsBracketOpenChar(int ch) noexcept {
+    bool IsBracketOpenChar(int ch) noexcept {
 	return GetBracketCloseChar(ch) > 0;
-}
+    }
 
 /*
  * IsValidRegOrQAdjacent
  * - returns true if ch is a valid character to put directly after Q / q
  *   * ref: Q Language: https://docs.raku.org/language/quoting
  */
-bool IsValidRegOrQAdjacent(int ch) noexcept {
-	return !(IsAlphaNumeric(ch) || ch == '_' || ch == '(' || ch == ')' || ch == '\'' );
-}
+    bool IsValidRegOrQAdjacent(int ch) noexcept {
+        return !(IsAlphaNumeric(ch) || ch == '_' || ch == '(' || ch == ')' || ch == '\'');
+    }
 
 /*
  * IsValidRegOrQPrecede
  * - returns true if ch is a valid preceeding character to put directly before Q / q
  *   * ref: Q Language: https://docs.raku.org/language/quoting
  */
-bool IsValidRegOrQPrecede(int ch) noexcept {
+    bool IsValidRegOrQPrecede(int ch) noexcept {
 	return !(IsAlphaNumeric(ch) || ch == '_');
-}
+    }
 
 /*
  * MatchCharInRange
  * - returns true if the mach character is found in range (of length)
  * - ignoreDelim (default false)
  */
-bool MatchCharInRange(StyleContext &sc, const Sci_Position length,
+    bool MatchCharInRange(StyleContext &sc, const Sci_Position length,
 		const int match, bool ignoreDelim = false) {
 	Sci_Position len = 0;
 	int chPrev = sc.chPrev;
@@ -343,13 +376,13 @@ bool MatchCharInRange(StyleContext &sc, const Sci_Position length,
 			return true;
 	}
 	return false;
-}
+    }
 
 /*
  * PrevNonWhitespaceChar
  * - returns the last non-whitespace char
  */
-int PrevNonWhitespaceChar(StyleContext &sc) {
+    int PrevNonWhitespaceChar(StyleContext &sc) {
 	Sci_Position rel = 0;
 	Sci_Position max_back = 0 - sc.currentPos;
 	while (--rel > max_back) {
@@ -358,7 +391,7 @@ int PrevNonWhitespaceChar(StyleContext &sc) {
 			return ch;
 	}
 	return 0; // no matching char
-}
+    }
 
 /*
  * IsQLangStartAtScPos
@@ -367,7 +400,7 @@ int PrevNonWhitespaceChar(StyleContext &sc) {
  *   - Q :adverb :adverb //;
  *   - q,qx,qw,qq,qqx,qqw,qqww :adverb /:adverb /;
  */
-bool IsQLangStartAtScPos(StyleContext &sc, int &type, const Sci_Position length) {
+    bool IsQLangStartAtScPos(StyleContext &sc, int &type, const Sci_Position length) {
 	const bool valid_adj = IsValidRegOrQAdjacent(sc.chNext);
 	const int chFw2 = sc.GetRelativeCharacter(2);
 	const int chFw3 = sc.GetRelativeCharacter(3);
@@ -404,7 +437,7 @@ bool IsQLangStartAtScPos(StyleContext &sc, int &type, const Sci_Position length)
 		}
 	}
 	return type >= 0;
-}
+    }
 
 /*
  * IsRegexStartAtScPos
@@ -414,7 +447,7 @@ bool IsQLangStartAtScPos(StyleContext &sc, int &type, const Sci_Position length)
  *   -              regex R :adverb //;
  *   -                     /:adverb /;
  */
-bool IsRegexStartAtScPos(StyleContext &sc, int &type, CharacterSet &set) {
+    bool IsRegexStartAtScPos(StyleContext &sc, int &type, CharacterSet &set) {
 	const bool valid_adj = IsValidRegOrQAdjacent(sc.chNext);
 	type = -1;
 	if (IsValidRegOrQPrecede(sc.chPrev)) {
@@ -447,42 +480,42 @@ bool IsRegexStartAtScPos(StyleContext &sc, int &type, CharacterSet &set) {
 		}
 	}
 	return type >= 0;
-}
+    }
 
 /*
  * IsValidIdentPrecede
  * - returns if ch is a valid preceeding char to put directly before an identifier
  */
-bool IsValidIdentPrecede(int ch) noexcept {
+    bool IsValidIdentPrecede(int ch) noexcept {
 	return !(IsAlphaNumeric(ch) || ch == '_' || ch == '@' || ch == '$' || ch == '%');
-}
+    }
 
 /*
  * IsValidDelimiter
  * - returns if ch is a valid delimiter (most chars are valid)
  *   * ref: Q Language: https://docs.raku.org/language/quoting
  */
-bool IsValidDelimiter(int ch) noexcept {
+    bool IsValidDelimiter(int ch) noexcept {
 	return !(IsAlphaNumeric(ch) || ch == ':');
-}
+    }
 
 /*
  * GetDelimiterCloseChar
  * - returns the corrisponding close char for a given delimiter (could be the same char)
  */
-int GetDelimiterCloseChar(int ch) noexcept {
+    int GetDelimiterCloseChar(int ch) noexcept {
 	int ch_end = GetBracketCloseChar(ch);
 	if (ch_end == 0 && IsValidDelimiter(ch)) {
 		ch_end = ch;
 	}
 	return ch_end;
-}
+    }
 
 /*
  * GetRepeatCharCount
  * - returns the occurence count of match
  */
-Sci_Position GetRepeatCharCount(StyleContext &sc, int chMatch, Sci_Position length) {
+    Sci_Position GetRepeatCharCount(StyleContext &sc, int chMatch, Sci_Position length) {
 	Sci_Position cnt = 0;
 	while (cnt < length) {
 		if (sc.GetRelativeCharacter(cnt) != chMatch) {
@@ -491,7 +524,7 @@ Sci_Position GetRepeatCharCount(StyleContext &sc, int chMatch, Sci_Position leng
 		cnt++;
 	}
 	return cnt;
-}
+    }
 
 /*
  * LengthToDelimiter
@@ -499,7 +532,7 @@ Sci_Position GetRepeatCharCount(StyleContext &sc, int chMatch, Sci_Position leng
  *   - Ignores nested delimiters (if opener != closer)
  *   - no trailing char after last closer (default false)
  */
-Sci_Position LengthToDelimiter(StyleContext &sc, const DelimPair &dp,
+    Sci_Position LengthToDelimiter(StyleContext &sc, const DelimPair &dp,
 		Sci_Position length, bool noTrailing = false) {
 	short cnt_open = 0;			// count open bracket
 	short cnt_close = 0;		// count close bracket
@@ -511,7 +544,7 @@ Sci_Position LengthToDelimiter(StyleContext &sc, const DelimPair &dp,
 	while (len < length) {
 		const int chPrev = sc.GetRelativeCharacter(len - 1);
 		const int ch = sc.GetRelativeCharacter(len);
-		const int chNext = sc.GetRelativeCharacter(len+1);
+            const int chNext = sc.GetRelativeCharacter(len + 1);
 
 		if (cnt_open == 0 && cnt_close == dp.count) {
 			return len;				// end condition has been met
@@ -519,7 +552,7 @@ Sci_Position LengthToDelimiter(StyleContext &sc, const DelimPair &dp,
 			if (chPrev != '\\' && ch == chOpener) {			// ignore escape sequence
 				cnt_open++;			// open nested bracket
 			} else if (chPrev != '\\' && dp.isCloser(ch)) {	// ignore escape sequence
-				if ( cnt_open > 0 ) {
+                    if (cnt_open > 0) {
 					cnt_open--;		// close nested bracket
 				} else if (dp.count > 1 && cnt_close < (dp.count - 1)) {
 					if (cnt_close > 1) {
@@ -547,14 +580,14 @@ Sci_Position LengthToDelimiter(StyleContext &sc, const DelimPair &dp,
 		len++;
 	}
 	return -1; // end condition has NOT been met
-}
+    }
 
 /*
  * LengthToEndHeredoc
  * - returns the length until the end of a heredoc section
  *   - delimiter string MUST begin on a new line
  */
-Sci_Position LengthToEndHeredoc(const StyleContext &sc, LexAccessor &styler,
+    Sci_Position LengthToEndHeredoc(const StyleContext &sc, LexAccessor &styler,
 		const Sci_Position length, const char *delim) {
 	bool on_new_ln = false;
 	int i = 0; // str index
@@ -570,13 +603,13 @@ Sci_Position LengthToEndHeredoc(const StyleContext &sc, LexAccessor &styler,
 			on_new_ln = IsANewLine(ch);
 	}
 	return -1;				// no match found
-}
+    }
 
 /*
  * LengthToNextChar
  * - returns the length until the next character
  */
-Sci_Position LengthToNextChar(StyleContext &sc, const Sci_Position length) {
+    Sci_Position LengthToNextChar(StyleContext &sc, const Sci_Position length) {
 	Sci_Position len = 0;
 	while (++len < length) {
 		const int ch = sc.GetRelativeCharacter(len);
@@ -585,29 +618,28 @@ Sci_Position LengthToNextChar(StyleContext &sc, const Sci_Position length) {
 		}
 	}
 	return len;
-}
+    }
 
 /*
  * GetRelativeString
  * - gets a relitive string and sets it in &str
  *   - resets string before seting
  */
-void GetRelativeString(StyleContext &sc, Sci_Position offset, Sci_Position length,
+    void GetRelativeString(StyleContext &sc, Sci_Position offset, Sci_Position length,
 		std::string &str) {
 	Sci_Position pos = offset;
 	str.clear();
 	while (pos < length) {
 		str += sc.GetRelativeCharacter(pos++);
 	}
-}
+    }
 
-} // end anonymous namespace
 
 /*----------------------------------------------------------------------------*
  * --- class: LexerRaku ---
  *----------------------------------------------------------------------------*/
 //class LexerRaku : public ILexerWithMetaData {
-class LexerRaku : public DefaultLexer {
+    class LexerRaku : public DefaultLexer {
 	CharacterSet setWord;
 	CharacterSet setSigil;
 	CharacterSet setTwigil;
@@ -624,7 +656,7 @@ class LexerRaku : public DefaultLexer {
 	WordList typesExceptions;
 	WordList adverbs;
 
-public:
+    public:
 	// Defined as explicit, so that constructor can not be copied
 	explicit LexerRaku() :
 		DefaultLexer("raku", SCLEX_RAKU),
@@ -635,56 +667,79 @@ public:
 		setSpecialVar(CharacterSet::setNone, "_/!") {
 		regexIdent.Set("regex rule token");
 	}
+
 	// Deleted so LexerRaku objects can not be copied.
 	LexerRaku(const LexerRaku &) = delete;
+
 	LexerRaku(LexerRaku &&) = delete;
+
 	void operator=(const LexerRaku &) = delete;
+
 	void operator=(LexerRaku &&) = delete;
+
 	virtual ~LexerRaku() {
 	}
+
 	void SCI_METHOD Release() noexcept override {
 		delete this;
 	}
+
 	int SCI_METHOD Version() const noexcept override {
 		return lvRelease5;
 	}
+
 	const char *SCI_METHOD PropertyNames() override {
 		return osRaku.PropertyNames();
 	}
+
 	int SCI_METHOD PropertyType(const char *name) override {
 		return osRaku.PropertyType(name);
 	}
+
 	const char *SCI_METHOD DescribeProperty(const char *name) override {
 		return osRaku.DescribeProperty(name);
 	}
+
 	Sci_Position SCI_METHOD PropertySet(const char *key, const char *val) override;
+
 	const char *SCI_METHOD PropertyGet(const char *key) override {
 		return osRaku.PropertyGet(key);
 	}
+
 	const char *SCI_METHOD DescribeWordListSets() override {
 		return osRaku.DescribeWordListSets();
 	}
+
 	Sci_Position SCI_METHOD WordListSet(int n, const char *wl) override;
+
 	void SCI_METHOD Lex(Sci_PositionU startPos, Sci_Position length, int initStyle, IDocument *pAccess) override;
+
 	void SCI_METHOD Fold(Sci_PositionU startPos, Sci_Position length, int initStyle, IDocument *pAccess) override;
 
 	static ILexer5 *LexerFactoryRaku() {
 		return new LexerRaku();
 	}
 
-protected:
+    protected:
 	bool IsOperatorChar(const int ch);
+
 	bool IsWordChar(const int ch, bool allowNumber = true);
+
 	bool IsWordStartChar(const int ch);
+
 	bool IsNumberChar(const int ch, int base = 10);
+
 	bool ProcessRegexTwinCapture(StyleContext &sc, const Sci_Position length,
 		int &type, const DelimPair &dp);
+
 	void ProcessStringVars(StyleContext &sc, const Sci_Position length, const int varState);
+
 	bool ProcessValidRegQlangStart(StyleContext &sc, Sci_Position length, const int type,
 		WordList &wordsAdverbs, DelimPair &dp);
+
 	Sci_Position LengthToNonWordChar(StyleContext &sc, Sci_Position length,
 		char *s, const int size, Sci_Position offset = 0);
-};
+    };
 
 /*----------------------------------------------------------------------------*
  * --- METHODS: LexerRaku ---
@@ -695,7 +750,7 @@ protected:
  * - Test for both ASCII and Unicode operators
  *   see: https://docs.raku.org/language/unicode_entry
  */
-bool LexerRaku::IsOperatorChar(const int ch) {
+    bool LexerRaku::IsOperatorChar(const int ch) {
 	if (ch > 0x7F) {
 		switch (ch) {
 			//   Unicode	ASCII Equiv.
@@ -721,7 +776,7 @@ bool LexerRaku::IsOperatorChar(const int ch) {
 		}
 	}
 	return setOperator.Contains(ch);
-}
+    }
 
 /*
  * LexerRaku::IsWordChar
@@ -730,7 +785,7 @@ bool LexerRaku::IsOperatorChar(const int ch) {
  *   also: ftp://ftp.unicode.org/Public/UCD/latest/ucd/UnicodeData.txt
  *   FIXME: *still* may not contain all valid characters
  */
-bool LexerRaku::IsWordChar(const int ch, bool allowNumber) {
+    bool LexerRaku::IsWordChar(const int ch, bool allowNumber) {
 	// Unicode numbers should not apear in word identifiers
 	if (ch > 0x7F) {
 		const CharacterCategory cc = CategoriseCharacter(ch);
@@ -749,15 +804,15 @@ bool LexerRaku::IsWordChar(const int ch, bool allowNumber) {
 		return true; // an ASCII number type
 	}
 	return setWord.Contains(ch);
-}
+    }
 
 /*
  * LexerRaku::IsWordStartChar
  * - Test for both ASCII and Unicode identifier "start / first" characters
  */
-bool LexerRaku::IsWordStartChar(const int ch) {
+    bool LexerRaku::IsWordStartChar(const int ch) {
 	return ch != '-' && IsWordChar(ch, false); // no numbers allowed
-}
+    }
 
 /*
  * LexerRaku::IsNumberChar
@@ -768,7 +823,7 @@ bool LexerRaku::IsWordStartChar(const int ch) {
  *     and NOT PARENTHESIZED or CIRCLED
  *   FIXME: *still* may not contain all valid number characters
  */
-bool LexerRaku::IsNumberChar(const int ch, int base) {
+    bool LexerRaku::IsNumberChar(const int ch, int base) {
 	if (ch > 0x7F) {
 		const CharacterCategory cc = CategoriseCharacter(ch);
 		switch (cc) {
@@ -782,23 +837,23 @@ bool LexerRaku::IsNumberChar(const int ch, int base) {
 		}
 	}
 	return IsADigit(ch, base);
-}
+    }
 
 /*
  * LexerRaku::PropertySet
  * -
  */
-Sci_Position SCI_METHOD LexerRaku::PropertySet(const char *key, const char *val) {
+    Sci_Position SCI_METHOD LexerRaku::PropertySet(const char *key, const char *val) {
 	if (osRaku.PropertySet(&options, key, val))
 		return 0;
 	return -1;
-}
+    }
 
 /*
  * LexerRaku::WordListSet
  * -
  */
-Sci_Position SCI_METHOD LexerRaku::WordListSet(int n, const char *wl) {
+    Sci_Position SCI_METHOD LexerRaku::WordListSet(int n, const char *wl) {
 	WordList *wordListN = nullptr;
 	switch (n) {
 		case 0:
@@ -833,7 +888,7 @@ Sci_Position SCI_METHOD LexerRaku::WordListSet(int n, const char *wl) {
 		}
 	}
 	return firstModification;
-}
+    }
 
 /*
  * LexerRaku::ProcessRegexTwinCapture
@@ -841,7 +896,7 @@ Sci_Position SCI_METHOD LexerRaku::WordListSet(int n, const char *wl) {
  * - moves to first new delimiter, if a bracket
  * - returns true when valid delimiter start found (if bracket)
  */
-bool LexerRaku::ProcessRegexTwinCapture(StyleContext &sc, const Sci_Position length,
+    bool LexerRaku::ProcessRegexTwinCapture(StyleContext &sc, const Sci_Position length,
 		int &type, const DelimPair &dp) {
 
 	if (type == RAKUTYPE_REGEX_S || type == RAKUTYPE_REGEX_TR || type == RAKUTYPE_REGEX_Y) {
@@ -863,13 +918,13 @@ bool LexerRaku::ProcessRegexTwinCapture(StyleContext &sc, const Sci_Position len
 		}
 	}
 	return false;
-}
+    }
 
 /*
  * LexerRaku::ProcessStringVars
  * - processes a string and highlights any valid variables
  */
-void LexerRaku::ProcessStringVars(StyleContext &sc, const Sci_Position length, const int varState) {
+    void LexerRaku::ProcessStringVars(StyleContext &sc, const Sci_Position length, const int varState) {
 	const int state = sc.state;
 	for (Sci_Position pos = 0; pos < length; pos++) {
 		if (sc.state == varState && !IsWordChar(sc.ch)) {
@@ -881,7 +936,8 @@ void LexerRaku::ProcessStringVars(StyleContext &sc, const Sci_Position length, c
 		}
 		sc.Forward(); // Next character
 	}
-}
+    }
+
 /*
  * LexerRaku::ProcessValidRegQlangStart
  * - processes a section of the document range from after a Regex / Q delimiter
@@ -889,7 +945,7 @@ void LexerRaku::ProcessStringVars(StyleContext &sc, const Sci_Position length, c
  *   - sets: adverbs, chOpen, chClose, chCount
  *  ref: https://docs.raku.org/language/regexes
  */
-bool LexerRaku::ProcessValidRegQlangStart(StyleContext &sc, Sci_Position length, const int type,
+    bool LexerRaku::ProcessValidRegQlangStart(StyleContext &sc, Sci_Position length, const int type,
 		WordList &wordsAdverbs, DelimPair &dp) {
 	Sci_Position startPos = sc.currentPos;
 	Sci_Position startLen = length;
@@ -980,14 +1036,14 @@ bool LexerRaku::ProcessValidRegQlangStart(StyleContext &sc, Sci_Position length,
 	dp.closer[0] = GetDelimiterCloseChar(dp.opener);
 	dp.closer[1] = 0; // no other closer char
 	return dp.closer[0] > 0;
-}
+    }
 
 /*
  * LexerRaku::LengthToNonWordChar
  * - returns the length until the next non "word" character: AlphaNum + '_'
  *   - also sets all the parsed chars in 's'
  */
-Sci_Position LexerRaku::LengthToNonWordChar(StyleContext &sc, Sci_Position length,
+    Sci_Position LexerRaku::LengthToNonWordChar(StyleContext &sc, Sci_Position length,
 		char *s, const int size, Sci_Position offset) {
 	Sci_Position len = 0;
 	Sci_Position max_length = size < length ? size : length;
@@ -1002,13 +1058,13 @@ Sci_Position LexerRaku::LengthToNonWordChar(StyleContext &sc, Sci_Position lengt
 	}
 	s[len + 1] = '\0';
 	return len;
-}
+    }
 
 /*
  * LexerRaku::Lex
  * - Main lexer method
  */
-void SCI_METHOD LexerRaku::Lex(Sci_PositionU startPos, Sci_Position length, int initStyle, IDocument *pAccess) {
+    void SCI_METHOD LexerRaku::Lex(Sci_PositionU startPos, Sci_Position length, int initStyle, IDocument *pAccess) {
 	LexAccessor styler(pAccess);
 	DelimPair dpEmbeded;			// delimiter pair: embeded comments
 	DelimPair dpString;				// delimiter pair: string
@@ -1309,7 +1365,8 @@ void SCI_METHOD LexerRaku::Lex(Sci_PositionU startPos, Sci_Position length, int 
 
 			// --- Numbers ----------------------------------------------------
 			else if (IsValidIdentPrecede(sc.chPrev) && (IsNumberChar(sc.ch)
-					|| (sc.ch == 'v' && IsNumberChar(sc.chNext) && wordLast == "use"))) {
+                                                            || (sc.ch == 'v' && IsNumberChar(sc.chNext) &&
+                                                                wordLast == "use"))) {
 				numState = RAKUNUM_DECIMAL;	// default: decimal (base 10)
 				cntDecimal = 0;
 				sc.SetState(SCE_RAKU_NUMBER);
@@ -1339,15 +1396,15 @@ void SCI_METHOD LexerRaku::Lex(Sci_PositionU startPos, Sci_Position length, int 
 				len = LengthToNonWordChar(sc, lengthToEnd, s, sizeof(s));
 				if (keywords.InList(s)) {
 					sc.SetState(SCE_RAKU_WORD);		// Keywords
-				} else if(functions.InList(s)) {
+                    } else if (functions.InList(s)) {
 					sc.SetState(SCE_RAKU_FUNCTION);	// Functions
-				} else if(typesBasic.InList(s)) {
+                    } else if (typesBasic.InList(s)) {
 					sc.SetState(SCE_RAKU_TYPEDEF);	// Types (basic)
-				} else if(typesComposite.InList(s)) {
+                    } else if (typesComposite.InList(s)) {
 					sc.SetState(SCE_RAKU_TYPEDEF);	// Types (composite)
-				} else if(typesDomainSpecific.InList(s)) {
+                    } else if (typesDomainSpecific.InList(s)) {
 					sc.SetState(SCE_RAKU_TYPEDEF);	// Types (domain-specific)
-				} else if(typesExceptions.InList(s)) {
+                    } else if (typesExceptions.InList(s)) {
 					sc.SetState(SCE_RAKU_TYPEDEF);	// Types (exceptions)
 				} else {
 					if (wordLast == "class")
@@ -1385,13 +1442,17 @@ void SCI_METHOD LexerRaku::Lex(Sci_PositionU startPos, Sci_Position length, int 
 
 				// State based on sigil
 				switch (sc.ch) {
-					case '$': sc.SetState(SCE_RAKU_MU);
+                        case '$':
+                            sc.SetState(SCE_RAKU_MU);
 						break;
-					case '@': sc.SetState(SCE_RAKU_POSITIONAL);
+                        case '@':
+                            sc.SetState(SCE_RAKU_POSITIONAL);
 						break;
-					case '%': sc.SetState(SCE_RAKU_ASSOCIATIVE);
+                        case '%':
+                            sc.SetState(SCE_RAKU_ASSOCIATIVE);
 						break;
-					case '&': sc.SetState(SCE_RAKU_CALLABLE);
+                        case '&':
+                            sc.SetState(SCE_RAKU_CALLABLE);
 				}
 				const int state = sc.state;
 				sc.Forward();
@@ -1463,7 +1524,7 @@ void SCI_METHOD LexerRaku::Lex(Sci_PositionU startPos, Sci_Position length, int 
 
 	// And we're done...
 	sc.Complete();
-}
+    }
 
 /*
  * LexerRaku::Lex
@@ -1474,7 +1535,9 @@ void SCI_METHOD LexerRaku::Lex(Sci_PositionU startPos, Sci_Position length, int 
  */
 #define RAKU_HEADFOLD_SHIFT	4
 #define RAKU_HEADFOLD_MASK	0xF0
-void SCI_METHOD LexerRaku::Fold(Sci_PositionU startPos, Sci_Position length, int /* initStyle */, IDocument *pAccess) {
+
+    void SCI_METHOD
+    LexerRaku::Fold(Sci_PositionU startPos, Sci_Position length, int /* initStyle */, IDocument *pAccess) {
 
 	// init LexAccessor / return if fold option is off
 	if (!options.fold) return;
@@ -1596,10 +1659,11 @@ void SCI_METHOD LexerRaku::Fold(Sci_PositionU startPos, Sci_Position length, int
 	// Done: set real level of the next line
 	int flagsNext = styler.LevelAt(lineCurrent) & ~SC_FOLDLEVELNUMBERMASK;
 	styler.SetLevel(lineCurrent, levelPrev | flagsNext);
-}
+    }
 
 /*----------------------------------------------------------------------------*
  * --- Scintilla: LexerModule ---
  *----------------------------------------------------------------------------*/
 
-LexerModule lmRaku(SCLEX_RAKU, LexerRaku::LexerFactoryRaku, "raku", rakuWordLists);
+    LexerModule lmRaku(SCLEX_RAKU, LexerRaku::LexerFactoryRaku, "raku", rakuWordLists);
+}

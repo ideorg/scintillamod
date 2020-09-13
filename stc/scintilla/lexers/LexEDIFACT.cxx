@@ -23,12 +23,12 @@
 #include "LexerModule.h"
 #include "DefaultLexer.h"
 
-using namespace ScintillaMod;
+namespace ScintillaMod {
 
-class LexerEDIFACT : public DefaultLexer
-{
-public:
+    class LexerEDIFACT : public DefaultLexer {
+    public:
 	LexerEDIFACT();
+
 	virtual ~LexerEDIFACT() {} // virtual destructor, as we inherit from ILexer
 
 	static ILexer5 *Factory() {
@@ -39,21 +39,20 @@ public:
 	{
 		return lvRelease5;
 	}
-	void SCI_METHOD Release() override
-	{
+
+        void SCI_METHOD Release() override {
 		delete this;
 	}
 
-	const char * SCI_METHOD PropertyNames() override
-	{
+        const char *SCI_METHOD PropertyNames() override {
 		return "fold\nlexer.edifact.highlight.un.all";
 	}
-	int SCI_METHOD PropertyType(const char *) override
-	{
+
+        int SCI_METHOD PropertyType(const char *) override {
 		return SC_TYPE_BOOLEAN; // Only one property!
 	}
-	const char * SCI_METHOD DescribeProperty(const char *name) override
-	{
+
+        const char *SCI_METHOD DescribeProperty(const char *name) override {
 		if (!strcmp(name, "fold"))
 			return "Whether to apply folding to document or not";
 		if (!strcmp(name, "lexer.edifact.highlight.un.all"))
@@ -61,10 +60,8 @@ public:
 		return NULL;
 	}
 
-	Sci_Position SCI_METHOD PropertySet(const char *key, const char *val) override
-	{
-		if (!strcmp(key, "fold"))
-		{
+        Sci_Position SCI_METHOD PropertySet(const char *key, const char *val) override {
+            if (!strcmp(key, "fold")) {
 			m_bFold = strcmp(val, "0") ? true : false;
 			return 0;
 		}
@@ -76,11 +73,9 @@ public:
 		return -1;
 	}
 
-	const char * SCI_METHOD PropertyGet(const char *key) override
-	{
+        const char *SCI_METHOD PropertyGet(const char *key) override {
 		m_lastPropertyValue = "";
-		if (!strcmp(key, "fold"))
-		{
+            if (!strcmp(key, "fold")) {
 			m_lastPropertyValue = m_bFold ? "1" : "0";
 		}
 		if (!strcmp(key, "lexer.edifact.highlight.un.all"))	// GetProperty
@@ -90,25 +85,29 @@ public:
 		return m_lastPropertyValue.c_str();
 	}
 
-	const char * SCI_METHOD DescribeWordListSets() override
-	{
-		return NULL;
-	}
-	Sci_Position SCI_METHOD WordListSet(int, const char *) override
-	{
-		return -1;
-	}
-	void SCI_METHOD Lex(Sci_PositionU startPos, Sci_Position length, int initStyle, IDocument *pAccess) override;
-	void SCI_METHOD Fold(Sci_PositionU startPos, Sci_Position length, int initStyle, IDocument *pAccess) override;
-	void * SCI_METHOD PrivateCall(int, void *) override
-	{
+        const char *SCI_METHOD DescribeWordListSets() override {
 		return NULL;
 	}
 
-protected:
+        Sci_Position SCI_METHOD WordListSet(int, const char *) override {
+		return -1;
+	}
+
+	void SCI_METHOD Lex(Sci_PositionU startPos, Sci_Position length, int initStyle, IDocument *pAccess) override;
+
+	void SCI_METHOD Fold(Sci_PositionU startPos, Sci_Position length, int initStyle, IDocument *pAccess) override;
+
+        void *SCI_METHOD PrivateCall(int, void *) override {
+		return NULL;
+	}
+
+    protected:
 	Sci_Position InitialiseFromUNA(IDocument *pAccess, Sci_PositionU MaxLength);
+
 	Sci_Position FindPreviousEnd(IDocument *pAccess, Sci_Position startPos) const;
+
 	Sci_Position ForwardPastWhitespace(IDocument *pAccess, Sci_Position startPos, Sci_Position MaxLength) const;
+
 	int DetectSegmentHeader(char SegmentHeader[3]) const;
 
 	bool m_bFold;
@@ -124,18 +123,17 @@ protected:
 	char m_chSegment;
 
 	std::string m_lastPropertyValue;
-};
+    };
 
-LexerModule lmEDIFACT(SCLEX_EDIFACT, LexerEDIFACT::Factory, "edifact");
-
-///////////////////////////////////////////////////////////////////////////////
-
-
+    LexerModule lmEDIFACT(SCLEX_EDIFACT, LexerEDIFACT::Factory, "edifact");
 
 ///////////////////////////////////////////////////////////////////////////////
 
-LexerEDIFACT::LexerEDIFACT() : DefaultLexer("edifact", SCLEX_EDIFACT)
-{
+
+
+///////////////////////////////////////////////////////////////////////////////
+
+    LexerEDIFACT::LexerEDIFACT() : DefaultLexer("edifact", SCLEX_EDIFACT) {
 	m_bFold = false;
 	m_bHighlightAllUN = false;
 	m_chComponent = ':';
@@ -143,10 +141,9 @@ LexerEDIFACT::LexerEDIFACT() : DefaultLexer("edifact", SCLEX_EDIFACT)
 	m_chDecimal = '.';
 	m_chRelease = '?';
 	m_chSegment = '\'';
-}
+    }
 
-void LexerEDIFACT::Lex(Sci_PositionU startPos, Sci_Position length, int, IDocument *pAccess)
-{
+    void LexerEDIFACT::Lex(Sci_PositionU startPos, Sci_Position length, int, IDocument *pAccess) {
 	Sci_PositionU posFinish = startPos + length;
 	InitialiseFromUNA(pAccess, posFinish);
 
@@ -162,8 +159,7 @@ void LexerEDIFACT::Lex(Sci_PositionU startPos, Sci_Position length, int, IDocume
 	styler.StartSegment(posCurrent);
 	Sci_Position posSegmentStart = -1;
 
-	while ((posCurrent < posFinish) && (posSegmentStart == -1))
-	{
+        while ((posCurrent < posFinish) && (posSegmentStart == -1)) {
 		posCurrent = ForwardPastWhitespace(pAccess, posCurrent, posFinish);
 		// Mark whitespace as default
 		styler.ColourTo(posCurrent - 1, SCE_EDI_DEFAULT);
@@ -171,14 +167,13 @@ void LexerEDIFACT::Lex(Sci_PositionU startPos, Sci_Position length, int, IDocume
 			break;
 
 		// Does is start with 3 charaters? ie, UNH
-		char SegmentHeader[4] = { 0 };
+            char SegmentHeader[4] = {0};
 		pAccess->GetCharRange(SegmentHeader, posCurrent, 3);
 
 		int SegmentStyle = DetectSegmentHeader(SegmentHeader);
 		if (SegmentStyle == SCE_EDI_BADSEGMENT)
 			break;
-		if (SegmentStyle == SCE_EDI_UNA)
-		{
+            if (SegmentStyle == SCE_EDI_UNA) {
 			posCurrent += 9;
 			styler.ColourTo(posCurrent - 1, SCE_EDI_UNA); // UNA
 			continue;
@@ -189,8 +184,7 @@ void LexerEDIFACT::Lex(Sci_PositionU startPos, Sci_Position length, int, IDocume
 		styler.ColourTo(posCurrent - 1, SegmentStyle); // UNH etc
 
 		// Colour in the rest of the segment
-		for (char c; posCurrent < posFinish; posCurrent++)
-		{
+            for (char c; posCurrent < posFinish; posCurrent++) {
 			pAccess->GetCharRange(&c, posCurrent, 1);
 
 			if (c == m_chRelease) // ? escape character, check first, in case of ?'
@@ -207,8 +201,7 @@ void LexerEDIFACT::Lex(Sci_PositionU startPos, Sci_Position length, int, IDocume
 				posSegmentStart = -1;
 				posCurrent++;
 				break;
-			}
-			else if (c == m_chComponent) // :
+                } else if (c == m_chComponent) // :
 				styler.ColourTo(posCurrent, SCE_EDI_SEP_COMPOSITE);
 			else if (c == m_chData) // +
 				styler.ColourTo(posCurrent, SCE_EDI_SEP_ELEMENT);
@@ -223,17 +216,16 @@ void LexerEDIFACT::Lex(Sci_PositionU startPos, Sci_Position length, int, IDocume
 
 	pAccess->StartStyling(posSegmentStart);
 	pAccess->SetStyleFor(posFinish - posSegmentStart, SCE_EDI_BADSEGMENT);
-}
+    }
 
-void LexerEDIFACT::Fold(Sci_PositionU startPos, Sci_Position length, int, IDocument *pAccess)
-{
+    void LexerEDIFACT::Fold(Sci_PositionU startPos, Sci_Position length, int, IDocument *pAccess) {
 	if (!m_bFold)
 		return;
 
 	Sci_PositionU endPos = startPos + length;
 	startPos = FindPreviousEnd(pAccess, startPos);
 	char c;
-	char SegmentHeader[4] = { 0 };
+        char SegmentHeader[4] = {0};
 
 	bool AwaitingSegment = true;
 	Sci_PositionU currLine = pAccess->LineFromPosition(startPos);
@@ -243,11 +235,9 @@ void LexerEDIFACT::Fold(Sci_PositionU startPos, Sci_Position length, int, IDocum
 	int indentCurrent = levelCurrentStyle & SC_FOLDLEVELNUMBERMASK;
 	int indentNext = indentCurrent;
 
-	while (startPos < endPos)
-	{
+        while (startPos < endPos) {
 		pAccess->GetCharRange(&c, startPos, 1);
-		switch (c)
-		{
+            switch (c) {
 		case '\t':
 		case '\r':
 		case ' ':
@@ -261,35 +251,30 @@ void LexerEDIFACT::Fold(Sci_PositionU startPos, Sci_Position length, int, IDocum
 			indentCurrent = indentNext;
 			continue;
 		}
-		if (c == m_chRelease)
-		{
+            if (c == m_chRelease) {
 			startPos += 2;
 			continue;
 		}
-		if (c == m_chSegment)
-		{
+            if (c == m_chSegment) {
 			AwaitingSegment = true;
 			startPos++;
 			continue;
 		}
 
-		if (!AwaitingSegment)
-		{
+            if (!AwaitingSegment) {
 			startPos++;
 			continue;
 		}
 		
 		// Segment!
 		pAccess->GetCharRange(SegmentHeader, startPos, 3);
-		if (SegmentHeader[0] != 'U' || SegmentHeader[1] != 'N')
-		{
+            if (SegmentHeader[0] != 'U' || SegmentHeader[1] != 'N') {
 			startPos++;
 			continue;
 		}
 
 		AwaitingSegment = false;
-		switch (SegmentHeader[2])
-		{
+            switch (SegmentHeader[2]) {
 		case 'H':
 		case 'G':
 			indentNext++;
@@ -305,22 +290,19 @@ void LexerEDIFACT::Fold(Sci_PositionU startPos, Sci_Position length, int, IDocum
 
 		startPos += 3;
 	}
-}
+    }
 
-Sci_Position LexerEDIFACT::InitialiseFromUNA(IDocument *pAccess, Sci_PositionU MaxLength)
-{
+    Sci_Position LexerEDIFACT::InitialiseFromUNA(IDocument *pAccess, Sci_PositionU MaxLength) {
 	MaxLength -= 9; // drop 9 chars, to give us room for UNA:+.? '
 
 	Sci_PositionU startPos = 0;
 	startPos += ForwardPastWhitespace(pAccess, 0, MaxLength);
-	if (startPos < MaxLength)
-	{
+        if (startPos < MaxLength) {
 		char bufUNA[9];
 		pAccess->GetCharRange(bufUNA, startPos, 9);
 
 		// Check it's UNA segment
-		if (!memcmp(bufUNA, "UNA", 3))
-		{
+            if (!memcmp(bufUNA, "UNA", 3)) {
 			m_chComponent = bufUNA[3];
 			m_chData = bufUNA[4];
 			m_chDecimal = bufUNA[5];
@@ -340,17 +322,15 @@ Sci_Position LexerEDIFACT::InitialiseFromUNA(IDocument *pAccess, Sci_PositionU M
 	m_chSegment = '\'';
 
 	return -1;
-}
+    }
 
-Sci_Position LexerEDIFACT::ForwardPastWhitespace(IDocument *pAccess, Sci_Position startPos, Sci_Position MaxLength) const
-{
+    Sci_Position
+    LexerEDIFACT::ForwardPastWhitespace(IDocument *pAccess, Sci_Position startPos, Sci_Position MaxLength) const {
 	char c;
 
-	while (startPos < MaxLength)
-	{
+        while (startPos < MaxLength) {
 		pAccess->GetCharRange(&c, startPos, 1);
-		switch (c)
-		{
+            switch (c) {
 		case '\t':
 		case '\r':
 		case '\n':
@@ -364,10 +344,9 @@ Sci_Position LexerEDIFACT::ForwardPastWhitespace(IDocument *pAccess, Sci_Positio
 	}
 
 	return MaxLength;
-}
+    }
 
-int LexerEDIFACT::DetectSegmentHeader(char SegmentHeader[3]) const
-{
+    int LexerEDIFACT::DetectSegmentHeader(char SegmentHeader[3]) const {
 	if (
 		SegmentHeader[0] < 'A' || SegmentHeader[0] > 'Z' ||
 		SegmentHeader[1] < 'A' || SegmentHeader[1] > 'Z' ||
@@ -385,19 +364,17 @@ int LexerEDIFACT::DetectSegmentHeader(char SegmentHeader[3]) const
 		return SCE_EDI_UNH;
 
 	return SCE_EDI_SEGMENTSTART;
-}
+    }
 
 // Look backwards for a ' or a document beginning
-Sci_Position LexerEDIFACT::FindPreviousEnd(IDocument *pAccess, Sci_Position startPos) const
-{
-	for (char c; startPos > 0; startPos--)
-	{
+    Sci_Position LexerEDIFACT::FindPreviousEnd(IDocument *pAccess, Sci_Position startPos) const {
+        for (char c; startPos > 0; startPos--) {
 		pAccess->GetCharRange(&c, startPos, 1);
 		if (c == m_chSegment)
 			return startPos;
 	}
 	// We didn't find a ', so just go with the beginning
 	return 0;
+    }
+
 }
-
-

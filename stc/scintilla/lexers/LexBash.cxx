@@ -30,7 +30,7 @@
 #include "SubStyles.h"
 #include "DefaultLexer.h"
 
-using namespace ScintillaMod;
+namespace ScintillaMod {
 
 #define HERE_DELIM_MAX			256
 
@@ -64,8 +64,6 @@ using namespace ScintillaMod;
 #define BASH_DELIM_BACKTICK		5
 
 #define BASH_DELIM_STACK_MAX	7
-
-namespace {
 
 inline int translateBashDigit(int ch) {
 	if (ch >= '0' && ch <= '9') {
@@ -173,7 +171,7 @@ struct OptionSetBash : public OptionSet<OptionsBash> {
 
 const char styleSubable[] = { SCE_SH_IDENTIFIER, SCE_SH_SCALAR, 0 };
 
-LexicalClass lexicalClasses[] = {
+static LexicalClass lexicalClasses[] = {
 	// Lexer Bash SCLEX_BASH SCE_SH_:
 	0, "SCE_SH_DEFAULT", "default", "White space",
 	1, "SCE_SH_ERROR", "error", "Error",
@@ -191,7 +189,6 @@ LexicalClass lexicalClasses[] = {
 	13, "SCE_SH_HERE_Q", "literal string", "Heredoc quoted string",
 };
 
-}
 
 class LexerBash : public DefaultLexer {
 	WordList keywords;
@@ -1083,4 +1080,5 @@ void SCI_METHOD LexerBash::Fold(Sci_PositionU startPos, Sci_Position length, int
 	styler.SetLevel(lineCurrent, levelPrev | flagsNext);
 }
 
-LexerModule lmBash(SCLEX_BASH, LexerBash::LexerFactoryBash, "bash", bashWordListDesc);
+    LexerModule lmBash(SCLEX_BASH, LexerBash::LexerFactoryBash, "bash", bashWordListDesc);
+}

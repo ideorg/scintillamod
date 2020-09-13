@@ -40,9 +40,8 @@ Differentiate between labels and variables
 #include "SparseState.h"
 #include "DefaultLexer.h"
 
-using namespace ScintillaMod;
+namespace ScintillaMod {
 
-namespace {
    // Use an unnamed namespace to protect the functions and classes from name conflicts
 
    bool IsSpaceEquiv(int state) {
@@ -51,10 +50,10 @@ namespace {
               state == SCE_ABL_DEFAULT);
    }
 
-   void highlightTaskMarker(StyleContext &sc, LexAccessor &styler, WordList &markerList){
+    void highlightTaskMarker(StyleContext &sc, LexAccessor &styler, WordList &markerList) {
       if ((isoperator(sc.chPrev) || IsASpace(sc.chPrev)) && markerList.Length()) {
          const int lengthMarker = 50;
-         char marker[lengthMarker+1];
+            char marker[lengthMarker + 1];
          Sci_Position currPos = (Sci_Position) sc.currentPos;
          Sci_Position i = 0;
          while (i < lengthMarker) {
@@ -66,7 +65,7 @@ namespace {
             i++;
          }
          marker[i] = '\0';
-         if (markerList.InListAbbreviated (marker,'(')) {
+            if (markerList.InListAbbreviated(marker, '(')) {
             sc.SetState(SCE_ABL_TASKMARKER);
          }
       }
@@ -84,6 +83,7 @@ namespace {
       bool foldComment;
       bool foldCommentMultiline;
       bool foldCompact;
+
       OptionsABL() {
          fold = false;
          foldSyntaxBased = true;
@@ -119,9 +119,9 @@ namespace {
          DefineWordListSets(ablWordLists);
       }
    };
-}
 
-class LexerABL : public DefaultLexer {
+
+    class LexerABL : public DefaultLexer {
    CharacterSet setWord;
    CharacterSet setNegationOp;
    CharacterSet setArithmethicOp;
@@ -134,63 +134,75 @@ class LexerABL : public DefaultLexer {
    WordList keywords4;      // Task Marker
    OptionsABL options;
    OptionSetABL osABL;
-public:
+    public:
    LexerABL() :
       DefaultLexer("abl", SCLEX_PROGRESS),
       setWord(CharacterSet::setAlphaNum, "_", 0x80, true),
       setNegationOp(CharacterSet::setNone, "!"),
       setArithmethicOp(CharacterSet::setNone, "+-/*%"),
       setRelOp(CharacterSet::setNone, "=!<>"),
-      setLogicalOp(CharacterSet::setNone, "|&"){
+                setLogicalOp(CharacterSet::setNone, "|&") {
    }
+
    virtual ~LexerABL() {
    }
+
    void SCI_METHOD Release() override {
       delete this;
    }
+
    int SCI_METHOD Version() const override {
       return lvRelease5;
    }
-   const char * SCI_METHOD PropertyNames() override {
+
+        const char *SCI_METHOD PropertyNames() override {
       return osABL.PropertyNames();
    }
+
    int SCI_METHOD PropertyType(const char *name) override {
       return osABL.PropertyType(name);
    }
-   const char * SCI_METHOD DescribeProperty(const char *name) override {
+
+        const char *SCI_METHOD DescribeProperty(const char *name) override {
       return osABL.DescribeProperty(name);
    }
-   Sci_Position SCI_METHOD PropertySet(const char *key, const char *val) override ;
-   const char * SCI_METHOD PropertyGet(const char *key) override {
+
+        Sci_Position SCI_METHOD PropertySet(const char *key, const char *val) override;
+
+        const char *SCI_METHOD PropertyGet(const char *key) override {
 	   return osABL.PropertyGet(key);
    }
 
-   const char * SCI_METHOD DescribeWordListSets() override {
+        const char *SCI_METHOD DescribeWordListSets() override {
       return osABL.DescribeWordListSets();
    }
+
    Sci_Position SCI_METHOD WordListSet(int n, const char *wl) override;
+
    void SCI_METHOD Lex(Sci_PositionU startPos, Sci_Position length, int initStyle, IDocument *pAccess) override;
+
    void SCI_METHOD Fold(Sci_PositionU startPos, Sci_Position length, int initStyle, IDocument *pAccess) override;
 
-   void * SCI_METHOD PrivateCall(int, void *) override {
+        void *SCI_METHOD PrivateCall(int, void *) override {
       return 0;
    }
+
    int SCI_METHOD LineEndTypesSupported() override {
       return SC_LINE_END_TYPE_DEFAULT;
    }
    static ILexer5 *LexerFactoryABL() {
       return new LexerABL();
    }
-};
+    };
 
-Sci_Position SCI_METHOD LexerABL::PropertySet(const char *key, const char *val) {
+    Sci_Position SCI_METHOD LexerABL::PropertySet(const char *key, const char *val) {
    if (osABL.PropertySet(&options, key, val)) {
       return 0;
    }
    return -1;
-}
+    }
 
-Sci_Position SCI_METHOD LexerABL::WordListSet(int n, const char *wl) {
+    Sci_Position SCI_METHOD LexerABL::WordListSet(int n, const char *wl) {
    WordList *wordListN = 0;
    switch (n) {
    case 0:
@@ -216,9 +228,9 @@ Sci_Position SCI_METHOD LexerABL::WordListSet(int n, const char *wl) {
       }
    }
    return firstModification;
-}
+    }
 
-void SCI_METHOD LexerABL::Lex(Sci_PositionU startPos, Sci_Position length, int initStyle, IDocument *pAccess) {
+    void SCI_METHOD LexerABL::Lex(Sci_PositionU startPos, Sci_Position length, int initStyle, IDocument *pAccess) {
    LexAccessor styler(pAccess);
 
    setWordStart = CharacterSet(CharacterSet::setAlpha, "_", 0x80, true);
@@ -235,9 +247,9 @@ void SCI_METHOD LexerABL::Lex(Sci_PositionU startPos, Sci_Position length, int i
    if (initStyle == SCE_ABL_PREPROCESSOR) {
       // Set continuationLine if last character of previous line is '~'
       if (lineCurrent > 0) {
-         Sci_Position endLinePrevious = styler.LineEnd(lineCurrent-1);
+                Sci_Position endLinePrevious = styler.LineEnd(lineCurrent - 1);
          if (endLinePrevious > 0) {
-            continuationLine = styler.SafeGetCharAt(endLinePrevious-1) == '~';
+                    continuationLine = styler.SafeGetCharAt(endLinePrevious - 1) == '~';
          }
       }
    }
@@ -259,21 +271,21 @@ void SCI_METHOD LexerABL::Lex(Sci_PositionU startPos, Sci_Position length, int i
          styler.Flush();  // looking at styles so need to flush
          st = styler.StyleAt(back);
 
-         chPrev = styler.SafeGetCharAt(back-1);
+                chPrev = styler.SafeGetCharAt(back - 1);
          // isSentenceStart is a non-visible state, used to identify where statements and preprocessor declerations can start
-         if (checkIsSentenceStart && st != SCE_ABL_COMMENT && st != SCE_ABL_LINECOMMENT && st != SCE_ABL_CHARACTER  && st != SCE_ABL_STRING ) {
-            chPrev_1 = styler.SafeGetCharAt(back-2);
-            chPrev_2 = styler.SafeGetCharAt(back-3);
-            chPrev_3 = styler.SafeGetCharAt(back-4);
+                if (checkIsSentenceStart && st != SCE_ABL_COMMENT && st != SCE_ABL_LINECOMMENT &&
+                    st != SCE_ABL_CHARACTER && st != SCE_ABL_STRING) {
+                    chPrev_1 = styler.SafeGetCharAt(back - 2);
+                    chPrev_2 = styler.SafeGetCharAt(back - 3);
+                    chPrev_3 = styler.SafeGetCharAt(back - 4);
             if ((chPrev == '.' || chPrev == ':' || chPrev == '}' ||
                (chPrev_3 == 'e' && chPrev_2 == 'l' && chPrev_1 == 's' &&  chPrev == 'e') ||
                (chPrev_3 == 't' && chPrev_2 == 'h' && chPrev_1 == 'e' &&  chPrev == 'n')) &&
-               (IsASpace(ch) || (ch == '/' && styler.SafeGetCharAt(back+1) == '*'))
+                        (IsASpace(ch) || (ch == '/' && styler.SafeGetCharAt(back + 1) == '*'))
                ) {
                   checkIsSentenceStart = false;
                   isSentenceStart = true;
-            }
-            else if (IsASpace(chPrev) && ch == '{') {
+                    } else if (IsASpace(chPrev) && ch == '{') {
                checkIsSentenceStart = false;
                isSentenceStart = false;
             }
@@ -310,7 +322,7 @@ void SCI_METHOD LexerABL::Lex(Sci_PositionU startPos, Sci_Position length, int i
       }
       // Handle line continuation generically.
       if (sc.ch == '~') {
-         if (static_cast<Sci_Position>((sc.currentPos+1)) >= lineEndNext) {
+                if (static_cast<Sci_Position>((sc.currentPos + 1)) >= lineEndNext) {
             lineCurrent++;
             lineEndNext = styler.LineEnd(lineCurrent);
             sc.Forward();
@@ -341,23 +353,23 @@ void SCI_METHOD LexerABL::Lex(Sci_PositionU startPos, Sci_Position length, int i
             if (sc.atLineStart || sc.atLineEnd || (!setWord.Contains(sc.ch) && sc.ch != '-')) {
                char s[1000];
                sc.GetCurrentLowered(s, sizeof(s));
-               bool isLastWordEnd = (s[0] == 'e' && s[1] =='n' && s[2] == 'd' && !IsAlphaNumeric(s[3]) && s[3] != '-');  // helps to identify "end trigger" phrase
-               if ((isSentenceStart && keywords2.InListAbbreviated (s,'(')) || (!isLastWordEnd && keywords3.InListAbbreviated (s,'('))) {
+                        bool isLastWordEnd = (s[0] == 'e' && s[1] == 'n' && s[2] == 'd' && !IsAlphaNumeric(s[3]) &&
+                                              s[3] != '-');  // helps to identify "end trigger" phrase
+                        if ((isSentenceStart && keywords2.InListAbbreviated(s, '(')) ||
+                            (!isLastWordEnd && keywords3.InListAbbreviated(s, '('))) {
                   sc.ChangeState(SCE_ABL_BLOCK);
                   isSentenceStart = false;
-               }
-               else if (keywords1.InListAbbreviated (s,'(')) {
+                        } else if (keywords1.InListAbbreviated(s, '(')) {
                   if (isLastWordEnd ||
-                     (s[0] == 'f' && s[1] =='o' && s[2] == 'r' && s[3] == 'w' && s[4] =='a' && s[5] == 'r' && s[6] == 'd'&& !IsAlphaNumeric(s[7]))) {
+                                (s[0] == 'f' && s[1] == 'o' && s[2] == 'r' && s[3] == 'w' && s[4] == 'a' &&
+                                 s[5] == 'r' && s[6] == 'd' && !IsAlphaNumeric(s[7]))) {
                      sc.ChangeState(SCE_ABL_END);
                      isSentenceStart = false;
-                  }
-                  else if ((s[0] == 'e' && s[1] =='l' && s[2] == 's' && s[3] == 'e') ||
-                         (s[0] == 't' && s[1] =='h' && s[2] == 'e' && s[3] == 'n')) {
+                            } else if ((s[0] == 'e' && s[1] == 'l' && s[2] == 's' && s[3] == 'e') ||
+                                       (s[0] == 't' && s[1] == 'h' && s[2] == 'e' && s[3] == 'n')) {
                      sc.ChangeState(SCE_ABL_WORD);
                      isSentenceStart = true;
-                  }
-                  else {
+                            } else {
                      sc.ChangeState(SCE_ABL_WORD);
                      isSentenceStart = false;
                   }
@@ -461,7 +473,7 @@ void SCI_METHOD LexerABL::Lex(Sci_PositionU startPos, Sci_Position length, int i
             if (sc.atLineEnd) {
                sc.SetState(SCE_ABL_DEFAULT);
             }
-         } else if (sc.Match('/','/') && (IsASpace(sc.chPrev) || isSentenceStart)) {
+                } else if (sc.Match('/', '/') && (IsASpace(sc.chPrev) || isSentenceStart)) {
             // Line comments are valid after a white space or EOL
             sc.SetState(SCE_ABL_LINECOMMENT);
             // Skip whitespace between // and preprocessor word
@@ -476,8 +488,7 @@ void SCI_METHOD LexerABL::Lex(Sci_PositionU startPos, Sci_Position length, int i
             /*    This code allows highlight of handles. Alas, it would cause the phrase "last-event:function"
                to be recognized as a BlockBegin */
                isSentenceStart = false;
-         }
-         else if ((sc.chPrev == '.' || sc.chPrev == ':' || sc.chPrev == '}') && (IsASpace(sc.ch))) {
+                } else if ((sc.chPrev == '.' || sc.chPrev == ':' || sc.chPrev == '}') && (IsASpace(sc.ch))) {
             isSentenceStart = true;
          }
       }
@@ -493,14 +504,14 @@ void SCI_METHOD LexerABL::Lex(Sci_PositionU startPos, Sci_Position length, int i
 	if (possibleOOLChange)
 		styler.ChangeLexerState(startPos, startPos + length);
    sc.Complete();
-}
+    }
 
 
 // Store both the current line's fold level and the next lines in the
 // level store to make it easy to pick up with each increment
 // and to make it possible to fiddle the current level for "} else {".
 
-void SCI_METHOD LexerABL::Fold(Sci_PositionU startPos, Sci_Position length, int initStyle, IDocument *pAccess) {
+    void SCI_METHOD LexerABL::Fold(Sci_PositionU startPos, Sci_Position length, int initStyle, IDocument *pAccess) {
 
    if (!options.fold)
       return;
@@ -512,8 +523,8 @@ void SCI_METHOD LexerABL::Fold(Sci_PositionU startPos, Sci_Position length, int 
    Sci_Position lineCurrent = styler.GetLine(startPos);
    int levelCurrent = SC_FOLDLEVELBASE;
    if (lineCurrent > 0)
-      levelCurrent = styler.LevelAt(lineCurrent-1) >> 16;
-   Sci_PositionU lineStartNext = styler.LineStart(lineCurrent+1);
+            levelCurrent = styler.LevelAt(lineCurrent - 1) >> 16;
+        Sci_PositionU lineStartNext = styler.LineStart(lineCurrent + 1);
    int levelNext = levelCurrent;
    char chNext = styler[startPos];
    int styleNext = styler.StyleAt(startPos);
@@ -521,11 +532,11 @@ void SCI_METHOD LexerABL::Fold(Sci_PositionU startPos, Sci_Position length, int 
    for (Sci_PositionU i = startPos; i < endPos; i++) {
       chNext = static_cast<char>(tolower(chNext));  // check tolower
       char ch = chNext;
-      chNext = styler.SafeGetCharAt(i+1);
+            chNext = styler.SafeGetCharAt(i + 1);
       int stylePrev = style;
       style = styleNext;
-      styleNext = styler.StyleAt(i+1);
-      bool atEOL = i == (lineStartNext-1);
+            styleNext = styler.StyleAt(i + 1);
+            bool atEOL = i == (lineStartNext - 1);
       if (options.foldComment && options.foldCommentMultiline && IsStreamCommentStyle(style)) {
          if (!IsStreamCommentStyle(stylePrev)) {
             levelNext++;
@@ -537,14 +548,13 @@ void SCI_METHOD LexerABL::Fold(Sci_PositionU startPos, Sci_Position length, int 
       if (options.foldSyntaxBased) {
          if (style == SCE_ABL_BLOCK && !IsAlphaNumeric(chNext)) {
             levelNext++;
-         }
-         else if (style == SCE_ABL_END  && (ch == 'e' || ch == 'f')) {
+                } else if (style == SCE_ABL_END && (ch == 'e' || ch == 'f')) {
             levelNext--;
          }
       }
       if (!IsASpace(ch))
          visibleChars++;
-      if (atEOL || (i == endPos-1)) {
+            if (atEOL || (i == endPos - 1)) {
          int lev = levelCurrent | levelNext << 16;
          if (visibleChars == 0 && options.foldCompact)
             lev |= SC_FOLDLEVELWHITEFLAG;
@@ -554,15 +564,16 @@ void SCI_METHOD LexerABL::Fold(Sci_PositionU startPos, Sci_Position length, int 
             styler.SetLevel(lineCurrent, lev);
          }
          lineCurrent++;
-         lineStartNext = styler.LineStart(lineCurrent+1);
+                lineStartNext = styler.LineStart(lineCurrent + 1);
          levelCurrent = levelNext;
-         if (atEOL && (i == static_cast<Sci_PositionU>(styler.Length()-1))) {
+                if (atEOL && (i == static_cast<Sci_PositionU>(styler.Length() - 1))) {
             // There is an empty line at end of file so give it same level and empty
             styler.SetLevel(lineCurrent, (levelCurrent | levelCurrent << 16) | SC_FOLDLEVELWHITEFLAG);
          }
          visibleChars = 0;
       }
    }
-}
+    }
 
-LexerModule lmProgress(SCLEX_PROGRESS, LexerABL::LexerFactoryABL, "abl", ablWordLists);
+    LexerModule lmProgress(SCLEX_PROGRESS, LexerABL::LexerFactoryABL, "abl", ablWordLists);
+}

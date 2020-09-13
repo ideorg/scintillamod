@@ -23,10 +23,9 @@
 #include "LexerModule.h"
 #include "DefaultLexer.h"
 
-using namespace ScintillaMod;
+namespace ScintillaMod {
 
-
-static const char *const DMISWordListDesc[] = {
+    static const char *const DMISWordListDesc[] = {
 	"DMIS Major Words",
 	"DMIS Minor Words",
 	"Unsupported DMIS Major Words",
@@ -34,11 +33,10 @@ static const char *const DMISWordListDesc[] = {
 	"Keywords for code folding start",
 	"Corresponding keywords for code folding end",
 	0
-};
+    };
 
 
-class LexerDMIS : public DefaultLexer
-{
+    class LexerDMIS : public DefaultLexer {
 	private:
 		char *m_wordListSets;
 		WordList m_majorWords;
@@ -48,11 +46,13 @@ class LexerDMIS : public DefaultLexer
 		WordList m_codeFoldingStart;
 		WordList m_codeFoldingEnd;
 
-		char * SCI_METHOD UpperCase(char *item);
+        char *SCI_METHOD UpperCase(char *item);
+
 		void SCI_METHOD InitWordListSets(void);
 
 	public:
 		LexerDMIS(void);
+
 		virtual ~LexerDMIS(void);
 
 		int SCI_METHOD Version() const override {
@@ -63,7 +63,7 @@ class LexerDMIS : public DefaultLexer
 			delete this;
 		}
 
-		const char * SCI_METHOD PropertyNames() override {
+        const char *SCI_METHOD PropertyNames() override {
 			return NULL;
 		}
 
@@ -71,7 +71,7 @@ class LexerDMIS : public DefaultLexer
 			return -1;
 		}
 
-		const char * SCI_METHOD DescribeProperty(const char *) override {
+        const char *SCI_METHOD DescribeProperty(const char *) override {
 			return NULL;
 		}
 
@@ -79,13 +79,13 @@ class LexerDMIS : public DefaultLexer
 			return -1;
 		}
 
-		const char * SCI_METHOD PropertyGet(const char *) override {
+        const char *SCI_METHOD PropertyGet(const char *) override {
 			return NULL;
 		}
 
 		Sci_Position SCI_METHOD WordListSet(int n, const char *wl) override;
 
-		void * SCI_METHOD PrivateCall(int, void *) override {
+        void *SCI_METHOD PrivateCall(int, void *) override {
 			return NULL;
 		}
 
@@ -93,14 +93,16 @@ class LexerDMIS : public DefaultLexer
 			return new LexerDMIS;
 		}
 
-		const char * SCI_METHOD DescribeWordListSets() override;
+        const char *SCI_METHOD DescribeWordListSets() override;
+
 		void SCI_METHOD Lex(Sci_PositionU startPos, Sci_Position lengthDoc, int initStyle, IDocument *pAccess) override;
-		void SCI_METHOD Fold(Sci_PositionU startPos, Sci_Position lengthDoc, int initStyle, IDocument *pAccess) override;
-};
+
+        void SCI_METHOD
+        Fold(Sci_PositionU startPos, Sci_Position lengthDoc, int initStyle, IDocument *pAccess) override;
+    };
 
 
-char * SCI_METHOD LexerDMIS::UpperCase(char *item)
-{
+    char *SCI_METHOD LexerDMIS::UpperCase(char *item) {
 	char *itemStart;
 
 
@@ -110,14 +112,13 @@ char * SCI_METHOD LexerDMIS::UpperCase(char *item)
 		item++;
 	};
 	return itemStart;
-}
+    }
 
-void SCI_METHOD LexerDMIS::InitWordListSets(void)
-{
+    void SCI_METHOD LexerDMIS::InitWordListSets(void) {
 	size_t totalLen = 0;
 
 
-	for (int i=0; DMISWordListDesc[i]; i++) {
+        for (int i = 0; DMISWordListDesc[i]; i++) {
 		totalLen += strlen(DMISWordListDesc[i]);
 		totalLen++;
 	};
@@ -126,14 +127,14 @@ void SCI_METHOD LexerDMIS::InitWordListSets(void)
 	this->m_wordListSets = new char[totalLen];
 	memset(this->m_wordListSets, 0, totalLen);
 
-	for (int i=0; DMISWordListDesc[i]; i++) {
+        for (int i = 0; DMISWordListDesc[i]; i++) {
 		strcat(this->m_wordListSets, DMISWordListDesc[i]);
 		strcat(this->m_wordListSets, "\n");
 	};
-}
+    }
 
 
-LexerDMIS::LexerDMIS(void) : DefaultLexer("DMIS", SCLEX_DMIS) {
+    LexerDMIS::LexerDMIS(void) : DefaultLexer("DMIS", SCLEX_DMIS) {
 	this->InitWordListSets();
 
 	this->m_majorWords.Clear();
@@ -142,14 +143,13 @@ LexerDMIS::LexerDMIS(void) : DefaultLexer("DMIS", SCLEX_DMIS) {
 	this->m_unsupportedMinor.Clear();
 	this->m_codeFoldingStart.Clear();
 	this->m_codeFoldingEnd.Clear();
-}
+    }
 
-LexerDMIS::~LexerDMIS(void) {
+    LexerDMIS::~LexerDMIS(void) {
 	delete[] this->m_wordListSets;
-}
+    }
 
-Sci_Position SCI_METHOD LexerDMIS::WordListSet(int n, const char *wl)
-{
+    Sci_Position SCI_METHOD LexerDMIS::WordListSet(int n, const char *wl) {
 	switch (n) {
 		case 0:
 			this->m_majorWords.Clear();
@@ -181,15 +181,13 @@ Sci_Position SCI_METHOD LexerDMIS::WordListSet(int n, const char *wl)
 	}
 
 	return 0;
-}
+    }
 
-const char * SCI_METHOD LexerDMIS::DescribeWordListSets()
-{
+    const char *SCI_METHOD LexerDMIS::DescribeWordListSets() {
 	return this->m_wordListSets;
-}
+    }
 
-void SCI_METHOD LexerDMIS::Lex(Sci_PositionU startPos, Sci_Position lengthDoc, int initStyle, IDocument *pAccess)
-{
+    void SCI_METHOD LexerDMIS::Lex(Sci_PositionU startPos, Sci_Position lengthDoc, int initStyle, IDocument *pAccess) {
 	const Sci_PositionU MAX_STR_LEN = 100;
 
 	LexAccessor styler(pAccess);
@@ -248,9 +246,9 @@ void SCI_METHOD LexerDMIS::Lex(Sci_PositionU startPos, Sci_Position lengthDoc, i
 			case SCE_DMIS_KEYWORD:
 				if (!setDMISWord.Contains(scCTX.ch)) {
 					char tmpStr[MAX_STR_LEN];
-					memset(tmpStr, 0, MAX_STR_LEN*sizeof(char));
-					scCTX.GetCurrent(tmpStr, (MAX_STR_LEN-1));
-					strncpy(tmpStr, this->UpperCase(tmpStr), (MAX_STR_LEN-1));
+                        memset(tmpStr, 0, MAX_STR_LEN * sizeof(char));
+                        scCTX.GetCurrent(tmpStr, (MAX_STR_LEN - 1));
+                        strncpy(tmpStr, this->UpperCase(tmpStr), (MAX_STR_LEN - 1));
 
 					if (this->m_minorWords.InList(tmpStr)) {
 						scCTX.ChangeState(SCE_DMIS_MINORWORD);
@@ -282,10 +280,9 @@ void SCI_METHOD LexerDMIS::Lex(Sci_PositionU startPos, Sci_Position lengthDoc, i
 		};
 	};
 	scCTX.Complete();
-}
+    }
 
-void SCI_METHOD LexerDMIS::Fold(Sci_PositionU startPos, Sci_Position lengthDoc, int, IDocument *pAccess)
-{
+    void SCI_METHOD LexerDMIS::Fold(Sci_PositionU startPos, Sci_Position lengthDoc, int, IDocument *pAccess) {
 	const int MAX_STR_LEN = 100;
 
 	LexAccessor styler(pAccess);
@@ -301,16 +298,16 @@ void SCI_METHOD LexerDMIS::Fold(Sci_PositionU startPos, Sci_Position lengthDoc, 
 
 
 	tmpStr = new char[MAX_STR_LEN];
-	memset(tmpStr, 0, MAX_STR_LEN*sizeof(char));
+        memset(tmpStr, 0, MAX_STR_LEN * sizeof(char));
 
-	for (Sci_PositionU i=startPos; i<endPos; i++) {
+        for (Sci_PositionU i = startPos; i < endPos; i++) {
 		char ch = chNext;
-		chNext = styler.SafeGetCharAt(i+1);
+            chNext = styler.SafeGetCharAt(i + 1);
 
 		bool atEOL = ((ch == '\r' && chNext != '\n') || (ch == '\n'));
 
-		if (strPos >= (MAX_STR_LEN-1)) {
-			strPos = MAX_STR_LEN-1;
+            if (strPos >= (MAX_STR_LEN - 1)) {
+                strPos = MAX_STR_LEN - 1;
 		};
 
 		int style = styler.StyleAt(i);
@@ -327,7 +324,7 @@ void SCI_METHOD LexerDMIS::Fold(Sci_PositionU startPos, Sci_Position lengthDoc, 
 				if (this->m_codeFoldingEnd.InList(tmpStr) && (!noFoldPos)) {
 					levelCurrent--;
 				};
-				memset(tmpStr, 0, MAX_STR_LEN*sizeof(char));
+                    memset(tmpStr, 0, MAX_STR_LEN * sizeof(char));
 				strPos = 0;
 				foldWordPossible = false;
 			};
@@ -338,7 +335,7 @@ void SCI_METHOD LexerDMIS::Fold(Sci_PositionU startPos, Sci_Position lengthDoc, 
 			};
 		};
 
-		if (atEOL || (i == (endPos-1))) {
+            if (atEOL || (i == (endPos - 1))) {
 			int lev = levelPrev;
 
 			if (levelCurrent > levelPrev) {
@@ -352,7 +349,8 @@ void SCI_METHOD LexerDMIS::Fold(Sci_PositionU startPos, Sci_Position lengthDoc, 
 		};
 	};
 	delete[] tmpStr;
+    }
+
+
+    LexerModule lmDMIS(SCLEX_DMIS, LexerDMIS::LexerFactoryDMIS, "DMIS", DMISWordListDesc);
 }
-
-
-LexerModule lmDMIS(SCLEX_DMIS, LexerDMIS::LexerFactoryDMIS, "DMIS", DMISWordListDesc);

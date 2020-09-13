@@ -32,54 +32,51 @@
 #include "OptionSet.h"
 #include "DefaultLexer.h"
 
-using namespace ScintillaMod;
+namespace ScintillaMod {
 
-namespace {
-    // Use an unnamed namespace to protect the functions and classes from name conflicts
-
-enum NumType {
+    enum NumType {
     Binary,
     Octal,
     Exponent,
     Hexadecimal,
     Decimal,
     FormatError
-};
+    };
 
-int GetNumStyle(const int numType) noexcept {
+    int GetNumStyle(const int numType) noexcept {
     if (numType == NumType::FormatError) {
         return SCE_NIM_NUMERROR;
     }
 
     return SCE_NIM_NUMBER;
-}
+    }
 
-constexpr bool IsLetter(const int ch) noexcept {
+    constexpr bool IsLetter(const int ch) noexcept {
     // 97 to 122 || 65 to 90
     return (ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z');
-}
+    }
 
-bool IsAWordChar(const int ch) noexcept {
+    bool IsAWordChar(const int ch) noexcept {
     return ch < 0x80 && (isalnum(ch) || ch == '_' || ch == '.');
-}
+    }
 
-int IsNumHex(const StyleContext &sc) noexcept {
+    int IsNumHex(const StyleContext &sc) noexcept {
     return sc.chNext == 'x' || sc.chNext == 'X';
-}
+    }
 
-int IsNumBinary(const StyleContext &sc) noexcept {
+    int IsNumBinary(const StyleContext &sc) noexcept {
     return sc.chNext == 'b' || sc.chNext == 'B';
-}
+    }
 
-int IsNumOctal(const StyleContext &sc) {
+    int IsNumOctal(const StyleContext &sc) {
     return IsADigit(sc.chNext) || sc.chNext == 'o';
-}
+    }
 
-constexpr bool IsNewline(const int ch) noexcept {
+    constexpr bool IsNewline(const int ch) noexcept {
     return (ch == '\n' || ch == '\r');
-}
+    }
 
-bool IsFuncName(const char *str) noexcept {
+    bool IsFuncName(const char *str) noexcept {
     const char *identifiers[] = {
         "proc",
         "func",
@@ -97,22 +94,22 @@ bool IsFuncName(const char *str) noexcept {
     }
 
     return false;
-}
+    }
 
-constexpr bool IsTripleLiteral(const int style) noexcept {
+    constexpr bool IsTripleLiteral(const int style) noexcept {
     return style == SCE_NIM_TRIPLE || style == SCE_NIM_TRIPLEDOUBLE;
-}
+    }
 
-constexpr bool IsLineComment(const int style) noexcept {
+    constexpr bool IsLineComment(const int style) noexcept {
     return style == SCE_NIM_COMMENTLINE || style == SCE_NIM_COMMENTLINEDOC;
-}
+    }
 
-constexpr bool IsStreamComment(const int style) noexcept {
+    constexpr bool IsStreamComment(const int style) noexcept {
     return style == SCE_NIM_COMMENT || style == SCE_NIM_COMMENTDOC;
-}
+    }
 
 // Adopted from Accessor.cxx
-int GetIndent(const Sci_Position line, Accessor &styler) {
+    int GetIndent(const Sci_Position line, Accessor &styler) {
     Sci_Position startPos = styler.LineStart(line);
     const Sci_Position eolPos = styler.LineStart(line + 1) - 1;
 
@@ -156,15 +153,15 @@ int GetIndent(const Sci_Position line, Accessor &styler) {
     } else {
         return indent;
     }
-}
+    }
 
-int IndentAmount(const Sci_Position line, Accessor &styler) {
+    int IndentAmount(const Sci_Position line, Accessor &styler) {
     const int indent = GetIndent(line, styler);
     const int indentLevel = indent & SC_FOLDLEVELNUMBERMASK;
     return indentLevel <= SC_FOLDLEVELBASE ? indent : indentLevel | (indent & ~SC_FOLDLEVELNUMBERMASK);
-}
+    }
 
-struct OptionsNim {
+    struct OptionsNim {
     bool fold;
     bool foldCompact;
     bool highlightRawStrIdent;
@@ -174,14 +171,14 @@ struct OptionsNim {
         foldCompact = true;
         highlightRawStrIdent = false;
     }
-};
+    };
 
-static const char *const nimWordListDesc[] = {
+    static const char *const nimWordListDesc[] = {
     "Keywords",
     nullptr
-};
+    };
 
-struct OptionSetNim : public OptionSet<OptionsNim> {
+    struct OptionSetNim : public OptionSet<OptionsNim> {
     OptionSetNim() {
         DefineProperty("lexer.nim.raw.strings.highlight.ident", &OptionsNim::highlightRawStrIdent,
             "Set to 1 to enable highlighting generalized raw string identifiers. "
@@ -192,9 +189,9 @@ struct OptionSetNim : public OptionSet<OptionsNim> {
 
         DefineWordListSets(nimWordListDesc);
     }
-};
+    };
 
-LexicalClass lexicalClasses[] = {
+    static LexicalClass lexicalClasses[] = {
     // Lexer Nim SCLEX_NIM SCE_NIM_:
     0,  "SCE_NIM_DEFAULT",        "default",              "White space",
     1,  "SCE_NIM_COMMENT",        "comment block",        "Block comment",
@@ -213,22 +210,21 @@ LexicalClass lexicalClasses[] = {
     14, "SCE_NIM_NUMERROR",       "numeric error",        "Numeric format error",
     15, "SCE_NIM_OPERATOR",       "operator",             "Operators",
     16, "SCE_NIM_IDENTIFIER",     "identifier",           "Identifiers",
-};
+    };
 
-}
 
-class LexerNim : public DefaultLexer {
+    class LexerNim : public DefaultLexer {
     CharacterSet setWord;
     WordList keywords;
     OptionsNim options;
     OptionSetNim osNim;
 
-public:
+    public:
     LexerNim() :
         DefaultLexer("nim", SCLEX_NIM, lexicalClasses, ELEMENTS(lexicalClasses)),
-        setWord(CharacterSet::setAlphaNum, "_", 0x80, true) { }
+                setWord(CharacterSet::setAlphaNum, "_", 0x80, true) {}
 
-    virtual ~LexerNim() { }
+        virtual ~LexerNim() {}
 
     void SCI_METHOD Release() noexcept override {
         delete this;
@@ -238,7 +234,7 @@ public:
         return lvRelease5;
     }
 
-    const char * SCI_METHOD PropertyNames() override {
+        const char *SCI_METHOD PropertyNames() override {
         return osNim.PropertyNames();
     }
 
@@ -246,26 +242,27 @@ public:
         return osNim.PropertyType(name);
     }
 
-    const char * SCI_METHOD DescribeProperty(const char *name) override {
+        const char *SCI_METHOD DescribeProperty(const char *name) override {
         return osNim.DescribeProperty(name);
     }
 
     Sci_Position SCI_METHOD PropertySet(const char *key, const char *val) override;
 
-	const char * SCI_METHOD PropertyGet(const char* key) override {
+        const char *SCI_METHOD PropertyGet(const char *key) override {
 		return osNim.PropertyGet(key);
 	}
 
-    const char * SCI_METHOD DescribeWordListSets() override {
+        const char *SCI_METHOD DescribeWordListSets() override {
         return osNim.DescribeWordListSets();
     }
 
     Sci_Position SCI_METHOD WordListSet(int n, const char *wl) override;
 
     void SCI_METHOD Lex(Sci_PositionU startPos, Sci_Position length, int initStyle, IDocument *pAccess) override;
+
     void SCI_METHOD Fold(Sci_PositionU startPos, Sci_Position length, int initStyle, IDocument *pAccess) override;
 
-    void * SCI_METHOD PrivateCall(int, void *) noexcept override {
+        void *SCI_METHOD PrivateCall(int, void *) noexcept override {
         return nullptr;
     }
 
@@ -280,17 +277,17 @@ public:
     static ILexer5 *LexerFactoryNim() {
         return new LexerNim();
     }
-};
+    };
 
-Sci_Position SCI_METHOD LexerNim::PropertySet(const char *key, const char *val) {
+    Sci_Position SCI_METHOD LexerNim::PropertySet(const char *key, const char *val) {
     if (osNim.PropertySet(&options, key, val)) {
         return 0;
     }
 
     return -1;
-}
+    }
 
-Sci_Position SCI_METHOD LexerNim::WordListSet(int n, const char *wl) {
+    Sci_Position SCI_METHOD LexerNim::WordListSet(int n, const char *wl) {
     WordList *wordListN = nullptr;
 
     switch (n) {
@@ -312,9 +309,9 @@ Sci_Position SCI_METHOD LexerNim::WordListSet(int n, const char *wl) {
     }
 
     return firstModification;
-}
+    }
 
-void SCI_METHOD LexerNim::Lex(Sci_PositionU startPos, Sci_Position length,
+    void SCI_METHOD LexerNim::Lex(Sci_PositionU startPos, Sci_Position length,
                               int initStyle, IDocument *pAccess) {
     // No one likes a leaky string
     if (initStyle == SCE_NIM_STRINGEOL) {
@@ -566,7 +563,7 @@ void SCI_METHOD LexerNim::Lex(Sci_PositionU startPos, Sci_Position length,
                 }
                 break;
             case SCE_NIM_BACKTICKS:
-                if (sc.ch == '`' ) {
+                    if (sc.ch == '`') {
                     sc.ForwardSetState(SCE_NIM_DEFAULT);
                 } else if (sc.atLineEnd) {
                     sc.ChangeState(SCE_NIM_STRINGEOL);
@@ -720,9 +717,9 @@ void SCI_METHOD LexerNim::Lex(Sci_PositionU startPos, Sci_Position length,
     }
 
     sc.Complete();
-}
+    }
 
-void SCI_METHOD LexerNim::Fold(Sci_PositionU startPos, Sci_Position length, int, IDocument *pAccess) {
+    void SCI_METHOD LexerNim::Fold(Sci_PositionU startPos, Sci_Position length, int, IDocument *pAccess) {
     if (!options.fold) {
         return;
     }
@@ -806,6 +803,7 @@ void SCI_METHOD LexerNim::Fold(Sci_PositionU startPos, Sci_Position length, int,
         indentCurrentLevel = indentNextLevel;
         lineCurrent = lineNext;
     }
-}
+    }
 
-LexerModule lmNim(SCLEX_NIM, LexerNim::LexerFactoryNim, "nim", nimWordListDesc);
+    LexerModule lmNim(SCLEX_NIM, LexerNim::LexerFactoryNim, "nim", nimWordListDesc);
+}

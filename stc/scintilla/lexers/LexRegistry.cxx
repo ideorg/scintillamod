@@ -29,30 +29,31 @@
 #include "OptionSet.h"
 #include "DefaultLexer.h"
 
-using namespace ScintillaMod;
+namespace ScintillaMod {
 
-static const char *const RegistryWordListDesc[] = {
+    static const char *const RegistryWordListDesc[] = {
 	0
-};
+    };
 
-struct OptionsRegistry {
+    struct OptionsRegistry {
 	bool foldCompact;
 	bool fold;
+
 	OptionsRegistry() {
 		foldCompact = false;
 		fold = false;
 	}
-};
+    };
 
-struct OptionSetRegistry : public OptionSet<OptionsRegistry> {
+    struct OptionSetRegistry : public OptionSet<OptionsRegistry> {
 	OptionSetRegistry() {
 		DefineProperty("fold.compact", &OptionsRegistry::foldCompact);
 		DefineProperty("fold", &OptionsRegistry::fold);
 		DefineWordListSets(RegistryWordListDesc);
 	}
-};
+    };
 
-class LexerRegistry : public DefaultLexer {
+    class LexerRegistry : public DefaultLexer {
 	OptionsRegistry options;
 	OptionSetRegistry optSetRegistry;
 
@@ -68,7 +69,7 @@ class LexerRegistry : public DefaultLexer {
 		Sci_Position i = 0;
 		while (i < 10) {
 			i++;
-			char curr = styler.SafeGetCharAt(start+i, '\0');
+                char curr = styler.SafeGetCharAt(start + i, '\0');
 			if (curr == ':') {
 				return true;
 			} else if (!curr) {
@@ -82,8 +83,8 @@ class LexerRegistry : public DefaultLexer {
 		Sci_Position i = 0;
 		while (i < 100) {
 			i++;
-			char curr = styler.SafeGetCharAt(start+i, '\0');
-			char next = styler.SafeGetCharAt(start+i+1, '\0');
+                char curr = styler.SafeGetCharAt(start + i, '\0');
+                char next = styler.SafeGetCharAt(start + i + 1, '\0');
 			bool atEOL = (curr == '\r' && next != '\n') || (curr == '\n');
 			if (curr == ch) {
 				return true;
@@ -101,8 +102,8 @@ class LexerRegistry : public DefaultLexer {
 		bool escaped = false;
 		while (!atEOL) {
 			i++;
-			char curr = styler.SafeGetCharAt(start+i, '\0');
-			char next = styler.SafeGetCharAt(start+i+1, '\0');
+                char curr = styler.SafeGetCharAt(start + i, '\0');
+                char next = styler.SafeGetCharAt(start + i + 1, '\0');
 			atEOL = (curr == '\r' && next != '\n') || (curr == '\n');
 			if (escaped) {
 				escaped = false;
@@ -110,7 +111,7 @@ class LexerRegistry : public DefaultLexer {
 			}
 			escaped = curr == '\\';
 			if (curr == '"') {
-				return IsNextNonWhitespace(styler, start+i, '=');
+                    return IsNextNonWhitespace(styler, start + i, '=');
 			} else if (!curr) {
 				return false;
 			}
@@ -123,8 +124,8 @@ class LexerRegistry : public DefaultLexer {
 		Sci_Position i = 0;
 		while (!atEOL) {
 			i++;
-			char curr = styler.SafeGetCharAt(start+i, '\0');
-			char next = styler.SafeGetCharAt(start+i+1, '\0');
+                char curr = styler.SafeGetCharAt(start + i, '\0');
+                char next = styler.SafeGetCharAt(start + i + 1, '\0');
 			atEOL = (curr == '\r' && next != '\n') || (curr == '\n');
 			if (curr == ']' || !curr) {
 				// There's still at least one or more square brackets ahead
@@ -142,7 +143,7 @@ class LexerRegistry : public DefaultLexer {
 		while (portion < 5) {
 			int i = 0;
 			while (i < count) {
-				digit = styler.SafeGetCharAt(start+offset);
+                    digit = styler.SafeGetCharAt(start + offset);
 				if (!(isxdigit(digit) || digit == '-')) {
 					return false;
 				}
@@ -152,7 +153,7 @@ class LexerRegistry : public DefaultLexer {
 			portion++;
 			count = (portion == 4) ? 13 : 5;
 		}
-		digit = styler.SafeGetCharAt(start+offset);
+            digit = styler.SafeGetCharAt(start + offset);
 		if (digit == '}') {
 			return true;
 		} else {
@@ -160,57 +161,70 @@ class LexerRegistry : public DefaultLexer {
 		}
 	}
 
-public:
+    public:
 	LexerRegistry() : DefaultLexer("registry", SCLEX_REGISTRY) {}
+
 	virtual ~LexerRegistry() {}
+
 	int SCI_METHOD Version() const override {
 		return lvRelease5;
 	}
+
 	void SCI_METHOD Release() override {
 		delete this;
 	}
+
 	const char *SCI_METHOD PropertyNames() override {
 		return optSetRegistry.PropertyNames();
 	}
+
 	int SCI_METHOD PropertyType(const char *name) override {
 		return optSetRegistry.PropertyType(name);
 	}
+
 	const char *SCI_METHOD DescribeProperty(const char *name) override {
 		return optSetRegistry.DescribeProperty(name);
 	}
+
 	Sci_Position SCI_METHOD PropertySet(const char *key, const char *val) override {
 		if (optSetRegistry.PropertySet(&options, key, val)) {
 			return 0;
 		}
 		return -1;
 	}
-	const char * SCI_METHOD PropertyGet(const char *key) override {
+
+        const char *SCI_METHOD PropertyGet(const char *key) override {
 		return optSetRegistry.PropertyGet(key);
 	}
 
 	Sci_Position SCI_METHOD WordListSet(int, const char *) override {
 		return -1;
 	}
+
 	void *SCI_METHOD PrivateCall(int, void *) override {
 		return 0;
 	}
+
 	static ILexer5 *LexerFactoryRegistry() {
 		return new LexerRegistry;
 	}
+
 	const char *SCI_METHOD DescribeWordListSets() override {
 		return optSetRegistry.DescribeWordListSets();
 	}
+
 	void SCI_METHOD Lex(Sci_PositionU startPos,
 								Sci_Position length,
 								int initStyle,
 								IDocument *pAccess) override;
+
 	void SCI_METHOD Fold(Sci_PositionU startPos,
 								 Sci_Position length,
 								 int initStyle,
 								 IDocument *pAccess) override;
-};
+    };
 
-void SCI_METHOD LexerRegistry::Lex(Sci_PositionU startPos,
+    void SCI_METHOD LexerRegistry::Lex(Sci_PositionU startPos,
 								   Sci_Position length,
 								   int initStyle,
 								   IDocument *pAccess) {
@@ -224,7 +238,7 @@ void SCI_METHOD LexerRegistry::Lex(Sci_PositionU startPos,
 	while (context.More()) {
 		if (context.atLineStart) {
 			Sci_Position currPos = static_cast<Sci_Position>(context.currentPos);
-			bool continued = styler[currPos-3] == '\\';
+                bool continued = styler[currPos - 3] == '\\';
 			highlight = continued ? true : false;
 		}
 		switch (context.state) {
@@ -352,10 +366,10 @@ void SCI_METHOD LexerRegistry::Lex(Sci_PositionU startPos,
 		context.Forward();
 	}
 	context.Complete();
-}
+    }
 
 // Folding similar to that of FoldPropsDoc in LexOthers
-void SCI_METHOD LexerRegistry::Fold(Sci_PositionU startPos,
+    void SCI_METHOD LexerRegistry::Fold(Sci_PositionU startPos,
 									Sci_Position length,
 									int,
 									IDocument *pAccess) {
@@ -370,12 +384,12 @@ void SCI_METHOD LexerRegistry::Fold(Sci_PositionU startPos,
 	for (Sci_PositionU i = startPos; i < endPos; i++) {
 		atKeyPath = IsKeyPathState(styler.StyleAt(i)) ? true : atKeyPath;
 		char curr = styler.SafeGetCharAt(i);
-		char next = styler.SafeGetCharAt(i+1);
+            char next = styler.SafeGetCharAt(i + 1);
 		bool atEOL = (curr == '\r' && next != '\n') || (curr == '\n');
-		if (atEOL || i == (endPos-1)) {
+            if (atEOL || i == (endPos - 1)) {
 			int level = SC_FOLDLEVELBASE;
 			if (currLine > 0) {
-				int prevLevel = styler.LevelAt(currLine-1);
+                    int prevLevel = styler.LevelAt(currLine - 1);
 				if (prevLevel & SC_FOLDLEVELHEADERFLAG) {
 					level += 1;
 				} else {
@@ -402,7 +416,7 @@ void SCI_METHOD LexerRegistry::Fold(Sci_PositionU startPos,
 	// Make the folding reach the last line in the file
 	int level = SC_FOLDLEVELBASE;
 	if (currLine > 0) {
-		int prevLevel = styler.LevelAt(currLine-1);
+            int prevLevel = styler.LevelAt(currLine - 1);
 		if (prevLevel & SC_FOLDLEVELHEADERFLAG) {
 			level += 1;
 		} else {
@@ -410,10 +424,11 @@ void SCI_METHOD LexerRegistry::Fold(Sci_PositionU startPos,
 		}
 	}
 	styler.SetLevel(currLine, level);
-}
+    }
 
-LexerModule lmRegistry(SCLEX_REGISTRY,
+    LexerModule lmRegistry(SCLEX_REGISTRY,
 					   LexerRegistry::LexerFactoryRegistry,
 					   "registry",
 					   RegistryWordListDesc);
 
+}

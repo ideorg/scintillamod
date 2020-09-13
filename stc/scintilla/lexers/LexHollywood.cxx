@@ -31,7 +31,7 @@
 #include "OptionSet.h"
 #include "DefaultLexer.h"
 
-using namespace ScintillaMod;
+namespace ScintillaMod {
 
 /* Bits:
  * 1  - whitespace
@@ -42,8 +42,8 @@ using namespace ScintillaMod;
  * 32 - bin digit
  * 64 - letter
  */
-static int character_classification[128] =
-{
+    static int character_classification[128] =
+            {
 	0, // NUL ($0)
 	0, // SOH ($1)
 	0, // STX ($2)
@@ -178,36 +178,35 @@ static int character_classification[128] =
 	2, // } ($7D)
 	2, // ~ ($7E)
 	0, // &#127; ($7F)
-};
+            };
 
-static bool IsSpace(int c) {
+    static bool IsSpace(int c) {
 	return c < 128 && (character_classification[c] & 1);
-}
+    }
 
-static bool IsOperator(int c) {
+    static bool IsOperator(int c) {
 	return c < 128 && (character_classification[c] & 2);
-}
+    }
 
-static bool IsIdentifier(int c) {
+    static bool IsIdentifier(int c) {
 	return c < 128 && (character_classification[c] & 4);
-}
+    }
 
-static bool IsDigit(int c) {
+    static bool IsDigit(int c) {
 	return c < 128 && (character_classification[c] & 8);
-}
+    }
 
-static bool IsHexDigit(int c) {
+    static bool IsHexDigit(int c) {
 	return c < 128 && (character_classification[c] & 16);
-}
+    }
 
-static int LowerCase(int c)
-{
+    static int LowerCase(int c) {
 	if (c >= 'A' && c <= 'Z')
 		return 'a' + c - 'A';
 	return c;
-}
+    }
 
-static int CheckHollywoodFoldPoint(char const *token) {
+    static int CheckHollywoodFoldPoint(char const *token) {
 	if (!strcmp(token, "function")) {
 		return 1;
 	}
@@ -215,91 +214,106 @@ static int CheckHollywoodFoldPoint(char const *token) {
 		return -1;
 	}
 	return 0;
-}
+    }
 
 // An individual named option for use in an OptionSet
 
 // Options used for LexerHollywood
-struct OptionsHollywood {
+    struct OptionsHollywood {
 	bool fold;
 	bool foldCompact;
+
 	OptionsHollywood() {
 		fold = false;
 		foldCompact = false;
 	}
-};
+    };
 
-static const char * const hollywoodWordListDesc[] = {
+    static const char *const hollywoodWordListDesc[] = {
 	"Hollywood keywords",
 	"Hollywood standard API functions",
 	"Hollywood plugin API functions",
 	"Hollywood plugin methods",
 	0
-};
+    };
 
-struct OptionSetHollywood : public OptionSet<OptionsHollywood> {
-	OptionSetHollywood(const char * const wordListDescriptions[]) {
+    struct OptionSetHollywood : public OptionSet<OptionsHollywood> {
+        OptionSetHollywood(const char *const wordListDescriptions[]) {
 		DefineProperty("fold", &OptionsHollywood::fold);
 		DefineProperty("fold.compact", &OptionsHollywood::foldCompact);
 		DefineWordListSets(wordListDescriptions);
 	}
-};
+    };
 
-class LexerHollywood : public DefaultLexer {
+    class LexerHollywood : public DefaultLexer {
 	int (*CheckFoldPoint)(char const *);
+
 	WordList keywordlists[4];	
 	OptionsHollywood options;
 	OptionSetHollywood osHollywood;
-public:
-	LexerHollywood(int (*CheckFoldPoint_)(char const *), const char * const wordListDescriptions[]) :
+    public:
+        LexerHollywood(int (*CheckFoldPoint_)(char const *), const char *const wordListDescriptions[]) :
 						 DefaultLexer("hollywood", SCLEX_HOLLYWOOD),
 						 CheckFoldPoint(CheckFoldPoint_),
 						 osHollywood(wordListDescriptions) {
 	}
+
 	virtual ~LexerHollywood() {
 	}
+
 	void SCI_METHOD Release() override {
 		delete this;
 	}
+
 	int SCI_METHOD Version() const override {
 		return lvRelease5;
 	}
-	const char * SCI_METHOD PropertyNames() override {
+
+        const char *SCI_METHOD PropertyNames() override {
 		return osHollywood.PropertyNames();
 	}
+
 	int SCI_METHOD PropertyType(const char *name) override {
 		return osHollywood.PropertyType(name);
 	}
-	const char * SCI_METHOD DescribeProperty(const char *name) override {
+
+        const char *SCI_METHOD DescribeProperty(const char *name) override {
 		return osHollywood.DescribeProperty(name);
 	}
+
 	Sci_Position SCI_METHOD PropertySet(const char *key, const char *val) override;
-	const char * SCI_METHOD PropertyGet(const char* key) override {
+
+        const char *SCI_METHOD PropertyGet(const char *key) override {
 		return osHollywood.PropertyGet(key);
 	}
-	const char * SCI_METHOD DescribeWordListSets() override {
+
+        const char *SCI_METHOD DescribeWordListSets() override {
 		return osHollywood.DescribeWordListSets();
 	}
+
 	Sci_Position SCI_METHOD WordListSet(int n, const char *wl) override;
+
 	void SCI_METHOD Lex(Sci_PositionU startPos, Sci_Position length, int initStyle, IDocument *pAccess) override;
+
 	void SCI_METHOD Fold(Sci_PositionU startPos, Sci_Position length, int initStyle, IDocument *pAccess) override;
 
-	void * SCI_METHOD PrivateCall(int, void *) override {
+        void *SCI_METHOD PrivateCall(int, void *) override {
 		return 0;
 	}
+
 	static ILexer5 *LexerFactoryHollywood() {
 		return new LexerHollywood(CheckHollywoodFoldPoint, hollywoodWordListDesc);
 	}
-};
+    };
 
-Sci_Position SCI_METHOD LexerHollywood::PropertySet(const char *key, const char *val) {
+    Sci_Position SCI_METHOD LexerHollywood::PropertySet(const char *key, const char *val) {
 	if (osHollywood.PropertySet(&options, key, val)) {
 		return 0;
 	}
 	return -1;
-}
+    }
 
-Sci_Position SCI_METHOD LexerHollywood::WordListSet(int n, const char *wl) {
+    Sci_Position SCI_METHOD LexerHollywood::WordListSet(int n, const char *wl) {
 	WordList *wordListN = 0;
 	switch (n) {
 	case 0:
@@ -325,9 +339,10 @@ Sci_Position SCI_METHOD LexerHollywood::WordListSet(int n, const char *wl) {
 		}
 	}
 	return firstModification;	
-}
+    }
 
-void SCI_METHOD LexerHollywood::Lex(Sci_PositionU startPos, Sci_Position length, int initStyle, IDocument *pAccess) {
+    void SCI_METHOD
+    LexerHollywood::Lex(Sci_PositionU startPos, Sci_Position length, int initStyle, IDocument *pAccess) {
 	LexAccessor styler(pAccess);
 
 	styler.StartAt(startPos);
@@ -336,8 +351,7 @@ void SCI_METHOD LexerHollywood::Lex(Sci_PositionU startPos, Sci_Position length,
 	StyleContext sc(startPos, length, initStyle, styler);
 
 	// Can't use sc.More() here else we miss the last character
-	for (; ; sc.Forward())
-	 {
+        for (;; sc.Forward()) {
 	 	if (sc.atLineStart) inString = false;
 	 		
 	 	if (sc.ch == '\"' && sc.chPrev != '\\') inString = !inString;
@@ -439,9 +453,10 @@ void SCI_METHOD LexerHollywood::Lex(Sci_PositionU startPos, Sci_Position length,
 			break;
 	}
 	sc.Complete();
-}
+    }
 
-void SCI_METHOD LexerHollywood::Fold(Sci_PositionU startPos, Sci_Position length, int /* initStyle */, IDocument *pAccess) {
+    void SCI_METHOD
+    LexerHollywood::Fold(Sci_PositionU startPos, Sci_Position length, int /* initStyle */, IDocument *pAccess) {
 
 	if (!options.fold)
 		return;
@@ -511,6 +526,7 @@ void SCI_METHOD LexerHollywood::Fold(Sci_PositionU startPos, Sci_Position length
 
 	int flagsNext = styler.LevelAt(lineCurrent) & ~SC_FOLDLEVELNUMBERMASK;
 	styler.SetLevel(lineCurrent, levelPrev | flagsNext);	
-}
+    }
 
-LexerModule lmHollywood(SCLEX_HOLLYWOOD, LexerHollywood::LexerFactoryHollywood, "hollywood", hollywoodWordListDesc);
+    LexerModule lmHollywood(SCLEX_HOLLYWOOD, LexerHollywood::LexerFactoryHollywood, "hollywood", hollywoodWordListDesc);
+}

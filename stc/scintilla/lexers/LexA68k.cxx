@@ -26,15 +26,12 @@
 #include "CharacterSet.h"
 #include "LexerModule.h"
 
-using namespace ScintillaMod;
-
-
 // Return values for GetOperatorType
 #define NO_OPERATOR     0
 #define OPERATOR_1CHAR  1
 #define OPERATOR_2CHAR  2
 
-
+namespace ScintillaMod {
 /**
  *  IsIdentifierStart
  *
@@ -341,5 +338,5 @@ static const char * const a68kWordListDesc[] =
     "Doxygen keywords",
     0
 };
-
-LexerModule lmA68k(SCLEX_A68K, ColouriseA68kDoc, "a68k", 0, a68kWordListDesc);
+    LexerModule lmA68k(SCLEX_A68K, ColouriseA68kDoc, "a68k", 0, a68kWordListDesc);
+}

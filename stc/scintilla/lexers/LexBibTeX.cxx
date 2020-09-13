@@ -32,7 +32,6 @@
 
 using namespace ScintillaMod;
 
-namespace {
 	bool IsAlphabetic(unsigned int ch)
 	{
 		return IsASCII(ch) && std::isalpha(ch) != 0;
@@ -291,14 +290,15 @@ namespace {
 		int flagsNext = styler.LevelAt(current_line) & ~SC_FOLDLEVELNUMBERMASK;
 		styler.SetLevel(current_line, prev_level | flagsNext);
 	}
-}
+
 static const char * const BibTeXWordLists[] = {
             "Entry Names",
             0,
 };
 
-
-LexerModule lmBibTeX(SCLEX_BIBTEX, ColorizeBibTeX, "bib", 0, BibTeXWordLists);
+namespace ScintillaMod {
+    LexerModule lmBibTeX(SCLEX_BIBTEX, ColorizeBibTeX, "bib", 0, BibTeXWordLists);
+}
 
 // Entry Names
 //    article, book, booklet, conference, inbook,

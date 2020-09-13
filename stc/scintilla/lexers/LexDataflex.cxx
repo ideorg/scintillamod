@@ -65,37 +65,37 @@ The list of keywords that can be used in dataflex.properties file (up to DataFle
 #include "CharacterSet.h"
 #include "LexerModule.h"
 
-using namespace ScintillaMod;
+namespace ScintillaMod {
 
 
-static void GetRangeLowered(Sci_PositionU start,
+    static void GetRangeLowered(Sci_PositionU start,
 		Sci_PositionU end,
 		Accessor &styler,
 		char *s,
 		Sci_PositionU len) {
 	Sci_PositionU i = 0;
-	while ((i < end - start + 1) && (i < len-1)) {
+        while ((i < end - start + 1) && (i < len - 1)) {
 		s[i] = static_cast<char>(tolower(styler[start + i]));
 		i++;
 	}
 	s[i] = '\0';
-}
+    }
 
-static void GetForwardRangeLowered(Sci_PositionU start,
+    static void GetForwardRangeLowered(Sci_PositionU start,
 		CharacterSet &charSet,
 		Accessor &styler,
 		char *s,
 		Sci_PositionU len) {
 	Sci_PositionU i = 0;
-	while ((i < len-1) && charSet.Contains(styler.SafeGetCharAt(start + i))) {
+        while ((i < len - 1) && charSet.Contains(styler.SafeGetCharAt(start + i))) {
 		s[i] = static_cast<char>(tolower(styler.SafeGetCharAt(start + i)));
 		i++;
 	}
 	s[i] = '\0';
 
-}
+    }
 
-enum {
+    enum {
 	stateInICode = 0x1000,
 	stateSingleQuoteOpen = 0x2000,
 	stateDoubleQuoteOpen = 0x4000,
@@ -103,10 +103,10 @@ enum {
 	stateFoldInCaseStatement = 0x0200,
 	stateFoldInPreprocessorLevelMask = 0x00FF,
 	stateFoldMaskAll = 0x0FFF
-};
+    };
 
 
-static bool IsFirstDataFlexWord(Sci_Position pos, Accessor &styler) {
+    static bool IsFirstDataFlexWord(Sci_Position pos, Accessor &styler) {
 	Sci_Position line = styler.GetLine(pos);
 	Sci_Position start_pos = styler.LineStart(line);
 	for (Sci_Position i = start_pos; i < pos; i++) {
@@ -115,13 +115,12 @@ static bool IsFirstDataFlexWord(Sci_Position pos, Accessor &styler) {
 			return false;
 	}
 	return true;
-}
+    }
 
 
-inline bool IsADataFlexField(int ch) {
+    inline bool IsADataFlexField(int ch) {
 	return (ch == '.');
-}
-
+    }
 
 static void ClassifyDataFlexWord(WordList *keywordlists[], StyleContext &sc, Accessor &styler) {
 	WordList& keywords = *keywordlists[0];
@@ -142,16 +141,17 @@ static void ClassifyDataFlexWord(WordList *keywordlists[], StyleContext &sc, Acc
 		// keywords in DataFlex can be used as table column names (file.field) and as such they
 		// should not be characterized as a keyword. So test for that.
 		// for ex. somebody using date as field name.
-        if (!IsADataFlexField(sc.GetRelative(-static_cast<int>(tokenlen+1)))) {
+            if (!IsADataFlexField(sc.GetRelative(-static_cast<int>(tokenlen + 1)))) {
 	      newState = SCE_DF_WORD;
 	    }
 	}
 	if (oldState == newState) {
-		if ((scopeOpen.InList(s) || scopeClosed.InList(s)) && (strcmp(s, "for") != 0) && (strcmp(s, "repeat") != 0)) {
+            if ((scopeOpen.InList(s) || scopeClosed.InList(s)) && (strcmp(s, "for") != 0) &&
+                (strcmp(s, "repeat") != 0)) {
 			// scope words in DataFlex can be used as table column names (file.field) and as such they
 			// should not be characterized as a scope word. So test for that.
 			// for ex. somebody using procedure for field name.
-			if (!IsADataFlexField(sc.GetRelative(-static_cast<int>(tokenlen+1)))) {
+                if (!IsADataFlexField(sc.GetRelative(-static_cast<int>(tokenlen + 1)))) {
 				newState = SCE_DF_SCOPEWORD;
 			}
 		} 
@@ -159,19 +159,19 @@ static void ClassifyDataFlexWord(WordList *keywordlists[], StyleContext &sc, Acc
 		if (strcmp(s, "if") == 0 ||  
 			strcmp(s, "ifnot") == 0 ||
 			strcmp(s, "case") == 0 ||
-			strcmp(s, "else") == 0 ) {
+                strcmp(s, "else") == 0) {
 				newState = SCE_DF_SCOPEWORD;
 		} 
 	}
 	if (oldState != newState && newState == SCE_DF_WORD) {
 		// a for loop must have for at the start of the line, for is also used in "define abc for 123"
-		if ( (strcmp(s, "for") == 0) && (IsFirstDataFlexWord(sc.currentPos-3, styler)) ) {   
+            if ((strcmp(s, "for") == 0) && (IsFirstDataFlexWord(sc.currentPos - 3, styler))) {
 				newState = SCE_DF_SCOPEWORD;
 		} 
 	}
 	if (oldState != newState && newState == SCE_DF_WORD) {
 		// a repeat loop must have repeat at the start of the line, repeat is also used in 'move (repeat("d",5)) to sFoo'
-		if ( (strcmp(s, "repeat") == 0) && (IsFirstDataFlexWord(sc.currentPos-6, styler)) ) {   
+            if ((strcmp(s, "repeat") == 0) && (IsFirstDataFlexWord(sc.currentPos - 6, styler))) {
 				newState = SCE_DF_SCOPEWORD;
 		} 
 	}
@@ -185,9 +185,10 @@ static void ClassifyDataFlexWord(WordList *keywordlists[], StyleContext &sc, Acc
 		sc.ChangeState(newState);
 	}
 	sc.SetState(SCE_DF_DEFAULT);
-}
+    }
 
-static void ColouriseDataFlexDoc(Sci_PositionU startPos, Sci_Position length, int initStyle, WordList *keywordlists[],
+    static void
+    ColouriseDataFlexDoc(Sci_PositionU startPos, Sci_Position length, int initStyle, WordList *keywordlists[],
 		Accessor &styler) {
 //	bool bSmartHighlighting = styler.GetPropertyInt("lexer.dataflex.smart.highlighting", 1) != 0;
 
@@ -226,7 +227,7 @@ static void ColouriseDataFlexDoc(Sci_PositionU startPos, Sci_Position length, in
 				}
 				break;
 			case SCE_DF_HEXNUMBER:
-				if (!(setHexNumber.Contains(sc.ch) || sc.ch == 'I') ) { // in |CI$22a we also want to color the "I"
+                    if (!(setHexNumber.Contains(sc.ch) || sc.ch == 'I')) { // in |CI$22a we also want to color the "I"
 					sc.SetState(SCE_DF_DEFAULT);
 				}
 				break;
@@ -266,11 +267,10 @@ static void ColouriseDataFlexDoc(Sci_PositionU startPos, Sci_Position length, in
 				} else if (sc.ch == '\"' && sc.chNext == '\"') {
 					sc.Forward();
 				} else if (sc.ch == '\'' || sc.ch == '\"') {
-					if (sc.ch == '\'' && (curLineState & stateSingleQuoteOpen) ) {
+                        if (sc.ch == '\'' && (curLineState & stateSingleQuoteOpen)) {
  				    curLineState &= ~(stateSingleQuoteOpen);
 					sc.ForwardSetState(SCE_DF_DEFAULT);
-					}
-					else if (sc.ch == '\"' && (curLineState & stateDoubleQuoteOpen) ) {
+                        } else if (sc.ch == '\"' && (curLineState & stateDoubleQuoteOpen)) {
  				    curLineState &= ~(stateDoubleQuoteOpen);
 					sc.ForwardSetState(SCE_DF_DEFAULT);
 					}
@@ -308,8 +308,10 @@ static void ColouriseDataFlexDoc(Sci_PositionU startPos, Sci_Position length, in
 			} else if ((sc.ch == '#' && !sc.Match("#REM")) && IsFirstDataFlexWord(sc.currentPos, styler)) {
 				sc.SetState(SCE_DF_PREPROCESSOR);
 			// || (sc.ch == '|' && sc.chNext == 'C' && sc.GetRelativeCharacter(2) == 'I' && sc.GetRelativeCharacter(3) == '$') ) {
-			} else if ((sc.ch == '$' && ((!setWord.Contains(sc.chPrev)) || sc.chPrev == 'I' ) ) || (sc.Match("|CI$")) ) {
-				sc.SetState(SCE_DF_HEXNUMBER); // start with $ and previous character not in a..zA..Z0..9 excluding "I" OR start with |CI$
+                } else if ((sc.ch == '$' && ((!setWord.Contains(sc.chPrev)) || sc.chPrev == 'I')) ||
+                           (sc.Match("|CI$"))) {
+                    sc.SetState(
+                            SCE_DF_HEXNUMBER); // start with $ and previous character not in a..zA..Z0..9 excluding "I" OR start with |CI$
 			} else if (setWordStart.Contains(sc.ch)) {
 				sc.SetState(SCE_DF_IDENTIFIER);
 			} else if (sc.ch == '{') {
@@ -330,7 +332,7 @@ static void ColouriseDataFlexDoc(Sci_PositionU startPos, Sci_Position length, in
 				sc.SetState(SCE_DF_OPERATOR);
 //			} else if (curLineState & stateInICode) {
 				// ICode start ! in a string followed by close string mark is not icode
-			} else if ((sc.ch == '!') && !(sc.ch == '!' && ((sc.chNext == '\"') || (sc.ch == '\'')) )) {
+                } else if ((sc.ch == '!') && !(sc.ch == '!' && ((sc.chNext == '\"') || (sc.ch == '\'')))) {
 				sc.SetState(SCE_DF_ICODE);
 			}
 		}
@@ -341,13 +343,13 @@ static void ColouriseDataFlexDoc(Sci_PositionU startPos, Sci_Position length, in
 	}
 
 	sc.Complete();
-}
+    }
 
-static bool IsStreamCommentStyle(int style) {
+    static bool IsStreamCommentStyle(int style) {
 	return style == SCE_DF_IMAGE;
-}
+    }
 
-static bool IsCommentLine(Sci_Position line, Accessor &styler) {
+    static bool IsCommentLine(Sci_Position line, Accessor &styler) {
 	Sci_Position pos = styler.LineStart(line);
 	Sci_Position eolPos = styler.LineStart(line + 1) - 1;
 	for (Sci_Position i = pos; i < eolPos; i++) {
@@ -361,20 +363,19 @@ static bool IsCommentLine(Sci_Position line, Accessor &styler) {
 		}
 	}
 	return false;
-}
+    }
 
 
-
-static unsigned int GetFoldInPreprocessorLevelFlag(int lineFoldStateCurrent) {
+    static unsigned int GetFoldInPreprocessorLevelFlag(int lineFoldStateCurrent) {
 	return lineFoldStateCurrent & stateFoldInPreprocessorLevelMask;
-}
+    }
 
-static void SetFoldInPreprocessorLevelFlag(int &lineFoldStateCurrent, unsigned int nestLevel) {
+    static void SetFoldInPreprocessorLevelFlag(int &lineFoldStateCurrent, unsigned int nestLevel) {
 	lineFoldStateCurrent &= ~stateFoldInPreprocessorLevelMask;
 	lineFoldStateCurrent |= nestLevel & stateFoldInPreprocessorLevelMask;
-}
+    }
 
-static int ClassifyDataFlexPreprocessorFoldPoint(int &levelCurrent, int &lineFoldStateCurrent,
+    static int ClassifyDataFlexPreprocessorFoldPoint(int &levelCurrent, int &lineFoldStateCurrent,
 		Sci_PositionU startPos, Accessor &styler) {
 	CharacterSet setWord(CharacterSet::setAlpha);
 
@@ -408,16 +409,17 @@ static int ClassifyDataFlexPreprocessorFoldPoint(int &levelCurrent, int &lineFol
 		}
 	}
 	return static_cast<int>(iWordSize);
-}
+    }
 
 
-static void ClassifyDataFlexWordFoldPoint(int &levelCurrent, int &lineFoldStateCurrent,
-		Sci_PositionU lastStart, Sci_PositionU currentPos, WordList *[], Accessor &styler) {
+    static void ClassifyDataFlexWordFoldPoint(int &levelCurrent, int &lineFoldStateCurrent,
+                                              Sci_PositionU lastStart, Sci_PositionU currentPos, WordList *[],
+                                              Accessor &styler) {
 	char s[100];
 
 	// property fold.dataflex.compilerlist
 	//	Set to 1 for enabling the code folding feature in *.prn files
-	bool foldPRN = styler.GetPropertyInt("fold.dataflex.compilerlist",0) != 0;
+        bool foldPRN = styler.GetPropertyInt("fold.dataflex.compilerlist", 0) != 0;
 
 	GetRangeLowered(lastStart, currentPos, styler, s, sizeof(s));
 
@@ -441,8 +443,8 @@ static void ClassifyDataFlexWordFoldPoint(int &levelCurrent, int &lineFoldStateC
 		strcmp(s, "cd_popup_object") == 0 ||
 		strcmp(s, "procedure") == 0 ||
 		strcmp(s, "procedure_section") == 0 ||
-		strcmp(s, "function") == 0 ) {
-			if ((IsFirstDataFlexWord(lastStart, styler )) || foldPRN) {
+                   strcmp(s, "function") == 0) {
+            if ((IsFirstDataFlexWord(lastStart, styler)) || foldPRN) {
 			levelCurrent++;
 			}
 	} else if (strcmp(s, "end") == 0) {  // end is not always the first keyword, for example "case end"
@@ -464,9 +466,9 @@ static void ClassifyDataFlexWordFoldPoint(int &levelCurrent, int &lineFoldStateC
 				   strcmp(s, "end_item_list") == 0 ||
 				   strcmp(s, "end_constraints") == 0 ||
 				   strcmp(s, "end_transaction") == 0 ||
-				   strcmp(s, "end_enum_list") == 0 ) {
+                   strcmp(s, "end_enum_list") == 0) {
 	//		lineFoldStateCurrent &= ~stateFoldInRecord;
-			if ((IsFirstDataFlexWord(lastStart, styler )) || foldPRN) {
+            if ((IsFirstDataFlexWord(lastStart, styler)) || foldPRN) {
 				levelCurrent--;
 				if (levelCurrent < SC_FOLDLEVELBASE) {
 					levelCurrent = SC_FOLDLEVELBASE;
@@ -474,11 +476,12 @@ static void ClassifyDataFlexWordFoldPoint(int &levelCurrent, int &lineFoldStateC
 			}
 	}
 
-}
+    }
 
 
-static void ClassifyDataFlexMetaDataFoldPoint(int &levelCurrent, 
-		Sci_PositionU lastStart, Sci_PositionU currentPos, WordList *[], Accessor &styler) {
+    static void ClassifyDataFlexMetaDataFoldPoint(int &levelCurrent,
+                                                  Sci_PositionU lastStart, Sci_PositionU currentPos, WordList *[],
+                                                  Accessor &styler) {
 	char s[100];
 
 	GetRangeLowered(lastStart, currentPos, styler, s, sizeof(s));
@@ -492,9 +495,9 @@ static void ClassifyDataFlexMetaDataFoldPoint(int &levelCurrent,
 			}
 	}
 
-}
+    }
 
-static void FoldDataFlexDoc(Sci_PositionU startPos, Sci_Position length, int initStyle, WordList *keywordlists[],
+    static void FoldDataFlexDoc(Sci_PositionU startPos, Sci_Position length, int initStyle, WordList *keywordlists[],
 		Accessor &styler) {
 	bool foldComment = styler.GetPropertyInt("fold.comment") != 0;
 	bool foldPreprocessor = styler.GetPropertyInt("fold.preprocessor") != 0;
@@ -528,18 +531,18 @@ static void FoldDataFlexDoc(Sci_PositionU startPos, Sci_Position length, int ini
 				levelCurrent--;
 			}
 		}
-		if (foldComment && atEOL && IsCommentLine(lineCurrent, styler))
-		{
+            if (foldComment && atEOL && IsCommentLine(lineCurrent, styler)) {
 			if (!IsCommentLine(lineCurrent - 1, styler)
 			    && IsCommentLine(lineCurrent + 1, styler))
 				levelCurrent++;
 			else if (IsCommentLine(lineCurrent - 1, styler)
-			         && !IsCommentLine(lineCurrent+1, styler))
+                         && !IsCommentLine(lineCurrent + 1, styler))
 				levelCurrent--;
 		}
 		if (foldPreprocessor) {
 			if (style == SCE_DF_PREPROCESSOR) {
-				iWordSize = ClassifyDataFlexPreprocessorFoldPoint(levelCurrent, lineFoldStateCurrent, i + 1, styler);
+                    iWordSize = ClassifyDataFlexPreprocessorFoldPoint(levelCurrent, lineFoldStateCurrent, i + 1,
+                                                                      styler);
 			//} else if (style == SCE_DF_PREPROCESSOR2 && ch == '(' && chNext == '*'
 			//           && styler.SafeGetCharAt(i + 2) == '$') {
 			//	ClassifyDataFlexPreprocessorFoldPoint(levelCurrent, lineFoldStateCurrent, i + 3, styler);
@@ -547,24 +550,23 @@ static void FoldDataFlexDoc(Sci_PositionU startPos, Sci_Position length, int ini
 			}
 		}
 
-		if (stylePrev != SCE_DF_SCOPEWORD && style == SCE_DF_SCOPEWORD)
-		{
+            if (stylePrev != SCE_DF_SCOPEWORD && style == SCE_DF_SCOPEWORD) {
 			// Store last word start point.
 			lastStart = i;
 		}
 		if (stylePrev == SCE_DF_SCOPEWORD) {
-			if(setWord.Contains(ch) && !setWord.Contains(chNext)) {
-				ClassifyDataFlexWordFoldPoint(levelCurrent, lineFoldStateCurrent, lastStart, i, keywordlists, styler);
+                if (setWord.Contains(ch) && !setWord.Contains(chNext)) {
+                    ClassifyDataFlexWordFoldPoint(levelCurrent, lineFoldStateCurrent, lastStart, i, keywordlists,
+                                                  styler);
 			}
 		}
 
-		if (stylePrev == SCE_DF_METATAG && ch == '#')
-		{
+            if (stylePrev == SCE_DF_METATAG && ch == '#') {
 			// Store last word start point.
 			lastStart = i;
 		}
 		if (stylePrev == SCE_DF_METATAG) {
-			if(setWord.Contains(ch) && !setWord.Contains(chNext)) {
+                if (setWord.Contains(ch) && !setWord.Contains(chNext)) {
 				ClassifyDataFlexMetaDataFoldPoint(levelCurrent, lastStart, i, keywordlists, styler);
 			}
 		}
@@ -595,14 +597,15 @@ static void FoldDataFlexDoc(Sci_PositionU startPos, Sci_Position length, int ini
 	if (visibleChars == 0 && foldCompact)
 		lev |= SC_FOLDLEVELWHITEFLAG;
 	styler.SetLevel(lineCurrent, lev);
-}
+    }
 
-static const char * const dataflexWordListDesc[] = {
+    static const char *const dataflexWordListDesc[] = {
 	"Keywords",
 	"Scope open",
 	"Scope close",
 	"Operators",
 	0
-};
+    };
 
-LexerModule lmDataflex(SCLEX_DATAFLEX, ColouriseDataFlexDoc, "dataflex", FoldDataFlexDoc, dataflexWordListDesc);
+    LexerModule lmDataflex(SCLEX_DATAFLEX, ColouriseDataFlexDoc, "dataflex", FoldDataFlexDoc, dataflexWordListDesc);
+}

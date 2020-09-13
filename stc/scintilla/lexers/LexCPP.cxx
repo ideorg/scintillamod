@@ -34,7 +34,7 @@
 
 using namespace ScintillaMod;
 
-namespace {
+namespace ScintillaMod {
 	// Use an unnamed namespace to protect the functions and classes from name conflicts
 
 constexpr bool IsSpaceEquiv(int state) noexcept {
@@ -461,7 +461,7 @@ struct OptionSetCPP : public OptionSet<OptionsCPP> {
 
 const char styleSubable[] = {SCE_C_IDENTIFIER, SCE_C_COMMENTDOCKEYWORD, 0};
 
-LexicalClass lexicalClasses[] = {
+static LexicalClass lexicalClasses[] = {
 	// Lexer Cpp SCLEX_CPP SCE_C_:
 	0, "SCE_C_DEFAULT", "default", "White space",
 	1, "SCE_C_COMMENT", "comment", "Comment: /* */.",
@@ -494,8 +494,6 @@ LexicalClass lexicalClasses[] = {
 };
 
 const int sizeLexicalClasses = static_cast<int>(std::size(lexicalClasses));
-
-}
 
 class LexerCPP : public ILexer5 {
 	bool caseSensitive;
@@ -548,6 +546,7 @@ public:
 		setRelOp(CharacterSet::setNone, "=!<>"),
 		setLogicalOp(CharacterSet::setNone, "|&"),
 		subStyles(styleSubable, 0x80, 0x40, inactiveFlag) {
+	    printf("abc");
 	}
 	// Deleted so LexerCPP objects can not be copied.
 	LexerCPP(const LexerCPP &) = delete;
@@ -1781,5 +1780,6 @@ bool LexerCPP::EvaluateExpression(const std::string &expr, const SymbolTable &pr
 	return !isFalse;
 }
 
-LexerModule lmCPP(SCLEX_CPP, LexerCPP::LexerFactoryCPP, "cpp", cppWordLists);
-LexerModule lmCPPNoCase(SCLEX_CPPNOCASE, LexerCPP::LexerFactoryCPPInsensitive, "cppnocase", cppWordLists);
+    LexerModule lmCPP(SCLEX_CPP, ScintillaMod::LexerCPP::LexerFactoryCPP, "cpp", cppWordLists);
+    LexerModule lmCPPNoCase(SCLEX_CPPNOCASE, LexerCPP::LexerFactoryCPPInsensitive, "cppnocase", cppWordLists);
+}

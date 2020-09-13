@@ -24,29 +24,27 @@
 
 using namespace ScintillaMod;
 
-namespace {
+namespace ScintillaMod {
 
-CatalogueModules catalogueDefault;
+    CatalogueModules catalogueDefault;
 
-}
-
-const LexerModule *Catalogue::Find(int language) {
+    const LexerModule *Catalogue::Find(int language) {
 	return catalogueDefault.Find(language);
-}
+    }
 
-const LexerModule *Catalogue::Find(const char *languageName) noexcept {
+    const LexerModule *Catalogue::Find(const char *languageName) noexcept {
 	return catalogueDefault.Find(languageName);
-}
+    }
 
-void Catalogue::AddLexerModule(LexerModule *plm) {
+    void Catalogue::AddLexerModule(LexerModule *plm) {
 	catalogueDefault.AddLexerModule(plm);
-}
+    }
 
 // To add or remove a lexer, add or remove its file and run LexGen.py.
 
 // Force a reference to all of the Scintilla lexers so that the linker will
 // not remove the code of the lexers.
-int Scintilla_LinkLexers() {
+    int Scintilla_LinkLexers() {
 
 	static int initialised = 0;
 	if (initialised)
@@ -194,4 +192,5 @@ int Scintilla_LinkLexers() {
 #endif
 
 	return 1;
+    }
 }
