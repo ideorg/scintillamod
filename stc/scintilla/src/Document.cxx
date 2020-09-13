@@ -138,7 +138,7 @@ Document::Document(int options) :
 	perLineData[ldMargin] = std::make_unique<LineAnnotation>();
 	perLineData[ldAnnotation] = std::make_unique<LineAnnotation>();
 	perLineData[ldEOLAnnotation] = std::make_unique<LineAnnotation>();
-    perLineData[ldInterAnnotation] = std::make_unique<LineAnnotation>();
+    perLineData[ldInterAnnotation] = std::make_unique<InterLineAnnotation>();
 
 	decorations = DecorationListCreate(IsLarge());
 
@@ -218,8 +218,8 @@ LineAnnotation *Document::EOLAnnotations() const noexcept {
 	return dynamic_cast<LineAnnotation *>(perLineData[ldEOLAnnotation].get());
 }
 
-LineAnnotation *Document::InterAnnotations() const noexcept {
-    return dynamic_cast<LineAnnotation *>(perLineData[ldInterAnnotation].get());
+InterLineAnnotation *Document::InterAnnotations() const noexcept {
+    return dynamic_cast<InterLineAnnotation *>(perLineData[ldInterAnnotation].get());
 }
 
 int Document::LineEndTypesSupported() const {
@@ -2437,7 +2437,7 @@ StyledText Document::InterAnnotationStyledText(Sci::Line line) const noexcept {
 
 void Document::InterAnnotationSetText(Sci::Line line, const char *text) {
     if (line >= 0 && line < LinesTotal()) {
-        InterAnnotations()->SetText(line, text);
+        InterAnnotations()->SetVector(line, text);
         const DocModification mh(SC_MOD_CHANGEINTERANNOTATION, LineStart(line),
                                  0, 0, 0, line);
         NotifyModified(mh);

@@ -144,6 +144,18 @@ public:
 	int Lines(Sci::Line line) const noexcept;
 };
 
+class  InterLineAnnotation: public LineAnnotation {
+public:
+    InterLineAnnotation() = default;
+    // Deleted so LineAnnotation objects can not be copied.
+    InterLineAnnotation(const InterLineAnnotation &) = delete;
+    InterLineAnnotation(InterLineAnnotation &&) = delete;
+    void operator=(const InterLineAnnotation &) = delete;
+    void operator=(InterLineAnnotation &&) = delete;
+    ~InterLineAnnotation() override = default;;
+    void SetVector(Sci::Line line, const char *text);
+};
+
 typedef std::vector<int> TabstopList;
 
 class LineTabstops : public PerLine {

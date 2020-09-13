@@ -473,6 +473,10 @@ int LineAnnotation::Lines(Sci::Line line) const noexcept {
 		return 0;
 }
 
+void InterLineAnnotation::SetVector(Sci::Line line, const char *text) {
+    SetText(line,text);
+}
+
 LineTabstops::~LineTabstops() {
 }
 

@@ -17,6 +17,7 @@ class LineMarkers;
 class LineLevels;
 class LineState;
 class LineAnnotation;
+class InterLineAnnotation;
 
 enum class EncodingFamily { eightBit, unicode, dbcs };
 
@@ -253,7 +254,7 @@ private:
 	LineAnnotation *Margins() const noexcept;
 	LineAnnotation *Annotations() const noexcept;
 	LineAnnotation *EOLAnnotations() const noexcept;
-    LineAnnotation *InterAnnotations() const noexcept;
+    InterLineAnnotation *InterAnnotations() const noexcept;
 
 	bool matchesValid;
 	std::unique_ptr<RegexSearchBase> regex;
