@@ -1396,7 +1396,7 @@ void EditView::DrawInterAnnotationText(Surface *surface, const EditModel &model,
     const XYPOSITION virtualSpace = model.sel.VirtualSpaceFor(
             model.pdoc->LineEnd(line)) * spaceWidth;
     rcSegment.left = xStart +
-                     static_cast<XYPOSITION>(ll->positions[ll->numCharsInLine] - subLineStart)
+                     static_cast<XYPOSITION>(ll->positions[std::min(ll->numCharsInLine,3)] - subLineStart)
                      + virtualSpace + vsDraw.aveCharWidth;
 
     const char *textFoldDisplay = model.GetFoldDisplayText(line);
@@ -1967,6 +1967,11 @@ void EditView::DrawForeground(Surface *surface, const EditModel &model, const Vi
 		PRectangle rcSegment = rcLine;
 		rcSegment.left = ll->positions[ts.start] + xStart - static_cast<XYPOSITION>(subLineStart);
 		rcSegment.right = ll->positions[ts.end()] + xStart - static_cast<XYPOSITION>(subLineStart);
+		if (ts.start>=3)
+        {
+            rcSegment.left+=100;
+            rcSegment.right+=100;
+        }
 		// Only try to draw if really visible - enhances performance by not calling environment to
 		// draw strings that are completely past the right side of the window.
 		if (rcSegment.Intersects(rcLine)) {
@@ -2218,8 +2223,7 @@ void EditView::DrawLine(Surface *surface, const EditModel &model, const ViewStyl
 			DrawBackground(surface, model, vsDraw, ll, rcLine, lineRange, posLineStart, xStart,
 				subLine, background);
 			DrawFoldDisplayText(surface, model, vsDraw, ll, line, xStart, rcLine, subLine, subLineStart, drawBack);
-            DrawInterAnnotationText(surface, model, vsDraw, ll, line, xStart, rcLine, subLine, subLineStart, drawBack);
-			DrawEOLAnnotationText(surface, model, vsDraw, ll, line, xStart, rcLine, subLine, subLineStart, drawBack);
+            DrawEOLAnnotationText(surface, model, vsDraw, ll, line, xStart, rcLine, subLine, subLineStart, drawBack);
 			phase = static_cast<DrawPhase>(phase & ~drawBack);	// Remove drawBack to not draw again in DrawFoldDisplayText
 			DrawEOL(surface, model, vsDraw, ll, rcLine, line, lineRange.end,
 				xStart, subLine, subLineStart, background);
@@ -2236,8 +2240,10 @@ void EditView::DrawLine(Surface *surface, const EditModel &model, const ViewStyl
 	}
 
 	if (phase & drawText) {
+        DrawInterAnnotationText(surface, model, vsDraw, ll, line, xStart, rcLine, subLine, subLineStart, drawBack);
 		DrawForeground(surface, model, vsDraw, ll, lineVisible, rcLine, lineRange, posLineStart, xStart,
 			subLine, background);
+
 	}
 
 	if (phase & drawIndentationGuides) {
