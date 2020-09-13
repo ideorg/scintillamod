@@ -56,6 +56,7 @@
 #include "EditView.h"
 #include "Editor.h"
 #include "ElapsedPeriod.h"
+#include "InterVec.h"
 
 using namespace ScintillaMod;
 
@@ -8148,7 +8149,7 @@ sptr_t Editor::WndProc(unsigned int iMessage, uptr_t wParam, sptr_t lParam) {
 		return vs.eolAnnotationStyleOffset;
 
     case SCI_INTERANNOTATIONSETTEXT:
-        pdoc->InterAnnotationSetText(static_cast<Sci::Line>(wParam), CharPtrFromSPtr(lParam));
+        pdoc->InterAnnotationSetVec(static_cast<Sci::Line>(wParam), (InterVec *) (lParam));
         break;
 
     case SCI_INTERANNOTATIONGETTEXT: {

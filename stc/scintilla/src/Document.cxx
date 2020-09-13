@@ -2435,9 +2435,9 @@ StyledText Document::InterAnnotationStyledText(Sci::Line line) const noexcept {
                                   pla->MultipleStyles(line), pla->Style(line), pla->Styles(line));
 }
 
-void Document::InterAnnotationSetText(Sci::Line line, const char *text) {
+void Document::InterAnnotationSetVec(Sci::Line line, const InterVec *vec) {
     if (line >= 0 && line < LinesTotal()) {
-        InterAnnotations()->SetVector(line, text);
+        InterAnnotations()->SetVector(line, vec->at(0).first.c_str());
         const DocModification mh(SC_MOD_CHANGEINTERANNOTATION, LineStart(line),
                                  0, 0, 0, line);
         NotifyModified(mh);
@@ -2456,7 +2456,7 @@ void Document::InterAnnotationSetStyle(Sci::Line line, int style) {
 void Document::InterAnnotationClearAll() {
     const Sci::Line maxEditorLine = LinesTotal();
     for (Sci::Line l=0; l<maxEditorLine; l++)
-        InterAnnotationSetText(l, nullptr);
+        InterAnnotationSetVec(l, nullptr);
     // Free remaining data
     InterAnnotations()->ClearAll();
 }

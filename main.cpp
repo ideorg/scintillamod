@@ -5,6 +5,7 @@
 #include <wx/wx.h>
 #endif
 #include "stc/stc.h"
+#include "stc/scintilla/src/InterVec.h"
 
 class MyApp : public wxApp
 {
@@ -165,7 +166,10 @@ MyFrame::MyFrame()
     SetEditorStyle(stc);
     stc->LoadFile("../main.cpp");
     stc->InterAnnotationSetVisible(1);
-    stc->InterAnnotationSetText(5,"ggg");
+    InterVec vec;
+    vec.push_back(std::make_pair("par1",3));
+    vec.push_back(std::make_pair("par2",7));
+    stc->InterAnnotationSetVec(5, &vec);
 //    stc->EOLAnnotationSetVisible(1);
 //    stc->EOLAnnotationSetText(5,"fff");
 }

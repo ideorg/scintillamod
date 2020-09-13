@@ -4755,9 +4755,9 @@ int wxStyledTextCtrl::EOLAnnotationGetStyleOffset() const
 }
 
 // Set the interleaved annotation text for a line
-void wxStyledTextCtrl::InterAnnotationSetText(int line, const wxString& text)
+void wxStyledTextCtrl::InterAnnotationSetVec(int line, const InterVec* vec)
 {
-    SendMsg(SCI_INTERANNOTATIONSETTEXT, line, (sptr_t)(const char*)wx2stc(text));
+    SendMsg(SCI_INTERANNOTATIONSETTEXT, line, (sptr_t)(const char*)vec);
 }
 
 // Get the interleaved annotation text for a line

@@ -31,6 +31,7 @@
 #define _WX_STC_STC_H_
 
 #include "wx/defs.h"
+#include "scintilla/src/InterVec.h"
 
 #if wxUSE_STC
 
@@ -5302,7 +5303,7 @@ public:
     int EOLAnnotationGetStyleOffset() const;
 
     // Set the interleaved annotation text for a line
-    void InterAnnotationSetText(int line, const wxString& text);
+    void InterAnnotationSetVec(int line, const InterVec* vec);
 
     // Get the interleaved annotation text for a line
     wxString InterAnnotationGetText(int line) const;

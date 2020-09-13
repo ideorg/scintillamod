@@ -7,6 +7,7 @@
 
 #ifndef DOCUMENT_H
 #define DOCUMENT_H
+#include "InterVec.h"
 
 namespace ScintillaMod {
 
@@ -494,7 +495,7 @@ public:
 
     StyledText InterAnnotationStyledText(Sci::Line line) const noexcept;
     void InterAnnotationSetStyle(Sci::Line line, int style);
-    void InterAnnotationSetText(Sci::Line line, const char *text);
+    void InterAnnotationSetVec(Sci::Line line, const InterVec *vec);
     void InterAnnotationClearAll();
 
 	bool AddWatcher(DocWatcher *watcher, void *userData);
