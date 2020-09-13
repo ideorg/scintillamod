@@ -457,10 +457,15 @@ void EditView::LayoutLine(const EditModel &model, Sci::Line line, Surface *surfa
 		// Layout the line, determining the position of each character,
 		// with an extra element at the end for the end of the line.
 		ll->positions[0] = 0;
+        const StyledText stInterAnnotation = model.pdoc->InterAnnotationStyledText(line);
+        const size_t style = stInterAnnotation.style + vstyle.interAnnotationStyleOffset;
+        std::unique_ptr<XYPOSITION[]> positions = std::make_unique<XYPOSITION []>(3 + 1 + 1);
+        posCache.MeasureWidths(surface, vstyle, style, "ggg",
+                               3, &positions[0], model.pdoc);
 		for (int i=0; i<3; i++)
-		    ll->interdeltas[i]=0;
+		    ll->interdeltas[i]=0.0f;
         for (int i=3; i<=numCharsInLine; i++)
-            ll->interdeltas[i]=100;
+            ll->interdeltas[i]=positions[2];
 		bool lastSegItalics = false;
 
 		BreakFinder bfLayout(ll, nullptr, Range(0, numCharsInLine), posLineStart, 0, false, model.pdoc, &model.reprs, nullptr);
