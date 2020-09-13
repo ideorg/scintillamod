@@ -48,6 +48,8 @@ class LineTabstops;
 * EditView draws the main text area.
 */
 class EditView {
+    XYPOSITION getTextWidth(std::string text, Surface *surface, const ViewStyle &vstyle,
+                            size_t style, Document *pdoc);
 public:
 	PrintParameters printParameters;
 	std::unique_ptr<LineTabstops> ldTabstops;

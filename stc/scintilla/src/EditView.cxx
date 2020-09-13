@@ -370,6 +370,15 @@ constexpr bool IsControlCharacter(int ch) noexcept {
 
 }
 
+XYPOSITION EditView::getTextWidth(std::string text, Surface *surface, const ViewStyle &vstyle,
+                                  size_t style, Document *pdoc) {
+    if (text.empty()) return 0;
+    std::unique_ptr<XYPOSITION[]> positions = std::make_unique<XYPOSITION []>(text.size() + 1 + 1);
+    posCache.MeasureWidths(surface, vstyle, style, text.c_str(),
+                           text.size(), &positions[0], pdoc);
+    return positions[text.size()-1];
+}
+
 /**
 * Fill in the LineLayout data for the given line.
 * Copy the given @a line and its styles from the document into local arrays.
@@ -465,10 +474,15 @@ void EditView::LayoutLine(const EditModel &model, Sci::Line line, Surface *surfa
             std::unique_ptr<XYPOSITION[]> positions = std::make_unique<XYPOSITION []>(text.size() + 1 + 1);
             posCache.MeasureWidths(surface, vstyle, style, text.c_str(),
                                    text.size(), &positions[0], model.pdoc);
+            XYPOSITION delta = 0.0f;
+            for (int i=interStruct->v[0].first; i<=numCharsInLine; i++) {
+
+            }
+            delta = getTextWidth(text, surface, vstyle, style, model.pdoc);
             for (int i=0; i<interStruct->v[0].first; i++)
                 ll->interdeltas[i]=0.0f;
             for (int i=interStruct->v[0].first; i<=numCharsInLine; i++)
-                ll->interdeltas[i]=positions[text.size()-1];
+                ll->interdeltas[i] = delta;
         }
         else {
             style = 0;
