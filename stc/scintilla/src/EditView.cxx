@@ -470,19 +470,16 @@ void EditView::LayoutLine(const EditModel &model, Sci::Line line, Surface *surfa
         size_t style;
         if (interStruct && !interStruct->v.empty()) {
             style = interStruct->h.style + vstyle.interAnnotationStyleOffset;
-            std::string text = interStruct->v[0].second;
-            std::unique_ptr<XYPOSITION[]> positions = std::make_unique<XYPOSITION []>(text.size() + 1 + 1);
-            posCache.MeasureWidths(surface, vstyle, style, text.c_str(),
-                                   text.size(), &positions[0], model.pdoc);
             XYPOSITION delta = 0.0f;
-            for (int i=interStruct->v[0].first; i<=numCharsInLine; i++) {
-
-            }
-            delta = getTextWidth(text, surface, vstyle, style, model.pdoc);
-            for (int i=0; i<interStruct->v[0].first; i++)
-                ll->interdeltas[i]=0.0f;
-            for (int i=interStruct->v[0].first; i<=numCharsInLine; i++)
+            int pos = 0;
+            for (int i=0; i<=numCharsInLine; i++) {
+                if (i==interStruct->v[pos].first)
+                {
+                    delta += getTextWidth(interStruct->v[pos].second, surface, vstyle, style, model.pdoc);
+                    pos++;
+                }
                 ll->interdeltas[i] = delta;
+            }
         }
         else {
             style = 0;
