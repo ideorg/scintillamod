@@ -1416,7 +1416,7 @@ void EditView::DrawInterAnnotationText(Surface *surface, const EditModel &model,
     const XYPOSITION virtualSpace = model.sel.VirtualSpaceFor(
             model.pdoc->LineEnd(line)) * spaceWidth;
     rcSegment.left = xStart +
-                     static_cast<XYPOSITION>(ll->positions[std::min(ll->numCharsInLine,2)] - subLineStart)
+                     static_cast<XYPOSITION>(ll->positions[std::min(ll->numCharsInLine,interStruct->v[0].second-1)] - subLineStart)
                      + virtualSpace + vsDraw.aveCharWidth;
 
     const char *textFoldDisplay = model.GetFoldDisplayText(line);
