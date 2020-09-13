@@ -8,6 +8,8 @@
 #ifndef PERLINE_H
 #define PERLINE_H
 
+#include "InterVec.h"
+
 namespace ScintillaMod {
 
 /**
@@ -144,7 +146,20 @@ public:
 	int Lines(Sci::Line line) const noexcept;
 };
 
+
+struct AnnotationHeader {
+    short style;	// Style IndividualStyles implies array of styles
+    short lines;
+    int length;
+};
+
+struct InterStruct {
+    AnnotationHeader h;
+    InterVec v;
+};
+
 class  InterLineAnnotation: public LineAnnotation {
+    SplitVector<std::unique_ptr<InterStruct>> annotationsInter;
 public:
     InterLineAnnotation() = default;
     // Deleted so LineAnnotation objects can not be copied.
@@ -153,7 +168,8 @@ public:
     void operator=(const InterLineAnnotation &) = delete;
     void operator=(InterLineAnnotation &&) = delete;
     ~InterLineAnnotation() override = default;;
-    void SetVector(Sci::Line line, const char *text);
+    void SetVector(Sci::Line line, const InterVec *v);
+    [[nodiscard]] const InterStruct* GetStruct(Sci::Line line) const noexcept;
 };
 
 typedef std::vector<int> TabstopList;

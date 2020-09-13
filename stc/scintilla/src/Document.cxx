@@ -2430,14 +2430,19 @@ void Document::EOLAnnotationClearAll() {
 }
 
 StyledText Document::InterAnnotationStyledText(Sci::Line line) const noexcept {
-    const LineAnnotation *pla = InterAnnotations();
-    return StyledText(pla->Length(line), pla->Text(line),
+    const InterLineAnnotation *pla = InterAnnotations();
+    const InterStruct *pas = pla->GetStruct(line);
+    if (!pas || pas->v.empty())
+        return StyledText(0, NULL,
+                          false, 0, NULL);
+    else
+        return StyledText(pas->v[0].first.size(), pas->v[0].first.c_str(),
                                   pla->MultipleStyles(line), pla->Style(line), pla->Styles(line));
 }
 
 void Document::InterAnnotationSetVec(Sci::Line line, const InterVec *vec) {
     if (line >= 0 && line < LinesTotal()) {
-        InterAnnotations()->SetVector(line, vec->at(0).first.c_str());
+        InterAnnotations()->SetVector(line, vec);
         const DocModification mh(SC_MOD_CHANGEINTERANNOTATION, LineStart(line),
                                  0, 0, 0, line);
         NotifyModified(mh);

@@ -329,12 +329,6 @@ Sci::Line LineState::GetMaxLineState() const noexcept {
 // Each allocated LineAnnotation is a char array which starts with an AnnotationHeader
 // and then has text and optional styles.
 
-struct AnnotationHeader {
-	short style;	// Style IndividualStyles implies array of styles
-	short lines;
-	int length;
-};
-
 namespace {
 
 constexpr int IndividualStyles = 0x100;
@@ -473,8 +467,29 @@ int LineAnnotation::Lines(Sci::Line line) const noexcept {
 		return 0;
 }
 
-void InterLineAnnotation::SetVector(Sci::Line line, const char *text) {
-    SetText(line,text);
+const InterStruct * InterLineAnnotation::GetStruct(Sci::Line line) const noexcept {
+    if (annotationsInter.Length() && (line >= 0) && (line < annotationsInter.Length()) && annotationsInter[line])
+        return annotationsInter[line].get();
+    else
+        return nullptr;
+}
+
+void InterLineAnnotation::SetVector(Sci::Line line, const InterVec *v) {
+    if (v->size()>0 && (line >= 0)) {
+        annotationsInter.EnsureLength(line+1);
+        const int style = Style(line);
+        annotationsInter[line] = std::make_unique<InterStruct>();
+        InterStruct *pa = annotationsInter[line].get();
+        assert(pa);
+        pa->h.style = static_cast<short>(style);
+        pa->h.length = static_cast<int>(sizeof(*v));
+        pa->h.lines = 1;
+        pa->v = *v;
+    } else {
+        if (annotationsInter.Length() && (line >= 0) && (line < annotationsInter.Length()) && annotationsInter[line]) {
+            annotationsInter[line].reset();
+        }
+    }
 }
 
 LineTabstops::~LineTabstops() {
