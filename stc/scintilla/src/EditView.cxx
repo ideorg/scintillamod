@@ -1971,12 +1971,11 @@ void EditView::DrawForeground(Surface *surface, const EditModel &model, const Vi
 		PRectangle rcSegment = rcLine;
 		rcSegment.left = ll->positions[ts.start] + xStart - static_cast<XYPOSITION>(subLineStart);
 		rcSegment.right = ll->positions[ts.end()] + xStart - static_cast<XYPOSITION>(subLineStart);
-		if (ts.start>=3)
-        {
-            rcSegment.left+=100;
-            rcSegment.right+=100;
-        }
-		// Only try to draw if really visible - enhances performance by not calling environment to
+        XYPOSITION delta = ll->interdeltas[ts.start];
+        rcSegment.left += delta;
+        rcSegment.right += delta;
+
+        // Only try to draw if really visible - enhances performance by not calling environment to
 		// draw strings that are completely past the right side of the window.
 		if (rcSegment.Intersects(rcLine)) {
 			const int styleMain = ll->styles[i];
