@@ -24,6 +24,7 @@
 #include "Partitioning.h"
 #include "CellBuffer.h"
 #include "PerLine.h"
+#include <algorithm>
 
 using namespace ScintillaMod;
 
@@ -485,6 +486,7 @@ void InterLineAnnotation::SetVector(Sci::Line line, const InterVec *v) {
         pa->h.length = static_cast<int>(sizeof(*v));
         pa->h.lines = 1;
         pa->v = *v;
+        std:sort(pa->v.begin(), pa->v.end());
     } else {
         if (annotationsInter.Length() && (line >= 0) && (line < annotationsInter.Length()) && annotationsInter[line]) {
             annotationsInter[line].reset();

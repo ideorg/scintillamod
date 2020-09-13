@@ -461,13 +461,13 @@ void EditView::LayoutLine(const EditModel &model, Sci::Line line, Surface *surfa
         size_t style;
         if (interStruct && !interStruct->v.empty()) {
             style = interStruct->h.style + vstyle.interAnnotationStyleOffset;
-            std::string text = interStruct->v[0].first;
+            std::string text = interStruct->v[0].second;
             std::unique_ptr<XYPOSITION[]> positions = std::make_unique<XYPOSITION []>(text.size() + 1 + 1);
             posCache.MeasureWidths(surface, vstyle, style, text.c_str(),
                                    text.size(), &positions[0], model.pdoc);
-            for (int i=0; i<3; i++)
+            for (int i=0; i<interStruct->v[0].first; i++)
                 ll->interdeltas[i]=0.0f;
-            for (int i=3; i<=numCharsInLine; i++)
+            for (int i=interStruct->v[0].first; i<=numCharsInLine; i++)
                 ll->interdeltas[i]=positions[text.size()-1];
         }
         else {
@@ -1405,7 +1405,7 @@ void EditView::DrawInterAnnotationText(Surface *surface, const EditModel &model,
     if (!interStruct || interStruct->v.empty()) {
         return;
     }
-    const std::string_view interAnnotationText(interStruct->v[0].first.c_str(), interStruct->v[0].first.size());
+    const std::string_view interAnnotationText(interStruct->v[0].second.c_str(), interStruct->v[0].second.size());
     const size_t style = interStruct->h.style + vsDraw.interAnnotationStyleOffset;
 
     PRectangle rcSegment = rcLine;
@@ -1416,7 +1416,7 @@ void EditView::DrawInterAnnotationText(Surface *surface, const EditModel &model,
     const XYPOSITION virtualSpace = model.sel.VirtualSpaceFor(
             model.pdoc->LineEnd(line)) * spaceWidth;
     rcSegment.left = xStart +
-                     static_cast<XYPOSITION>(ll->positions[std::min(ll->numCharsInLine,interStruct->v[0].second-1)] - subLineStart)
+                     static_cast<XYPOSITION>(ll->positions[std::min(ll->numCharsInLine,interStruct->v[0].first-1)] - subLineStart)
                      + virtualSpace + vsDraw.aveCharWidth;
 
     const char *textFoldDisplay = model.GetFoldDisplayText(line);

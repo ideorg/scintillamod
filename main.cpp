@@ -167,9 +167,9 @@ MyFrame::MyFrame()
     stc->LoadFile("../main.cpp");
     stc->InterAnnotationSetVisible(1);
     InterVec vec;
-    vec.push_back(std::make_pair("par1",3));
-    vec.push_back(std::make_pair("par2",7));
-    stc->InterAnnotationSetVec(5, &vec);
+    vec.push_back(std::make_pair(6,"par2"));
+    vec.push_back(std::make_pair(4,"par1"));
+    stc->InterAnnotationSetVec(7, &vec);
 //    stc->EOLAnnotationSetVisible(1);
 //    stc->EOLAnnotationSetText(5,"fff");
 }

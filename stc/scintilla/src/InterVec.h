@@ -4,7 +4,7 @@
 #include <string>
 #include <vector>
 
-typedef std::pair<std::string, int> InterPair;
+typedef std::pair<int, std::string> InterPair;
 typedef std::vector<InterPair> InterVec;
 struct AnnotationHeader {
     short style;	// Style IndividualStyles implies array of styles
