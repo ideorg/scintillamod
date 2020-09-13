@@ -457,6 +457,10 @@ void EditView::LayoutLine(const EditModel &model, Sci::Line line, Surface *surfa
 		// Layout the line, determining the position of each character,
 		// with an extra element at the end for the end of the line.
 		ll->positions[0] = 0;
+		for (int i=0; i<3; i++)
+		    ll->interdeltas[i]=0;
+        for (int i=3; i<=numCharsInLine; i++)
+            ll->interdeltas[i]=100;
 		bool lastSegItalics = false;
 
 		BreakFinder bfLayout(ll, nullptr, Range(0, numCharsInLine), posLineStart, 0, false, model.pdoc, &model.reprs, nullptr);

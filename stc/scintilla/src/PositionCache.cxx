@@ -85,6 +85,7 @@ void LineLayout::Resize(int maxLineLength_) {
 		// Extra position allocated as sometimes the Windows
 		// GetTextExtentExPoint API writes an extra element.
 		positions = std::make_unique<XYPOSITION []>(maxLineLength_ + 1 + 1);
+		interdeltas = std::make_unique<XYPOSITION []>(maxLineLength_ + 1);
 		if (bidiData) {
 			bidiData->Resize(maxLineLength_);
 		}
@@ -104,6 +105,7 @@ void LineLayout::Free() noexcept {
 	chars.reset();
 	styles.reset();
 	positions.reset();
+	interdeltas.reset();
 	lineStarts.reset();
 	bidiData.reset();
 }
@@ -620,7 +622,8 @@ TextSegment BreakFinder::Next() {
 				charWidth = pdoc->DBCSDrawBytes(
 					std::string_view(&ll->chars[nextBreak], lineRange.end - nextBreak));
 			const Representation *repr = preprs->RepresentationFromCharacter(&ll->chars[nextBreak], charWidth);
-			if (((nextBreak > 0) && (ll->styles[nextBreak] != ll->styles[nextBreak - 1])) ||
+			if (((nextBreak > 0) && (ll->styles[nextBreak] != ll->styles[nextBreak - 1]
+			||ll->interdeltas[nextBreak] != ll->interdeltas[nextBreak - 1] )) ||
 					repr ||
 					(nextBreak == saeNext)) {
 				while ((nextBreak >= saeNext) && (saeNext < lineRange.end)) {
