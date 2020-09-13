@@ -5322,6 +5322,13 @@ void Editor::SetEOLAnnotationVisible(int visible) {
 	}
 }
 
+void Editor::SetInterAnnotationVisible(int visible) {
+    if (vs.interAnnotationVisible != visible) {
+        vs.interAnnotationVisible = visible;
+        Redraw();
+    }
+}
+
 /**
  * Recursively expand a fold, making lines visible except where they have an unexpanded parent.
  */
@@ -8139,6 +8146,43 @@ sptr_t Editor::WndProc(unsigned int iMessage, uptr_t wParam, sptr_t lParam) {
 
 	case SCI_EOLANNOTATIONGETSTYLEOFFSET:
 		return vs.eolAnnotationStyleOffset;
+
+    case SCI_INTERANNOTATIONSETTEXT:
+        pdoc->InterAnnotationSetText(static_cast<Sci::Line>(wParam), CharPtrFromSPtr(lParam));
+        break;
+
+    case SCI_INTERANNOTATIONGETTEXT: {
+        const StyledText st = pdoc->InterAnnotationStyledText(static_cast<Sci::Line>(wParam));
+        return BytesResult(lParam, reinterpret_cast<const unsigned char *>(st.text), st.length);
+    }
+
+    case SCI_INTERANNOTATIONGETSTYLE: {
+        const StyledText st = pdoc->InterAnnotationStyledText(static_cast<Sci::Line>(wParam));
+        return st.style;
+    }
+
+    case SCI_INTERANNOTATIONSETSTYLE:
+        pdoc->InterAnnotationSetStyle(static_cast<Sci::Line>(wParam), static_cast<int>(lParam));
+        break;
+
+    case SCI_INTERANNOTATIONCLEARALL:
+        pdoc->InterAnnotationClearAll();
+        break;
+
+    case SCI_INTERANNOTATIONSETVISIBLE:
+        SetInterAnnotationVisible(static_cast<int>(wParam));
+        break;
+
+    case SCI_INTERANNOTATIONGETVISIBLE:
+        return vs.interAnnotationVisible;
+
+    case SCI_INTERANNOTATIONSETSTYLEOFFSET:
+        vs.interAnnotationStyleOffset = static_cast<int>(wParam);
+        InvalidateStyleRedraw();
+        break;
+
+    case SCI_INTERANNOTATIONGETSTYLEOFFSET:
+        return vs.interAnnotationStyleOffset;
 
 	case SCI_RELEASEALLEXTENDEDSTYLES:
 		vs.ReleaseAllExtendedStyles();

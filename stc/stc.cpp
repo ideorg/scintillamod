@@ -4754,6 +4754,66 @@ int wxStyledTextCtrl::EOLAnnotationGetStyleOffset() const
     return SendMsg(SCI_EOLANNOTATIONGETSTYLEOFFSET, 0, 0);
 }
 
+// Set the interleaved annotation text for a line
+void wxStyledTextCtrl::InterAnnotationSetText(int line, const wxString& text)
+{
+    SendMsg(SCI_INTERANNOTATIONSETTEXT, line, (sptr_t)(const char*)wx2stc(text));
+}
+
+// Get the interleaved annotation text for a line
+wxString wxStyledTextCtrl::InterAnnotationGetText(int line) const {
+    const int msg = SCI_INTERANNOTATIONGETTEXT;
+    long len = SendMsg(msg, line, (sptr_t)NULL);
+    if (!len) return wxEmptyString;
+
+    wxCharBuffer buf(len);
+    SendMsg(msg, line, (sptr_t)buf.data());
+    return stc2wx(buf);
+}
+
+// Set the style number for the interleaved annotations for a line
+void wxStyledTextCtrl::InterAnnotationSetStyle(int line, int style)
+{
+    SendMsg(SCI_INTERANNOTATIONSETSTYLE, line, style);
+}
+
+// Get the style number for the interleaved annotations for a line
+int wxStyledTextCtrl::InterAnnotationGetStyle(int line) const
+{
+    return SendMsg(SCI_INTERANNOTATIONGETSTYLE, line, 0);
+}
+
+// Clear the end of annotations from all lines
+void wxStyledTextCtrl::InterAnnotationClearAll()
+{
+    SendMsg(SCI_INTERANNOTATIONCLEARALL, 0, 0);
+}
+
+// Set the visibility for the interleaved annotations for a view
+void wxStyledTextCtrl::InterAnnotationSetVisible(int visible)
+{
+    SendMsg(SCI_INTERANNOTATIONSETVISIBLE, visible, 0);
+}
+
+// Get the visibility for the interleaved annotations for a view
+int wxStyledTextCtrl::InterAnnotationGetVisible() const
+{
+    return SendMsg(SCI_INTERANNOTATIONGETVISIBLE, 0, 0);
+}
+
+// Get the start of the range of style numbers used for interleaved annotations
+void wxStyledTextCtrl::InterAnnotationSetStyleOffset(int style)
+{
+    SendMsg(SCI_INTERANNOTATIONSETSTYLEOFFSET, style, 0);
+}
+
+// Get the start of the range of style numbers used for interleaved annotations
+int wxStyledTextCtrl::InterAnnotationGetStyleOffset() const
+{
+    return SendMsg(SCI_INTERANNOTATIONGETSTYLEOFFSET, 0, 0);
+}
+
+
 // Start notifying the container of all key presses and commands.
 void wxStyledTextCtrl::StartRecord()
 {

@@ -4,7 +4,7 @@
 #ifndef WX_PRECOMP
 #include <wx/wx.h>
 #endif
-#include <wx/stc/stc.h>
+#include "stc/stc.h"
 
 class MyApp : public wxApp
 {
@@ -162,9 +162,12 @@ MyFrame::MyFrame()
     stc->SetLexer(wxSTC_LEX_CPP);
     stc->StyleSetForeground(wxSTC_C_COMMENT, wxColour(0, 128, 192));
     stc->StyleSetForeground(wxSTC_C_NUMBER, wxColour(128, 0, 128));*/
-
     SetEditorStyle(stc);
     stc->LoadFile("../main.cpp");
+    stc->InterAnnotationSetVisible(1);
+    stc->InterAnnotationSetText(5,"ggg");
+//    stc->EOLAnnotationSetVisible(1);
+//    stc->EOLAnnotationSetText(5,"fff");
 }
 void MyFrame::OnExit(wxCommandEvent& event)
 {

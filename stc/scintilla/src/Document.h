@@ -244,7 +244,8 @@ private:
 	std::vector<WatcherWithUserData> watchers;
 
 	// ldSize is not real data - it is for dimensions and loops
-	enum lineData { ldMarkers, ldLevels, ldState, ldMargin, ldAnnotation, ldEOLAnnotation, ldSize };
+	enum lineData { ldMarkers, ldLevels, ldState, ldMargin, ldAnnotation,
+	        ldEOLAnnotation,ldInterAnnotation, ldSize };
 	std::unique_ptr<PerLine> perLineData[ldSize];
 	LineMarkers *Markers() const noexcept;
 	LineLevels *Levels() const noexcept;
@@ -252,6 +253,7 @@ private:
 	LineAnnotation *Margins() const noexcept;
 	LineAnnotation *Annotations() const noexcept;
 	LineAnnotation *EOLAnnotations() const noexcept;
+    LineAnnotation *InterAnnotations() const noexcept;
 
 	bool matchesValid;
 	std::unique_ptr<RegexSearchBase> regex;
@@ -488,6 +490,11 @@ public:
 	void EOLAnnotationSetStyle(Sci::Line line, int style);
 	void EOLAnnotationSetText(Sci::Line line, const char *text);
 	void EOLAnnotationClearAll();
+
+    StyledText InterAnnotationStyledText(Sci::Line line) const noexcept;
+    void InterAnnotationSetStyle(Sci::Line line, int style);
+    void InterAnnotationSetText(Sci::Line line, const char *text);
+    void InterAnnotationClearAll();
 
 	bool AddWatcher(DocWatcher *watcher, void *userData);
 	bool RemoveWatcher(DocWatcher *watcher, void *userData);

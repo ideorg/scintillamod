@@ -112,6 +112,7 @@ retTypeMap = {
     'IndentView': 'int',
     'IndicatorStyle': 'int',
     'IndicFlag': 'int',
+    'InterAnnotationVisible': 'int',
     'line': 'int',
     'LineCache': 'int',
     'LineEndType': 'int',

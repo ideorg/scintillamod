@@ -138,6 +138,7 @@ Document::Document(int options) :
 	perLineData[ldMargin] = std::make_unique<LineAnnotation>();
 	perLineData[ldAnnotation] = std::make_unique<LineAnnotation>();
 	perLineData[ldEOLAnnotation] = std::make_unique<LineAnnotation>();
+    perLineData[ldInterAnnotation] = std::make_unique<LineAnnotation>();
 
 	decorations = DecorationListCreate(IsLarge());
 
@@ -215,6 +216,10 @@ LineAnnotation *Document::Annotations() const noexcept {
 
 LineAnnotation *Document::EOLAnnotations() const noexcept {
 	return dynamic_cast<LineAnnotation *>(perLineData[ldEOLAnnotation].get());
+}
+
+LineAnnotation *Document::InterAnnotations() const noexcept {
+    return dynamic_cast<LineAnnotation *>(perLineData[ldInterAnnotation].get());
 }
 
 int Document::LineEndTypesSupported() const {
@@ -2422,6 +2427,38 @@ void Document::EOLAnnotationClearAll() {
 		EOLAnnotationSetText(l, nullptr);
 	// Free remaining data
 	EOLAnnotations()->ClearAll();
+}
+
+StyledText Document::InterAnnotationStyledText(Sci::Line line) const noexcept {
+    const LineAnnotation *pla = InterAnnotations();
+    return StyledText(pla->Length(line), pla->Text(line),
+                                  pla->MultipleStyles(line), pla->Style(line), pla->Styles(line));
+}
+
+void Document::InterAnnotationSetText(Sci::Line line, const char *text) {
+    if (line >= 0 && line < LinesTotal()) {
+        InterAnnotations()->SetText(line, text);
+        const DocModification mh(SC_MOD_CHANGEINTERANNOTATION, LineStart(line),
+                                 0, 0, 0, line);
+        NotifyModified(mh);
+    }
+}
+
+void Document::InterAnnotationSetStyle(Sci::Line line, int style) {
+    if (line >= 0 && line < LinesTotal()) {
+        InterAnnotations()->SetStyle(line, style);
+        const DocModification mh(SC_MOD_CHANGEINTERANNOTATION, LineStart(line),
+                                 0, 0, 0, line);
+        NotifyModified(mh);
+    }
+}
+
+void Document::InterAnnotationClearAll() {
+    const Sci::Line maxEditorLine = LinesTotal();
+    for (Sci::Line l=0; l<maxEditorLine; l++)
+        InterAnnotationSetText(l, nullptr);
+    // Free remaining data
+    InterAnnotations()->ClearAll();
 }
 
 void Document::IncrementStyleClock() noexcept {

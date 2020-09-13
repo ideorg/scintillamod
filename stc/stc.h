@@ -5301,6 +5301,33 @@ public:
     // Get the start of the range of style numbers used for end of line annotations
     int EOLAnnotationGetStyleOffset() const;
 
+    // Set the interleaved annotation text for a line
+    void InterAnnotationSetText(int line, const wxString& text);
+
+    // Get the interleaved annotation text for a line
+    wxString InterAnnotationGetText(int line) const;
+
+    // Set the style number for the interleaved annotations for a line
+    void InterAnnotationSetStyle(int line, int style);
+
+    // Get the style number for the interleaved annotations for a line
+    int InterAnnotationGetStyle(int line) const;
+
+    // Clear the end of annotations from all lines
+    void InterAnnotationClearAll();
+
+    // Set the visibility for the interleaved annotations for a view
+    void InterAnnotationSetVisible(int visible);
+
+    // Get the visibility for the interleaved annotations for a view
+    int InterAnnotationGetVisible() const;
+
+    // Get the start of the range of style numbers used for interleaved annotations
+    void InterAnnotationSetStyleOffset(int style);
+
+    // Get the start of the range of style numbers used for interleaved annotations
+    int InterAnnotationGetStyleOffset() const;
+
     // Start notifying the container of all key presses and commands.
     void StartRecord();
 

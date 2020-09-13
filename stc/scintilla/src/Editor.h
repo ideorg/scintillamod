@@ -547,6 +547,7 @@ protected:	// ScintillaBase subclass needs access to much of Editor
 
 	void SetAnnotationVisible(int visible);
 	void SetEOLAnnotationVisible(int visible);
+    void SetInterAnnotationVisible(int visible);
 
 	Sci::Line ExpandLine(Sci::Line line);
 	void SetFoldExpanded(Sci::Line lineDoc, bool expanded);
