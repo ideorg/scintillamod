@@ -2429,15 +2429,9 @@ void Document::EOLAnnotationClearAll() {
 	EOLAnnotations()->ClearAll();
 }
 
-StyledText Document::InterAnnotationStyledText(Sci::Line line) const noexcept {
+const InterStruct* Document::InterAnnotationStyledText(Sci::Line line) const noexcept {
     const InterLineAnnotation *pla = InterAnnotations();
-    const InterStruct *pas = pla->GetStruct(line);
-    if (!pas || pas->v.empty())
-        return StyledText(0, NULL,
-                          false, 0, NULL);
-    else
-        return StyledText(pas->v[0].first.size(), pas->v[0].first.c_str(),
-                                  pla->MultipleStyles(line), pla->Style(line), pla->Styles(line));
+    return pla->GetStruct(line);
 }
 
 void Document::InterAnnotationSetVec(Sci::Line line, const InterVec *vec) {

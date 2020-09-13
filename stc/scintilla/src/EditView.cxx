@@ -457,15 +457,24 @@ void EditView::LayoutLine(const EditModel &model, Sci::Line line, Surface *surfa
 		// Layout the line, determining the position of each character,
 		// with an extra element at the end for the end of the line.
 		ll->positions[0] = 0;
-        const StyledText stInterAnnotation = model.pdoc->InterAnnotationStyledText(line);
-        const size_t style = stInterAnnotation.style + vstyle.interAnnotationStyleOffset;
-        std::unique_ptr<XYPOSITION[]> positions = std::make_unique<XYPOSITION []>(3 + 1 + 1);
-        posCache.MeasureWidths(surface, vstyle, style, "ggg",
-                               3, &positions[0], model.pdoc);
-		for (int i=0; i<3; i++)
-		    ll->interdeltas[i]=0.0f;
-        for (int i=3; i<=numCharsInLine; i++)
-            ll->interdeltas[i]=positions[2];
+        const InterStruct* interStruct = model.pdoc->InterAnnotationStyledText(line);
+        size_t style;
+        if (interStruct && !interStruct->v.empty()) {
+            style = interStruct->h.style + vstyle.interAnnotationStyleOffset;
+            std::string text = interStruct->v[0].first;
+            std::unique_ptr<XYPOSITION[]> positions = std::make_unique<XYPOSITION []>(text.size() + 1 + 1);
+            posCache.MeasureWidths(surface, vstyle, style, text.c_str(),
+                                   text.size(), &positions[0], model.pdoc);
+            for (int i=0; i<3; i++)
+                ll->interdeltas[i]=0.0f;
+            for (int i=3; i<=numCharsInLine; i++)
+                ll->interdeltas[i]=positions[text.size()-1];
+        }
+        else {
+            style = 0;
+            for (int i=0; i<=numCharsInLine; i++)
+                ll->interdeltas[i]=0.0f;
+        }
 		bool lastSegItalics = false;
 
 		BreakFinder bfLayout(ll, nullptr, Range(0, numCharsInLine), posLineStart, 0, false, model.pdoc, &model.reprs, nullptr);
@@ -1056,7 +1065,9 @@ void EditView::DrawEOL(Surface *surface, const EditModel &model, const ViewStyle
 	rcSegment.right = rcLine.right;
 
 	const bool drawEOLAnnotationStyledText = (vsDraw.eolAnnotationVisible != EOLANNOTATION_HIDDEN) && model.pdoc->EOLAnnotationStyledText(line).text;
-    const bool drawInterAnnotationStyledText = (vsDraw.eolAnnotationVisible != INTERANNOTATION_HIDDEN) && model.pdoc->InterAnnotationStyledText(line).text;
+    const InterStruct *interstruct = model.pdoc->InterAnnotationStyledText(line);
+    const bool drawInterAnnotationStyledText = (vsDraw.eolAnnotationVisible != INTERANNOTATION_HIDDEN)
+            && interstruct && !interstruct->v.empty();
 	const bool fillRemainder = (!lastSubLine || (!model.GetFoldDisplayText(line) && !(drawEOLAnnotationStyledText|drawInterAnnotationStyledText)));
 	if (fillRemainder) {
 		// Fill the remainder of the line
@@ -1390,12 +1401,12 @@ void EditView::DrawInterAnnotationText(Surface *surface, const EditModel &model,
     if (vsDraw.interAnnotationVisible == INTERANNOTATION_HIDDEN) {
         return;
     }
-    const StyledText stInterAnnotation = model.pdoc->InterAnnotationStyledText(line);
-    if (!stInterAnnotation.text || !ValidStyledText(vsDraw, vsDraw.interAnnotationStyleOffset, stInterAnnotation)) {
+    const InterStruct *interStruct = model.pdoc->InterAnnotationStyledText(line);
+    if (!interStruct || interStruct->v.empty()) {
         return;
     }
-    const std::string_view interAnnotationText(stInterAnnotation.text, stInterAnnotation.length);
-    const size_t style = stInterAnnotation.style + vsDraw.interAnnotationStyleOffset;
+    const std::string_view interAnnotationText(interStruct->v[0].first.c_str(), interStruct->v[0].first.size());
+    const size_t style = interStruct->h.style + vsDraw.interAnnotationStyleOffset;
 
     PRectangle rcSegment = rcLine;
     FontAlias fontText = vsDraw.styles[style].font;

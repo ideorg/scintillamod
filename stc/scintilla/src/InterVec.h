@@ -6,5 +6,15 @@
 
 typedef std::pair<std::string, int> InterPair;
 typedef std::vector<InterPair> InterVec;
+struct AnnotationHeader {
+    short style;	// Style IndividualStyles implies array of styles
+    short lines;
+    int length;
+};
+
+struct InterStruct {
+    AnnotationHeader h;
+    InterVec v;
+};
 
 #endif //SCINTILLAMOD_INTERVEC_H

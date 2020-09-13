@@ -493,7 +493,7 @@ public:
 	void EOLAnnotationSetText(Sci::Line line, const char *text);
 	void EOLAnnotationClearAll();
 
-    StyledText InterAnnotationStyledText(Sci::Line line) const noexcept;
+    const InterStruct *InterAnnotationStyledText(Sci::Line line) const noexcept;
     void InterAnnotationSetStyle(Sci::Line line, int style);
     void InterAnnotationSetVec(Sci::Line line, const InterVec *vec);
     void InterAnnotationClearAll();

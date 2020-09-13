@@ -146,18 +146,6 @@ public:
 	int Lines(Sci::Line line) const noexcept;
 };
 
-
-struct AnnotationHeader {
-    short style;	// Style IndividualStyles implies array of styles
-    short lines;
-    int length;
-};
-
-struct InterStruct {
-    AnnotationHeader h;
-    InterVec v;
-};
-
 class  InterLineAnnotation: public LineAnnotation {
     SplitVector<std::unique_ptr<InterStruct>> annotationsInter;
 public:

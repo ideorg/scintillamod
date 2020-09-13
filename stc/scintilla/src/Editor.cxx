@@ -8152,14 +8152,18 @@ sptr_t Editor::WndProc(unsigned int iMessage, uptr_t wParam, sptr_t lParam) {
         pdoc->InterAnnotationSetVec(static_cast<Sci::Line>(wParam), (InterVec *) (lParam));
         break;
 
+/* todo
     case SCI_INTERANNOTATIONGETTEXT: {
         const StyledText st = pdoc->InterAnnotationStyledText(static_cast<Sci::Line>(wParam));
         return BytesResult(lParam, reinterpret_cast<const unsigned char *>(st.text), st.length);
-    }
+    }*/
 
     case SCI_INTERANNOTATIONGETSTYLE: {
-        const StyledText st = pdoc->InterAnnotationStyledText(static_cast<Sci::Line>(wParam));
-        return st.style;
+        const InterStruct* interStruct = pdoc->InterAnnotationStyledText(static_cast<Sci::Line>(wParam));
+        if (!interStruct)
+            return 0;
+        else
+            return interStruct->h.style;
     }
 
     case SCI_INTERANNOTATIONSETSTYLE:
