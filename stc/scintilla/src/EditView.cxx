@@ -1416,78 +1416,84 @@ void EditView::DrawInterAnnotationText(Surface *surface, const EditModel &model,
     if (!interStruct || interStruct->v.empty()) {
         return;
     }
-    const std::string_view interAnnotationText(interStruct->v[0].second.c_str(), interStruct->v[0].second.size());
-    const size_t style = interStruct->h.style + vsDraw.interAnnotationStyleOffset;
+    for (int i=0; i<interStruct->v.size(); i++) {
 
-    PRectangle rcSegment = rcLine;
-    FontAlias fontText = vsDraw.styles[style].font;
-    const int widthInterAnnotationText = static_cast<int>(surface->WidthText(fontText, interAnnotationText));
+        const std::string_view interAnnotationText(interStruct->v[i].second.c_str(), interStruct->v[i].second.size());
+        const size_t style = interStruct->h.style + vsDraw.interAnnotationStyleOffset;
 
-    const XYPOSITION spaceWidth = vsDraw.styles[ll->EndLineStyle()].spaceWidth;
-    const XYPOSITION virtualSpace = model.sel.VirtualSpaceFor(
-            model.pdoc->LineEnd(line)) * spaceWidth;
-    rcSegment.left = xStart +
-                     static_cast<XYPOSITION>(ll->positions[std::min(ll->numCharsInLine,interStruct->v[0].first-1)] - subLineStart)
-                     + virtualSpace + vsDraw.aveCharWidth;
+        PRectangle rcSegment = rcLine;
+        FontAlias fontText = vsDraw.styles[style].font;
+        const int widthInterAnnotationText = static_cast<int>(surface->WidthText(fontText, interAnnotationText));
 
-    const char *textFoldDisplay = model.GetFoldDisplayText(line);
-    if (textFoldDisplay) {
-        const std::string_view foldDisplayText(textFoldDisplay);
-        rcSegment.left += (static_cast<int>(surface->WidthText(fontText, foldDisplayText)) + vsDraw.aveCharWidth);
-    }
-    rcSegment.right = rcSegment.left + static_cast<XYPOSITION>(widthInterAnnotationText);
+        const XYPOSITION spaceWidth = vsDraw.styles[ll->EndLineStyle()].spaceWidth;
+        const XYPOSITION virtualSpace = model.sel.VirtualSpaceFor(
+                model.pdoc->LineEnd(line)) * spaceWidth;
+        int n = std::min(ll->numCharsInLine, interStruct->v[i].first - 1);
+        rcSegment.left = xStart +
+                         static_cast<XYPOSITION>(ll->positions[n] - subLineStart)
+                         + virtualSpace + vsDraw.aveCharWidth;
+        rcSegment.left += ll->interdeltas[n];
 
-    const ColourOptional background = vsDraw.Background(model.pdoc->GetMark(line), model.caret.active, ll->containsCaret);
-    ColourDesired textFore = vsDraw.styles[style].fore;
-    const ColourDesired textBack = TextBackground(model, vsDraw, ll, background, false,
-                                                  false, static_cast<int>(style), -1);
-
-    if (model.trackLineWidth) {
-        if (rcSegment.right + 1> lineWidthMaxSeen) {
-            // EOL Annotation text border drawn on rcSegment.right with width 1 is the last visible object of the line
-            lineWidthMaxSeen = static_cast<int>(rcSegment.right + 1);
+        const char *textFoldDisplay = model.GetFoldDisplayText(line);
+        if (textFoldDisplay) {
+            const std::string_view foldDisplayText(textFoldDisplay);
+            rcSegment.left += (static_cast<int>(surface->WidthText(fontText, foldDisplayText)) + vsDraw.aveCharWidth);
         }
-    }
+        rcSegment.right = rcSegment.left + static_cast<XYPOSITION>(widthInterAnnotationText);
 
-    if (phase & drawBack) {
-        surface->FillRectangle(rcSegment, textBack);
+        const ColourOptional background = vsDraw.Background(model.pdoc->GetMark(line), model.caret.active,
+                                                            ll->containsCaret);
+        ColourDesired textFore = vsDraw.styles[style].fore;
+        const ColourDesired textBack = TextBackground(model, vsDraw, ll, background, false,
+                                                      false, static_cast<int>(style), -1);
 
-        // Fill Remainder of the line
-        PRectangle rcRemainder = rcSegment;
-        rcRemainder.left = rcRemainder.right;
-        if (rcRemainder.left < rcLine.left)
-            rcRemainder.left = rcLine.left;
-        rcRemainder.right = rcLine.right;
-        FillLineRemainder(surface, model, vsDraw, ll, line, rcRemainder, subLine);
-    }
-
-    if (phase & drawText) {
-        if (phasesDraw != phasesOne) {
-            surface->DrawTextTransparent(rcSegment, fontText,
-                                         rcSegment.top + vsDraw.maxAscent, interAnnotationText,
-                                         textFore);
-        } else {
-            surface->DrawTextNoClip(rcSegment, fontText,
-                                    rcSegment.top + vsDraw.maxAscent, interAnnotationText,
-                                    textFore, textBack);
+        if (model.trackLineWidth) {
+            if (rcSegment.right + 1 > lineWidthMaxSeen) {
+                // EOL Annotation text border drawn on rcSegment.right with width 1 is the last visible object of the line
+                lineWidthMaxSeen = static_cast<int>(rcSegment.right + 1);
+            }
         }
-    }
 
-    if (phase & drawIndicatorsFore) {
-        if (vsDraw.interAnnotationVisible == INTERANNOTATION_BOXED ) {
-            surface->PenColour(textFore);
-            PRectangle rcBox = rcSegment;
-            rcBox.left = std::round(rcSegment.left);
-            rcBox.right = std::round(rcSegment.right);
-            const IntegerRectangle ircBox(rcBox);
-            surface->MoveTo(ircBox.left, ircBox.top);
-            surface->LineTo(ircBox.left, ircBox.bottom);
-            surface->MoveTo(ircBox.right, ircBox.top);
-            surface->LineTo(ircBox.right, ircBox.bottom);
-            surface->MoveTo(ircBox.left, ircBox.top);
-            surface->LineTo(ircBox.right, ircBox.top);
-            surface->MoveTo(ircBox.left, ircBox.bottom - 1);
-            surface->LineTo(ircBox.right, ircBox.bottom - 1);
+        if (phase & drawBack) {
+            surface->FillRectangle(rcSegment, textBack);
+
+            // Fill Remainder of the line
+            PRectangle rcRemainder = rcSegment;
+            rcRemainder.left = rcRemainder.right;
+            if (rcRemainder.left < rcLine.left)
+                rcRemainder.left = rcLine.left;
+            rcRemainder.right = rcLine.right;
+            FillLineRemainder(surface, model, vsDraw, ll, line, rcRemainder, subLine);
+        }
+
+        if (phase & drawText) {
+            if (phasesDraw != phasesOne) {
+                surface->DrawTextTransparent(rcSegment, fontText,
+                                             rcSegment.top + vsDraw.maxAscent, interAnnotationText,
+                                             textFore);
+            } else {
+                surface->DrawTextNoClip(rcSegment, fontText,
+                                        rcSegment.top + vsDraw.maxAscent, interAnnotationText,
+                                        textFore, textBack);
+            }
+        }
+
+        if (phase & drawIndicatorsFore) {
+            if (vsDraw.interAnnotationVisible == INTERANNOTATION_BOXED) {
+                surface->PenColour(textFore);
+                PRectangle rcBox = rcSegment;
+                rcBox.left = std::round(rcSegment.left);
+                rcBox.right = std::round(rcSegment.right);
+                const IntegerRectangle ircBox(rcBox);
+                surface->MoveTo(ircBox.left, ircBox.top);
+                surface->LineTo(ircBox.left, ircBox.bottom);
+                surface->MoveTo(ircBox.right, ircBox.top);
+                surface->LineTo(ircBox.right, ircBox.bottom);
+                surface->MoveTo(ircBox.left, ircBox.top);
+                surface->LineTo(ircBox.right, ircBox.top);
+                surface->MoveTo(ircBox.left, ircBox.bottom - 1);
+                surface->LineTo(ircBox.right, ircBox.bottom - 1);
+            }
         }
     }
 }
