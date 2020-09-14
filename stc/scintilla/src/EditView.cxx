@@ -1650,6 +1650,7 @@ void EditView::DrawCarets(Surface *surface, const EditModel &model, const ViewSt
 		const XYPOSITION virtualOffset = posCaret.VirtualSpace() * spaceWidth;
 		if (ll->InLine(offset, subLine) && offset <= ll->numCharsBeforeEOL) {
 			XYPOSITION xposCaret = ll->positions[offset] + virtualOffset - ll->positions[ll->LineStart(subLine)];
+            xposCaret += ll->interdeltas[offset];
 			if (model.BidirectionalEnabled() && (posCaret.VirtualSpace() == 0)) {
 				// Get caret point
 				const ScreenLine screenLine(ll, subLine, vsDraw, rcLine.right, tabWidthMinimumPixels);
