@@ -273,6 +273,7 @@ Point LineLayout::PointFromPosition(int posInLine, int lineHeight, PointEnd pe) 
 			pt.y = static_cast<XYPOSITION>(subLine*lineHeight);
 			if (posInLine <= rangeSubLine.end) {
 				pt.x = positions[posInLine] - positions[rangeSubLine.start];
+				pt.x += interdeltas[posInLine];
 				if (rangeSubLine.start != 0)	// Wrapped lines may be indented
 					pt.x += wrapIndent;
 				if (pe & peSubLineEnd)	// Return end of first subline not start of next
