@@ -20,6 +20,7 @@ private:
     void OnHello(wxCommandEvent& event);
     void OnExit(wxCommandEvent& event);
     void OnAbout(wxCommandEvent& event);
+    void OnStcMarginClick(wxStyledTextEvent& event);
 };
 enum
 {
@@ -165,6 +166,9 @@ MyFrame::MyFrame()
     stc->StyleSetForeground(wxSTC_C_NUMBER, wxColour(128, 0, 128));*/
     SetEditorStyle(stc);
     stc->LoadFile("../main.cpp");
+    stc->SetMarginCursor(0,0);
+    stc->SetMarginCursor(1,8);
+    Bind(wxEVT_STC_MARGINCLICK, &MyFrame::OnStcMarginClick, this, 1);
     stc->InterAnnotationSetVisible(1);
     InterVec vec;
     vec.push_back(std::make_pair(6,"par2"));
@@ -174,6 +178,7 @@ MyFrame::MyFrame()
 //    stc->EOLAnnotationSetText(5,"fff");
     stc->SetSelection(192,226);
 }
+
 void MyFrame::OnExit(wxCommandEvent& event)
 {
     Close(true);
@@ -186,4 +191,30 @@ void MyFrame::OnAbout(wxCommandEvent& event)
 void MyFrame::OnHello(wxCommandEvent& event)
 {
     wxLogMessage("Hello world from wxWidgets!");
+}
+#define STC_LINE_NUM_MARGIN 0  // Margines paska numerów linii
+#define STC_FOLD_MARGIN 1  // Margines znaczników
+
+void MyFrame::OnStcMarginClick(wxStyledTextEvent &event) {
+    wxStyledTextCtrl* stc = static_cast<wxStyledTextCtrl*>(event.GetEventObject());
+
+    switch (event.GetMargin())
+    {
+        case STC_LINE_NUM_MARGIN:
+            break;
+
+            // Obsługa marginesu znaczników...
+        case STC_FOLD_MARGIN:
+        {
+            int line_number = stc->LineFromPosition(event.GetPosition());
+            if (stc->GetFoldLevel(line_number) & wxSTC_FOLDLEVELHEADERFLAG)
+            {
+                stc->ToggleFold(line_number);
+            }
+            break;
+        }
+
+        default:
+            break;
+    }
 }
