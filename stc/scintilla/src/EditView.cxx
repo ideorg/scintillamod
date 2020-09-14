@@ -2276,10 +2276,8 @@ void EditView::DrawLine(Surface *surface, const EditModel &model, const ViewStyl
 	}
 
 	if (phase & drawText) {
-        DrawInterAnnotationText(surface, model, vsDraw, ll, line, xStart, rcLine, subLine, subLineStart, drawBack);
-		DrawForeground(surface, model, vsDraw, ll, lineVisible, rcLine, lineRange, posLineStart, xStart,
+        DrawForeground(surface, model, vsDraw, ll, lineVisible, rcLine, lineRange, posLineStart, xStart,
 			subLine, background);
-
 	}
 
 	if (phase & drawIndentationGuides) {

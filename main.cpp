@@ -172,6 +172,7 @@ MyFrame::MyFrame()
     stc->InterAnnotationSetVec(7, &vec);
 //    stc->EOLAnnotationSetVisible(1);
 //    stc->EOLAnnotationSetText(5,"fff");
+    stc->SetSelection(192,226);
 }
 void MyFrame::OnExit(wxCommandEvent& event)
 {
